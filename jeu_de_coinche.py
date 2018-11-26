@@ -2,7 +2,7 @@
 """
 Created on Tue Jul 10 23:58:04 2018
 
-@author: rthie
+@author: rthie le bg
 """
 
 import random

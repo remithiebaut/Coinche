@@ -214,7 +214,7 @@ def jouer_pli(manche,joueurs):
     pli.append(carte) #same
     condition=carte.couleur
     for j in joueurs[1:]:
-        
+        chosir_carte(joueur[0].main)
         
         
         
@@ -228,7 +228,10 @@ ini_manche(partie.manche,j)
 """
     def cartes_possibles(manche,numero_couleur,j):
         main_possible=[]
-            for carte in j.main:
+        main_actuelle=j.main+[]
+        if j.couleur[numero_couleur]!=None :
+            for carte in main_actuelle:
+                if liste_couleur[numero_couleur]==couleur.atout
         return main_possible
 """
 """

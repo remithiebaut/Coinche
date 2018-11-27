@@ -48,7 +48,9 @@ class carte():
   self.numero=numero #prend la valeur none quand inexistant
   self.couleur=couleur
   self.reste=reste #utilisé seulement dans la distribution de cartes, lutiliser a la place de none ?
-
+  self.valeur=None #ordre de puissance dans lannonce actuelle 16 valet datout et 1:7 normal
+  self.atout=False
+  
 class main():
     def __init__(self):    
        self.cartes=[]     
@@ -242,7 +244,7 @@ def cartes_possibles(manche, couleur_choisie, j):
     cartes_possible=[]
     
     #cas 1 : la couleur demandée est atout
-    if couleur_choisie==manche.atout :
+    if couleur_choisie==manche.atout : 
         
         #cas 1.1 : a de latout ATTENTION on ne monte pas encore a latout, on utilisera la fonction qui determine le gagnant
         if j.main.reste[couleur_choisie]!=0 :           #
@@ -267,7 +269,7 @@ def cartes_possibles(manche, couleur_choisie, j):
     #cas 2.21 : a atout ATTENTION on ne peut pas encore se defaussersur la carte dun partenaire, on utilisera la fonction qui determine le gagnant
     if j.main.reste[manche.atout]!=0 :
         for carte in j.main.cartes:
-            if carte.couleur==manche.atout:
+            if carte.atout: #optimisable avec atout
                 cartes_possible.append(carte)
         return cartes_possible
     
@@ -275,12 +277,39 @@ def cartes_possibles(manche, couleur_choisie, j):
     return j.main.cartes
 
 
-def gain_pli(manche): #donner a la classe carte une variable valeur pour les classer par force
+def gain_pli(manche,joueurs): #donner a la classe carte une variable valeur pour les classer par force
+    """
+    donne le gagnant de la manche
+    """
+    gagnant=(0,manche.pli.cartes[0].atout)
     for carte in manche.pli.cartes:
-        if carte.couleur==manche.atout:
+        if gagnant[2]:
+            gagnant=indice(manche.pli.cartes,carte)
             for carte in manche.pli:
                 a=1
-            
+
+def ini_manche(manche, joueurs):
+    if manche.atout==liste_couleur[4]:
+        for j in joueurs :
+            for carte in j.main.cartes:
+                carte.value=indice(liste_numero,carte.numero)
+    
+    elif manche.atout==liste_couleur[5]:
+        for j in joueurs :
+            for carte in j.main.cartes:
+                carte.atout=True
+                carte.value=indice(ordre_atout,carte.numero)
+    
+    elif manche.atout in liste_couleur[:4]:
+        for j in joueurs:
+            for carte in j.main.cartes:
+                if carte.couleur==manche.atout:
+                    carte.atout=True
+                    carte.value=indice(ordre_atout,carte.numero)
+                else :
+                    carte.value=indice(liste_numero,carte.numero)
+                    
+                
         
 partie=partie()
 j=raccourci(partie.manche)

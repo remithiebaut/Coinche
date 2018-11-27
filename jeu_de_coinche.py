@@ -80,14 +80,13 @@ class equipe():
      self.mise=None  #a reinitialiser
 
 class manche():
-    def __init__(self,j1="joueur1",j2="joueur2",j3="joueur3",j4="joueur4",e1="e1",e2="e2"):
+    def __init__(self,j1="joueur1",j2="joueur2",j3="joueur3",j4="joueur4", e1="e1",e2="e2"): # e1 et e2 inutiles
      self.atout=None
      self.coinche=False #indicateur de coinche
      self.surcoinche=False
      self.pli=main() #pli en cours
      self.pioche =[ [carte(i,j) for i in liste_numero] for j in liste_couleur] #ligne = couleur/ colonne= numero
-     self.e1=equipe(self.pioche,j1,j3,1,3,1) #attention e1 est une variable pose potentiellement probleme
-     self.e2=equipe(self.pioche,j2,j4,2,4,2)
+     self.equipe=(equipe(self.pioche,j1,j3,1,3,0),equipe(self.pioche,j2,j4,2,4,1)) #attention e1 est une variable pose potentiellement probleme
 
 class partie():
      def __init__(self,j1="joueur1",j2="joueur2",j3="joueur3",j4="joueur4",e1="e1",e2="e2",limite_score=2000):
@@ -98,7 +97,7 @@ class partie():
 
 
 def raccourci(manche): #allège lecriture
-     j=[manche.e1.j1, manche.e1.j2, manche.e2.j1, manche.e2.j2]
+     j=[manche.equipe[0].j1, manche.equipe[0].j2, manche.equipe[1].j1, manche.equipe[1].j2]
      return j
 
 def affiche_cartes(cartes,message=""):
@@ -160,7 +159,7 @@ def choisir_atout(manche):
 
 
                if numero_joueur%2==0: #faire un tour dans lautre equipe pour coinche
-                  manche.e1.mise=mise #fixe la mise de lequipe attention mise est un char
+                  manche.equipe[0].mise=mise #fixe la mise de lequipe attention mise est un char
 
                   for k in [1,3]:
                      affiche_cartes(j[k].main.cartes, "Joueur numero " + str(k+1))
@@ -174,7 +173,7 @@ def choisir_atout(manche):
                                  manche.surcoinche=surcoinche
 
                else : #la flemme de généraliser
-                  manche.e2.mise=mise #fixe la mise de lequipe attention mise est un char
+                  manche.equipe[1].mise=mise #fixe la mise de lequipe attention mise est un char
                   for k in [0,2]:
                      affiche_cartes(j[k].main.cartes,"Joueur numero " + str(k+1))
                      if not coinche :
@@ -227,17 +226,22 @@ def jouer_carte(main,pli,position_carte):
      return couleur_choisie                 
 
 
-def jouer_pli(manche,joueurs):
+def jouer_pli(manche,joueurs): #•fonctionne
     """
-    prends en entrée le tableau ORDONNEE des joueurs de ce pli
+    prends en entrée le tableau ORDONNEE des joueurs de ce pli et le renvoi réordonné
     """
     couleur_choisie=jouer_carte(joueurs[0].main,manche.pli,choisir_carte(joueurs[0].main.cartes))
 
     for j in joueurs[1:]:
         jouer_carte(j.main,manche.pli,choisir_carte(cartes_possibles(manche, couleur_choisie, j)))
     affiche_cartes(manche.pli.cartes)    
-    #il faut maintenant determiner le gagnant
-   
+    
+    indice_gagnant=gain_pli(manche.pli)
+    nouvel_ordre=[joueurs[indice_gagnant],joueurs[(indice_gagnant+1)%4], joueurs[(indice_gagnant+2)%4] ,joueurs[(indice_gagnant+3)%4]]
+    manche.equipe[joueurs[indice_gagnant].equipe].pli=manche.pli # trouver methode pour que les plis sajoutent pour linstant ils se remplacent
+    manche.pli=main() #reinitialise le pli
+
+    return nouvel_ordre
 
 def cartes_possibles(manche, couleur_choisie, j):
     
@@ -277,45 +281,53 @@ def cartes_possibles(manche, couleur_choisie, j):
     return j.main.cartes
 
 
-def gain_pli(manche,joueurs): #donner a la classe carte une variable valeur pour les classer par force
+def gain_pli(pli): 
     """
-    donne le gagnant de la manche
+    donne lindice du gagnant du pli dans lordre du pli
     """
-    gagnant=(0,manche.pli.cartes[0].atout)
-    for carte in manche.pli.cartes:
-        if gagnant[2]:
-            gagnant=indice(manche.pli.cartes,carte)
-            for carte in manche.pli:
-                a=1
+    gagnant=pli.cartes[0]
+    for carte in pli.cartes:
+        if not gagnant.atout:
+            if carte.atout :
+                gagnant=carte
+            elif gagnant.couleur==carte.couleur and carte.valeur>gagnant.valeur:
+                gagnant=carte
+        
+        else :
+            if carte.valeur>gagnant.valeur:
+                gagnant=carte
+    return indice(pli.cartes,gagnant)
 
 def ini_manche(manche, joueurs):
     if manche.atout==liste_couleur[4]:
         for j in joueurs :
             for carte in j.main.cartes:
-                carte.value=indice(liste_numero,carte.numero)
+                carte.valeur=indice(liste_numero,carte.numero)
     
     elif manche.atout==liste_couleur[5]:
         for j in joueurs :
             for carte in j.main.cartes:
                 carte.atout=True
-                carte.value=indice(ordre_atout,carte.numero)
+                carte.valeur=indice(ordre_atout,carte.numero)
     
     elif manche.atout in liste_couleur[:4]:
         for j in joueurs:
             for carte in j.main.cartes:
                 if carte.couleur==manche.atout:
                     carte.atout=True
-                    carte.value=indice(ordre_atout,carte.numero)
+                    carte.valeur=indice(ordre_atout,carte.numero)
                 else :
-                    carte.value=indice(liste_numero,carte.numero)
+                    carte.valeur=indice(liste_numero,carte.numero)
                     
                 
         
 partie=partie()
 j=raccourci(partie.manche)
 choisir_atout(partie.manche)
+ini_manche(partie.manche,j)
 #ini_manche(partie.manche,j)    
-jouer_pli(partie.manche, j)
+for i in range(8):
+    j=jouer_pli(partie.manche, j)
 """
 def tour_de_jeu(partie):
    j=raccourci(partie)

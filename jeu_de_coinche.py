@@ -275,7 +275,7 @@ def cartes_possibles(manche, couleur_choisie, j):
     return j.main.cartes
 
 
-def gain_pli(manche):
+def gain_pli(manche): #donner a la classe carte une variable valeur pour les classer par force
     for carte in manche.pli.cartes:
         if carte.couleur==manche.atout:
             for carte in manche.pli:

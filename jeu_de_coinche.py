@@ -91,6 +91,7 @@ class joueur():
 
 class equipe():
     def __init__(self,pioche, name1, name2, numero_equipe):
+     
      self.j1=joueur(pioche,numero_equipe,name1)
      self.j2=joueur(pioche,numero_equipe,name2)
      self.pli=main("pli de l'equipe " + str(numero_equipe)) #a reinitialiser
@@ -98,6 +99,7 @@ class equipe():
 
 class manche():
     def __init__(self,j1,j2,j3,j4,e1,e2): # e1 et e2 inutiles
+     
      self.atout=None
      self.coinche=False #indicateur de coinche
      self.surcoinche=False
@@ -110,6 +112,7 @@ class manche():
 
 class partie():
      def __init__(self,j1="joueur1",j2="joueur2",j3="joueur3",j4="joueur4",e1="e1",e2="e2",limite_score=2000):
+         
          self.manche=manche(j1,j2,j3,j4,e1,e2)
          self.limite=limite_score
          self.points=[0,0]
@@ -117,7 +120,7 @@ class partie():
 
 
 def raccourci(manche): #allège lecriture
-     j=[manche.equipe[0].j1, manche.equipe[0].j2, manche.equipe[1].j1, manche.equipe[1].j2]
+     j=[manche.equipe[0].j1,  manche.equipe[1].j1, manche.equipe[0].j2, manche.equipe[1].j2]
      return j
 
 def affiche_cartes(cartes,name="cartes"):
@@ -262,7 +265,7 @@ def jouer_pli(manche,joueurs): #•fonctionne
     gagnant=gain_pli(manche.pli)
     nouvel_ordre=[joueurs[gagnant],joueurs[(gagnant+1)%4], joueurs[(gagnant+2)%4] ,joueurs[(gagnant+3)%4]]
     manche.equipe[joueurs[gagnant].equipe].pli.add(manche.pli) # trouver methode pour que les plis sajoutent pour linstant ils se remplacent
-    manche.pli=main(main.pli.name) #reinitialise le pli
+    manche.pli=main(manche.pli.name) #reinitialise le pli
 
     return nouvel_ordre
 
@@ -345,14 +348,20 @@ def ini_manche(manche, joueurs):
                     
                 
         
-partie=partie("Remi","Vincent","Pierre","Guilhem")
+partie=partie(j1="Remi",j2="Vincent",j3="Pierre",j4="Guilhem")
 j=raccourci(partie.manche)
-choisir_atout(partie.manche)
+choisir_atout(partie.manche) #choisir valeur par defaut pour les test
 ini_manche(partie.manche,j)
 #ini_manche(partie.manche,j)    
 for i in range(8):
     print("pli {} : \n \n".format(i))
-    j=jouer_pli(partie.manche, j)
+    j=jouer_pli(partie.manche, j) #erreur dans le decompte des plis confusion avec les tas joueur 
+
+
+ print("FIN")   
+while True :
+    a=0
+        
 """
 def tour_de_jeu(partie):
    j=raccourci(partie)

@@ -263,6 +263,7 @@ def jouer_pli(manche,joueurs): #•fonctionne
     affiche_cartes(manche.pli.cartes, manche.pli.name)    
     
     gagnant=gain_pli(manche.pli)
+    print(" Le gagnant est {} avec le {} de {}".format(joueurs[gagnant].name, manche.pli.cartes[gagnant].numero , manche.pli.cartes[gagnant].couleur ))
     nouvel_ordre=[joueurs[gagnant],joueurs[(gagnant+1)%4], joueurs[(gagnant+2)%4] ,joueurs[(gagnant+3)%4]]
     manche.equipe[joueurs[gagnant].equipe].pli.add(manche.pli) # trouver methode pour que les plis sajoutent pour linstant ils se remplacent
     manche.pli=main(manche.pli.name) #reinitialise le pli
@@ -355,10 +356,12 @@ ini_manche(partie.manche,j)
 #ini_manche(partie.manche,j)    
 for i in range(8):
     print("pli {} : \n \n".format(i))
-    j=jouer_pli(partie.manche, j) #erreur dans le decompte des plis confusion avec les tas joueur 
+    j=jouer_pli(partie.manche, j) #erreur dans le decompte des plis confusion avec les tas joueur bug a iteration2 
+    for k in range(2):
+        affiche_cartes(partie.manche.equipe[k].pli.cartes,partie.manche.equipe[k].pli.name)
 
 
- print("FIN")   
+print("FIN")   
 while True :
     a=0
         

@@ -43,6 +43,32 @@ def verification(question, conditions) : #rajout dun quit
 
 liste_numero=['7', '8', '9', 'V', 'D', 'R', '10', 'A']
 liste_couleur=['coeur', 'pique', 'carreau', 'trefle',  'sans atout', 'tout atout']
+liste_annonce=["normal","atout","sans atout","tout atout"]
+
+#attention erreur
+
+liste_point[tout_atout]=[0, 0, 9, 14, 1, 2, 5, 7]
+assert(4*sum(liste_point_tout_atout))==152 and len(liste_point_tout_atout)==8
+
+liste_point[sans_atout]=[0, 0, 0, 2, 3, 4, 10, 19]
+assert(4*sum(liste_point_sans_atout))==152 and len(liste_point_sans_atout)==8
+
+liste_point["normal"]=[0, 0, 0, 2, 3, 4, 10, 11] 
+liste_point["atout"]=[0, 0, 14, 20, 3, 4, 10, 11]
+assert(3*sum(liste_point)+sum(liste_point_atout))==152 and len(liste_point_atout)==8 and len(liste_point)==8
+
+
+
+
+points={}
+for annonce in liste_annonce :
+    points[annonce]={}
+    j=0
+    for numero in liste_numero:
+        points[annonce][numero]=liste_point[annonce]+j
+        j+=1
+    
+
 liste_annonce=[str(80+10*i) for i in range(11)]
 liste_annonce.append('capot')
 liste_annonce.append('generale')
@@ -60,6 +86,7 @@ class carte():
   self.reste=reste #utilisé seulement dans la distribution de cartes, lutiliser a la place de none ?
   self.valeur=None #ordre de puissance dans lannonce actuelle 16 valet datout et 1:7 normal
   self.atout=False
+  self.points=0
   
 class main():
     def __init__(self,name): 
@@ -68,13 +95,34 @@ class main():
        #initialise les compteur
        self.reste={"cartes":0} #changé en dico
        for couleur in liste_couleur[:4]:
-           self.reste[couleur]=0
-           
+           self.reste[couleur]=0           
            
     def add(self, supplement):
         self.cartes+=supplement.cartes
         for key in self.reste:
             self.reste[key]+=supplement.reste[key]
+            
+    def tri_couleur(self):
+        """
+        trie les cartes par couleur et mets a jour les compteurs de restes à jour
+        """
+        new_cartes=[]
+        for couleur in liste_couleur[:4] :
+            for carte in self.cartes:
+                if carte.couleur==couleur:
+                    new_cartes.append(carte)
+                    self.reste[couleur]+=1
+        self.cartes=new_cartes
+    
+    def piocher(self,pioche):    
+        while not self.reste["cartes"]==8 : #on peut probablement faire plus rapide(prendre aleatoirement dans les cartes restantes)
+           x=int(1000*random.random()%8) # il est possible que le bug survienne apres plusieurs boucles (apres test)
+           y=int(1000*random.random()%4)
+           if pioche[y][x].reste==1:
+               self.cartes.append(pioche[y][x])
+               pioche[y][x].reste=0
+               self.reste["cartes"]+=1
+        self.tri_couleur() #remet les compteurs de couleur à jour
 
 
 class joueur():
@@ -82,7 +130,7 @@ class joueur():
        
        self.name=name
        self.main=main(name)
-       piocher(self.main, pioche)
+       self.main.piocher(pioche)
        self.equipe=numero_equipe
        
        
@@ -97,6 +145,9 @@ class equipe():
      self.pli=main("pli de l'equipe " + str(numero_equipe)) #a reinitialiser
      self.mise=None  #a reinitialiser
 
+
+
+
 class manche():
     def __init__(self,j1,j2,j3,j4,e1,e2): # e1 et e2 inutiles
      
@@ -106,9 +157,39 @@ class manche():
      self.pli=main("pli en cours") 
      self.pioche =[ [carte(i,j) for i in liste_numero] for j in liste_couleur] #ligne = couleur/ colonne= numero
      self.equipe=(equipe(self.pioche,j1,j3,0),equipe(self.pioche,j2,j4,1)) #attention e1 est une variable pose potentiellement probleme
-    
+   
+    def debut(self, joueurs):
+        #normal
+        if self.atout in liste_couleur[:4]:
+            for j in joueurs:
+                for carte in j.main.cartes:
+                    if carte.couleur==self.atout:
+                        carte.atout=True
+                        carte.valeur=indice(ordre_atout,carte.numero)
+                        carte.points=liste_point_atout[carte.numero]
+                    else :
+                        carte.valeur=indice(liste_numero,carte.numero)
+                        carte.points=liste_point[carte.numero]
+        #sans atout
+        elif self.atout==liste_couleur[4]:
+            for j in joueurs :
+                for carte in j.main.cartes:
+                    carte.valeur=indice(liste_numero,carte.numero)
+                    carte.points=liste_point_sans_atout[carte.numero]
         
-
+        #tout atout
+        elif self.atout==liste_couleur[5]:
+            for j in joueurs :
+                for carte in j.main.cartes:
+                    carte.atout=True
+                    carte.valeur=indice(ordre_atout,carte.numero)
+                    carte.points=liste_point_tout_atout[carte.numero]
+        
+        
+        
+    def raccourci(self): #allège lecriture
+         j=[self.equipe[0].j1,  self.equipe[1].j1, self.equipe[0].j2, self.equipe[1].j2]
+         return j
 
 class partie():
      def __init__(self,j1="joueur1",j2="joueur2",j3="joueur3",j4="joueur4",e1="e1",e2="e2",limite_score=2000):
@@ -119,9 +200,7 @@ class partie():
 
 
 
-def raccourci(manche): #allège lecriture
-     j=[manche.equipe[0].j1,  manche.equipe[1].j1, manche.equipe[0].j2, manche.equipe[1].j2]
-     return j
+
 
 def affiche_cartes(cartes,name="cartes"):
    """
@@ -129,21 +208,13 @@ def affiche_cartes(cartes,name="cartes"):
    """
    print("\n \n {:^15} \n".format(name))
    for i in range(len(cartes)):
-       if not cartes[i].numero==None:
+       if not cartes[i].numero==None :
         print("{} : {:>2} de {} ".format(str(i+1),cartes[i].numero,cartes[i].couleur))
    print()
 
 
 
-def piocher(main,pioche):    
-    while not main.reste["cartes"]==8 : #on peut probablement faire plus rapide(prendre aleatoirement dans les cartes restantes)
-       x=int(1000*random.random()%8) # il est possible que le bug survienne apres plusieurs boucles (apres test)
-       y=int(1000*random.random()%4)
-       if pioche[y][x].reste==1:
-           main.cartes.append(pioche[y][x])
-           pioche[y][x].reste=0
-           main.reste["cartes"]+=1
-    tri_couleur(main) #remet les compteurs de couleur à jour
+
 
 
 
@@ -152,7 +223,7 @@ def choisir_atout(manche): # pensez a afficher avant surcoinche
    """
    fixe l'atout et la mise d'atout
    """
-   j=raccourci(manche)
+   j=manche.raccourci()
    coinche=manche.coinche
    surcoinche=manche.surcoinche
    mise=0
@@ -214,21 +285,11 @@ def choisir_atout(manche): # pensez a afficher avant surcoinche
 
 
 
-def tri_couleur(main):
-    """
-    on va trier les cartes par couleur et mettre a jour les compteurs de restes
-    """
-    new_cartes=[]
-    for couleur in liste_couleur[:4] :
-        for carte in main.cartes:
-            if carte.couleur==couleur:
-                new_cartes.append(carte)
-                main.reste[couleur]+=1
-    main.cartes=new_cartes
+
 
 def choisir_carte(cartes,nom): 
      """
-     retourne  carte choisie et sa position dans la main
+     choisie et retourne une carte
      """
      affiche_cartes(cartes,nom)
      while True :
@@ -236,39 +297,23 @@ def choisir_carte(cartes,nom):
          position_carte = int(position_carte)-1
          if position_carte<len(cartes) :
              if cartes[position_carte].numero!=None:
-                 return position_carte
+                 return cartes[position_carte]
 
-def jouer_carte(main,pli,position_carte):
-     pli.cartes.append(copy.deepcopy(main.cartes[position_carte])) # a priori marche voir doc deepcopy
-     couleur_choisie=main.cartes[position_carte].couleur
+def jouer_carte(main,pli,carte_choisie):
+     """
+     joue la carte choisie et retourne sa couleur
+     """
+     pli.cartes.append(copy.deepcopy(carte_choisie)) # a priori marche voir doc deepcopy
+     couleur_choisie=carte_choisie.couleur
      pli.reste[couleur_choisie]+=1
      pli.reste["cartes"]+=1
      main.reste[couleur_choisie]-=1
      main.reste["cartes"]-=1
-     main.cartes[position_carte].numero=None 
+     carte_choisie.numero=None 
+     
      return couleur_choisie                 
-
     
 
-def jouer_pli(manche,joueurs): #•fonctionne
-    """
-    prends en entrée le tableau ORDONNEE des joueurs de ce pli et le renvoi réordonné
-    """
-    
-    couleur_choisie=jouer_carte(joueurs[0].main,manche.pli,choisir_carte(joueurs[0].main.cartes,joueurs[0].name))
-
-    for j in joueurs[1:]:
-        affiche_cartes(j.main.cartes, j.name)
-        jouer_carte(j.main,manche.pli,choisir_carte(cartes_possibles(manche, couleur_choisie, j),j.name))
-    affiche_cartes(manche.pli.cartes, manche.pli.name)    
-    
-    gagnant=gain_pli(manche.pli)
-    print(" Le gagnant est {} avec le {} de {}".format(joueurs[gagnant].name, manche.pli.cartes[gagnant].numero , manche.pli.cartes[gagnant].couleur ))
-    nouvel_ordre=[joueurs[gagnant],joueurs[(gagnant+1)%4], joueurs[(gagnant+2)%4] ,joueurs[(gagnant+3)%4]]
-    manche.equipe[joueurs[gagnant].equipe].pli.add(manche.pli) # trouver methode pour que les plis sajoutent pour linstant ils se remplacent
-    manche.pli=main(manche.pli.name) #reinitialise le pli
-
-    return nouvel_ordre
 
 def cartes_possibles(manche, couleur_choisie, j):
     
@@ -326,39 +371,42 @@ def gain_pli(pli):
                 gagnant=carte
     return indice(pli.cartes,gagnant)
 
-def ini_manche(manche, joueurs):
-    if manche.atout==liste_couleur[4]:
-        for j in joueurs :
-            for carte in j.main.cartes:
-                carte.valeur=indice(liste_numero,carte.numero)
+
+
+
+def jouer_pli(manche,joueurs): #•fonctionne
+    """
+    prends en entrée le tableau ORDONNEE des joueurs de ce pli et le renvoi réordonné
+    """
     
-    elif manche.atout==liste_couleur[5]:
-        for j in joueurs :
-            for carte in j.main.cartes:
-                carte.atout=True
-                carte.valeur=indice(ordre_atout,carte.numero)
+    #la meilleure carte est le 1er joueur pour l'ini
+    couleur_choisie=jouer_carte(joueurs[0].main, manche.pli, choisir_carte(joueurs[0].main.cartes, joueurs[0].name))
+
+    for j in joueurs[1:]:
+        affiche_cartes(j.main.cartes, j.name)
+        carte_choisie=choisir_carte(cartes_possibles(manche, couleur_choisie, j),j.name)
+        jouer_carte(j.main, manche.pli, carte_choisie)
+    affiche_cartes(manche.pli.cartes, manche.pli.name)    
     
-    elif manche.atout in liste_couleur[:4]:
-        for j in joueurs:
-            for carte in j.main.cartes:
-                if carte.couleur==manche.atout:
-                    carte.atout=True
-                    carte.valeur=indice(ordre_atout,carte.numero)
-                else :
-                    carte.valeur=indice(liste_numero,carte.numero)
+    gagnant=gain_pli(manche.pli)
+    print(" Le gagnant est {} avec le {} de {}".format(joueurs[gagnant].name, manche.pli.cartes[gagnant].numero , manche.pli.cartes[gagnant].couleur ))
+    nouvel_ordre=[joueurs[gagnant],joueurs[(gagnant+1)%4], joueurs[(gagnant+2)%4] ,joueurs[(gagnant+3)%4]]
+    manche.equipe[joueurs[gagnant].equipe].pli.add(manche.pli) # trouver methode pour que les plis sajoutent pour linstant ils se remplacent
+    manche.pli=main(manche.pli.name) #reinitialise le pli
+
+    return nouvel_ordre
                     
                 
         
 partie=partie(j1="Remi",j2="Vincent",j3="Pierre",j4="Guilhem")
-j=raccourci(partie.manche)
+j=partie.manche.raccourci()
 choisir_atout(partie.manche) #choisir valeur par defaut pour les test
-ini_manche(partie.manche,j)
-#ini_manche(partie.manche,j)    
+partie.manche.debut(j)
 for i in range(8):
     print("pli {} : \n \n".format(i))
-    j=jouer_pli(partie.manche, j) #erreur dans le decompte des plis confusion avec les tas joueur bug a iteration2 
+    j=jouer_pli(partie.manche, j) #erreur dans le decompte des plis confusion avec les tas joueur bug a iteration2 a priori fonctionne : confusion entre la position dans la main et celles des cartes possibles
     for k in range(2):
-        affiche_cartes(partie.manche.equipe[k].pli.cartes,partie.manche.equipe[k].pli.name)
+        affiche_cartes(partie.manche.equipe[k].pli.cartes, partie.manche.equipe[k].pli.name)
 
 
 print("FIN")   
@@ -395,4 +443,8 @@ def ini_manche(manche, joueurs):
                 if carte.couleur==manche.atout:
                     carte.atout=True
 
+for joueur in j:
+    affiche_cartes(joueur.main.cartes,joueur.name,toutes=True)
+    for carte in joueur.main.cartes:
+        print(carte.points)
 """

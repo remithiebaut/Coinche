@@ -1,0 +1,948 @@
+     Remi       
+
+1 :  7 de coeur 
+2 :  8 de coeur 
+3 :  7 de pique 
+4 : 10 de pique 
+5 :  9 de pique 
+6 : 10 de trefle 
+7 :  A de trefle 
+8 :  8 de trefle 
+
+
+Souhaitez-vous annoncer ? oui/non oui
+
+Choisir la couleur d'atout : ['coeur', 'pique', 'carreau', 'trefle', 'sans atout', 'tout atout'] coeur
+
+Choisir la hauteur d'annonce : ['80', '90', '100', '110', '120', '130', '140', '150', '160', '170', '180', 'capot', 'generale'] 80
+
+ 
+     Vincent     
+
+1 :  9 de coeur 
+2 :  8 de carreau 
+3 :  R de carreau 
+4 :  D de carreau 
+5 :  9 de carreau 
+6 :  9 de trefle 
+7 :  V de trefle 
+8 :  D de trefle 
+
+
+Souhaitez-vous coincher ? oui/non oui
+
+Souhaitez-vous surcoincher ? oui/non oui
+
+ 
+     Guilhem     
+
+1 : 10 de coeur 
+2 :  A de coeur 
+3 :  R de coeur 
+4 :  8 de pique 
+5 :  D de pique 
+6 :  V de pique 
+7 :  A de carreau 
+8 :  7 de trefle 
+
+pli 0 : 
+ 
+
+
+ 
+      Remi       
+
+1 :  7 de coeur 
+2 :  8 de coeur 
+3 :  7 de pique 
+4 : 10 de pique 
+5 :  9 de pique 
+6 : 10 de trefle 
+7 :  A de trefle 
+8 :  8 de trefle 
+
+
+Quelle carte ? 1ère, 2ème ? 1
+
+ 
+     Vincent     
+
+1 :  9 de coeur 
+2 :  8 de carreau 
+3 :  R de carreau 
+4 :  D de carreau 
+5 :  9 de carreau 
+6 :  9 de trefle 
+7 :  V de trefle 
+8 :  D de trefle 
+
+
+ 
+     Vincent     
+
+1 :  9 de coeur 
+
+
+Quelle carte ? 1ère, 2ème ? 1
+
+ 
+     Pierre      
+
+1 :  D de coeur 
+2 :  V de coeur 
+3 :  A de pique 
+4 :  R de pique 
+5 : 10 de carreau 
+6 :  V de carreau 
+7 :  7 de carreau 
+8 :  R de trefle 
+
+
+ 
+     Pierre      
+
+1 :  D de coeur 
+2 :  V de coeur 
+
+
+Quelle carte ? 1ère, 2ème ? 2
+
+ 
+     Guilhem     
+
+1 : 10 de coeur 
+2 :  A de coeur 
+3 :  R de coeur 
+4 :  8 de pique 
+5 :  D de pique 
+6 :  V de pique 
+7 :  A de carreau 
+8 :  7 de trefle 
+
+
+ 
+     Guilhem     
+
+1 : 10 de coeur 
+2 :  A de coeur 
+3 :  R de coeur 
+
+
+Quelle carte ? 1ère, 2ème ? 3
+
+ 
+  pli en cours   
+
+1 :  7 de coeur 
+2 :  9 de coeur 
+3 :  V de coeur 
+4 :  R de coeur 
+
+ Le gagnant est Pierre avec le V de coeur
+
+ 
+ pli de l'equipe 0 
+
+1 :  7 de coeur 
+2 :  9 de coeur 
+3 :  V de coeur 
+4 :  R de coeur 
+
+
+ 
+ pli de l'equipe 1 
+
+
+pli 1 : 
+ 
+
+
+ 
+     Pierre      
+
+1 :  D de coeur 
+3 :  A de pique 
+4 :  R de pique 
+5 : 10 de carreau 
+6 :  V de carreau 
+7 :  7 de carreau 
+8 :  R de trefle 
+
+
+Quelle carte ? 1ère, 2ème ? 2
+
+Quelle carte ? 1ère, 2ème ? 1
+
+ 
+     Guilhem     
+
+1 : 10 de coeur 
+2 :  A de coeur 
+4 :  8 de pique 
+5 :  D de pique 
+6 :  V de pique 
+7 :  A de carreau 
+8 :  7 de trefle 
+
+
+ 
+     Guilhem     
+
+1 : 10 de coeur 
+2 :  A de coeur 
+
+
+Quelle carte ? 1ère, 2ème ? 2
+
+ 
+      Remi       
+
+2 :  8 de coeur 
+3 :  7 de pique 
+4 : 10 de pique 
+5 :  9 de pique 
+6 : 10 de trefle 
+7 :  A de trefle 
+8 :  8 de trefle 
+
+
+ 
+      Remi       
+
+2 :  8 de coeur 
+
+
+Quelle carte ? 1ère, 2ème ? 1
+
+Quelle carte ? 1ère, 2ème ? 1
+
+Quelle carte ? 1ère, 2ème ? 2
+
+ 
+     Vincent     
+
+2 :  8 de carreau 
+3 :  R de carreau 
+4 :  D de carreau 
+5 :  9 de carreau 
+6 :  9 de trefle 
+7 :  V de trefle 
+8 :  D de trefle 
+
+
+ 
+     Vincent     
+
+2 :  8 de carreau 
+3 :  R de carreau 
+4 :  D de carreau 
+5 :  9 de carreau 
+6 :  9 de trefle 
+7 :  V de trefle 
+8 :  D de trefle 
+
+
+Quelle carte ? 1ère, 2ème ? 3
+
+ 
+  pli en cours   
+
+1 :  D de coeur 
+2 :  A de coeur 
+3 :  8 de coeur 
+4 :  R de carreau 
+
+ Le gagnant est Guilhem avec le A de coeur
+
+ 
+ pli de l'equipe 0 
+
+1 :  7 de coeur 
+2 :  9 de coeur 
+3 :  V de coeur 
+4 :  R de coeur 
+
+
+ 
+ pli de l'equipe 1 
+
+1 :  D de coeur 
+2 :  A de coeur 
+3 :  8 de coeur 
+4 :  R de carreau 
+
+pli 2 : 
+ 
+
+
+ 
+     Guilhem     
+
+1 : 10 de coeur 
+4 :  8 de pique 
+5 :  D de pique 
+6 :  V de pique 
+7 :  A de carreau 
+8 :  7 de trefle 
+
+
+Quelle carte ? 1ère, 2ème ? 2
+
+Quelle carte ? 1ère, 2ème ? 4
+
+ 
+      Remi       
+
+3 :  7 de pique 
+4 : 10 de pique 
+5 :  9 de pique 
+6 : 10 de trefle 
+7 :  A de trefle 
+8 :  8 de trefle 
+
+
+ 
+      Remi       
+
+1 :  7 de pique 
+2 : 10 de pique 
+3 :  9 de pique 
+
+
+Quelle carte ? 1ère, 2ème ? 5
+
+Quelle carte ? 1ère, 2ème ? 3
+
+ 
+     Vincent     
+
+2 :  8 de carreau 
+4 :  D de carreau 
+5 :  9 de carreau 
+6 :  9 de trefle 
+7 :  V de trefle 
+8 :  D de trefle 
+
+
+ 
+     Vincent     
+
+2 :  8 de carreau 
+4 :  D de carreau 
+5 :  9 de carreau 
+6 :  9 de trefle 
+7 :  V de trefle 
+8 :  D de trefle 
+
+
+Quelle carte ? 1ère, 2ème ? 2
+
+ 
+     Pierre      
+
+3 :  A de pique 
+4 :  R de pique 
+5 : 10 de carreau 
+6 :  V de carreau 
+7 :  7 de carreau 
+8 :  R de trefle 
+
+
+ 
+     Pierre      
+
+1 :  A de pique 
+2 :  R de pique 
+
+
+Quelle carte ? 1ère, 2ème ? 1
+
+ 
+  pli en cours   
+
+1 :  8 de pique 
+2 :  9 de pique 
+3 :  8 de carreau 
+4 :  A de pique 
+
+ Le gagnant est Pierre avec le A de pique
+
+ 
+ pli de l'equipe 0 
+
+1 :  7 de coeur 
+2 :  9 de coeur 
+3 :  V de coeur 
+4 :  R de coeur 
+5 :  8 de pique 
+6 :  9 de pique 
+7 :  8 de carreau 
+8 :  A de pique 
+
+
+ 
+ pli de l'equipe 1 
+
+1 :  D de coeur 
+2 :  A de coeur 
+3 :  8 de coeur 
+4 :  R de carreau 
+
+pli 3 : 
+ 
+
+
+ 
+     Pierre      
+
+4 :  R de pique 
+5 : 10 de carreau 
+6 :  V de carreau 
+7 :  7 de carreau 
+8 :  R de trefle 
+
+
+Quelle carte ? 1ère, 2ème ? 2
+
+Quelle carte ? 1ère, 2ème ? 2
+
+Quelle carte ? 1ère, 2ème ? 3
+
+Quelle carte ? 1ère, 2ème ? 1
+
+Quelle carte ? 1ère, 2ème ? 2
+
+Quelle carte ? 1ère, 2ème ? 1
+
+Quelle carte ? 1ère, 2ème ? 4
+
+ 
+     Guilhem     
+
+1 : 10 de coeur 
+5 :  D de pique 
+6 :  V de pique 
+7 :  A de carreau 
+8 :  7 de trefle 
+
+
+ 
+     Guilhem     
+
+2 :  D de pique 
+3 :  V de pique 
+
+
+Quelle carte ? 1ère, 2ème ? 1
+
+Quelle carte ? 1ère, 2ème ? 2
+
+ 
+      Remi       
+
+3 :  7 de pique 
+4 : 10 de pique 
+6 : 10 de trefle 
+7 :  A de trefle 
+8 :  8 de trefle 
+
+
+ 
+      Remi       
+
+1 :  7 de pique 
+2 : 10 de pique 
+
+
+Quelle carte ? 1ère, 2ème ? 1
+
+ 
+     Vincent     
+
+4 :  D de carreau 
+5 :  9 de carreau 
+6 :  9 de trefle 
+7 :  V de trefle 
+8 :  D de trefle 
+
+
+ 
+     Vincent     
+
+4 :  D de carreau 
+5 :  9 de carreau 
+6 :  9 de trefle 
+7 :  V de trefle 
+8 :  D de trefle 
+
+
+Quelle carte ? 1ère, 2ème ? 4
+
+ 
+  pli en cours   
+
+1 :  R de pique 
+2 :  D de pique 
+3 :  7 de pique 
+4 :  D de carreau 
+
+ Le gagnant est Pierre avec le R de pique
+
+ 
+ pli de l'equipe 0 
+
+1 :  7 de coeur 
+2 :  9 de coeur 
+3 :  V de coeur 
+4 :  R de coeur 
+5 :  8 de pique 
+6 :  9 de pique 
+7 :  8 de carreau 
+8 :  A de pique 
+9 :  R de pique 
+10 :  D de pique 
+11 :  7 de pique 
+12 :  D de carreau 
+
+
+ 
+ pli de l'equipe 1 
+
+1 :  D de coeur 
+2 :  A de coeur 
+3 :  8 de coeur 
+4 :  R de carreau 
+
+pli 4 : 
+ 
+
+
+ 
+     Pierre      
+
+5 : 10 de carreau 
+6 :  V de carreau 
+7 :  7 de carreau 
+8 :  R de trefle 
+
+
+Quelle carte ? 1ère, 2ème ? 5
+
+ 
+     Guilhem     
+
+1 : 10 de coeur 
+6 :  V de pique 
+7 :  A de carreau 
+8 :  7 de trefle 
+
+
+ 
+     Guilhem     
+
+1 :  A de carreau 
+
+
+Quelle carte ? 1ère, 2ème ? 1
+
+ 
+      Remi       
+
+4 : 10 de pique 
+6 : 10 de trefle 
+7 :  A de trefle 
+8 :  8 de trefle 
+
+
+ 
+      Remi       
+
+4 : 10 de pique 
+6 : 10 de trefle 
+7 :  A de trefle 
+8 :  8 de trefle 
+
+
+Quelle carte ? 1ère, 2ème ? 4
+
+ 
+     Vincent     
+
+5 :  9 de carreau 
+6 :  9 de trefle 
+7 :  V de trefle 
+8 :  D de trefle 
+
+
+ 
+     Vincent     
+
+4 :  9 de carreau 
+
+
+Quelle carte ? 1ère, 2ème ? 4
+
+ 
+  pli en cours   
+
+1 : 10 de carreau 
+2 :  A de carreau 
+3 : 10 de pique 
+4 :  9 de carreau 
+
+ Le gagnant est Guilhem avec le A de carreau
+
+ 
+ pli de l'equipe 0 
+
+1 :  7 de coeur 
+2 :  9 de coeur 
+3 :  V de coeur 
+4 :  R de coeur 
+5 :  8 de pique 
+6 :  9 de pique 
+7 :  8 de carreau 
+8 :  A de pique 
+9 :  R de pique 
+10 :  D de pique 
+11 :  7 de pique 
+12 :  D de carreau 
+
+
+ 
+ pli de l'equipe 1 
+
+1 :  D de coeur 
+2 :  A de coeur 
+3 :  8 de coeur 
+4 :  R de carreau 
+5 : 10 de carreau 
+6 :  A de carreau 
+7 : 10 de pique 
+8 :  9 de carreau 
+
+pli 5 : 
+ 
+
+
+ 
+     Guilhem     
+
+1 : 10 de coeur 
+6 :  V de pique 
+8 :  7 de trefle 
+
+
+Quelle carte ? 1ère, 2ème ? 6
+
+ 
+      Remi       
+
+6 : 10 de trefle 
+7 :  A de trefle 
+8 :  8 de trefle 
+
+
+ 
+      Remi       
+
+6 : 10 de trefle 
+7 :  A de trefle 
+8 :  8 de trefle 
+
+
+Quelle carte ? 1ère, 2ème ? 6
+
+ 
+     Vincent     
+
+6 :  9 de trefle 
+7 :  V de trefle 
+8 :  D de trefle 
+
+
+ 
+     Vincent     
+
+6 :  9 de trefle 
+7 :  V de trefle 
+8 :  D de trefle 
+
+
+Quelle carte ? 1ère, 2ème ? 6
+
+ 
+     Pierre      
+
+6 :  V de carreau 
+7 :  7 de carreau 
+8 :  R de trefle 
+
+
+ 
+     Pierre      
+
+6 :  V de carreau 
+7 :  7 de carreau 
+8 :  R de trefle 
+
+
+Quelle carte ? 1ère, 2ème ? 6
+
+ 
+  pli en cours   
+
+1 :  V de pique 
+2 : 10 de trefle 
+3 :  9 de trefle 
+4 :  V de carreau 
+
+ Le gagnant est Guilhem avec le V de pique
+
+ 
+ pli de l'equipe 0 
+
+1 :  7 de coeur 
+2 :  9 de coeur 
+3 :  V de coeur 
+4 :  R de coeur 
+5 :  8 de pique 
+6 :  9 de pique 
+7 :  8 de carreau 
+8 :  A de pique 
+9 :  R de pique 
+10 :  D de pique 
+11 :  7 de pique 
+12 :  D de carreau 
+
+
+ 
+ pli de l'equipe 1 
+
+1 :  D de coeur 
+2 :  A de coeur 
+3 :  8 de coeur 
+4 :  R de carreau 
+5 : 10 de carreau 
+6 :  A de carreau 
+7 : 10 de pique 
+8 :  9 de carreau 
+9 :  V de pique 
+10 : 10 de trefle 
+11 :  9 de trefle 
+12 :  V de carreau 
+
+pli 6 : 
+ 
+
+
+ 
+     Guilhem     
+
+1 : 10 de coeur 
+8 :  7 de trefle 
+
+
+Quelle carte ? 1ère, 2ème ? 1
+
+ 
+      Remi       
+
+7 :  A de trefle 
+8 :  8 de trefle 
+
+
+ 
+      Remi       
+
+7 :  A de trefle 
+8 :  8 de trefle 
+
+
+Quelle carte ? 1ère, 2ème ? 7
+
+ 
+     Vincent     
+
+7 :  V de trefle 
+8 :  D de trefle 
+
+
+ 
+     Vincent     
+
+7 :  V de trefle 
+8 :  D de trefle 
+
+
+Quelle carte ? 1ère, 2ème ? 7
+
+ 
+     Pierre      
+
+7 :  7 de carreau 
+8 :  R de trefle 
+
+
+ 
+     Pierre      
+
+7 :  7 de carreau 
+8 :  R de trefle 
+
+
+Quelle carte ? 1ère, 2ème ? 7
+
+ 
+  pli en cours   
+
+1 : 10 de coeur 
+2 :  A de trefle 
+3 :  V de trefle 
+4 :  7 de carreau 
+
+ Le gagnant est Remi avec le A de trefle
+
+ 
+ pli de l'equipe 0 
+
+1 :  7 de coeur 
+2 :  9 de coeur 
+3 :  V de coeur 
+4 :  R de coeur 
+5 :  8 de pique 
+6 :  9 de pique 
+7 :  8 de carreau 
+8 :  A de pique 
+9 :  R de pique 
+10 :  D de pique 
+11 :  7 de pique 
+12 :  D de carreau 
+13 : 10 de coeur 
+14 :  A de trefle 
+15 :  V de trefle 
+16 :  7 de carreau 
+
+
+ 
+ pli de l'equipe 1 
+
+1 :  D de coeur 
+2 :  A de coeur 
+3 :  8 de coeur 
+4 :  R de carreau 
+5 : 10 de carreau 
+6 :  A de carreau 
+7 : 10 de pique 
+8 :  9 de carreau 
+9 :  V de pique 
+10 : 10 de trefle 
+11 :  9 de trefle 
+12 :  V de carreau 
+
+pli 7 : 
+ 
+
+
+ 
+      Remi       
+
+8 :  8 de trefle 
+
+
+Quelle carte ? 1ère, 2ème ? 8
+
+ 
+     Vincent     
+
+8 :  D de trefle 
+
+
+ 
+     Vincent     
+
+3 :  D de trefle 
+
+
+Quelle carte ? 1ère, 2ème ? 3
+
+ 
+     Pierre      
+
+8 :  R de trefle 
+
+
+ 
+     Pierre      
+
+1 :  R de trefle 
+
+
+Quelle carte ? 1ère, 2ème ? 1
+
+ 
+     Guilhem     
+
+8 :  7 de trefle 
+
+
+ 
+     Guilhem     
+
+1 :  7 de trefle 
+
+
+Quelle carte ? 1ère, 2ème ? 1
+
+ 
+  pli en cours   
+
+1 :  8 de trefle 
+2 :  D de trefle 
+3 :  R de trefle 
+4 :  7 de trefle 
+
+ Le gagnant est Pierre avec le R de trefle
+
+ 
+ pli de l'equipe 0 
+
+1 :  7 de coeur 
+2 :  9 de coeur 
+3 :  V de coeur 
+4 :  R de coeur 
+5 :  8 de pique 
+6 :  9 de pique 
+7 :  8 de carreau 
+8 :  A de pique 
+9 :  R de pique 
+10 :  D de pique 
+11 :  7 de pique 
+12 :  D de carreau 
+13 : 10 de coeur 
+14 :  A de trefle 
+15 :  V de trefle 
+16 :  7 de carreau 
+17 :  8 de trefle 
+18 :  D de trefle 
+19 :  R de trefle 
+20 :  7 de trefle 
+
+
+ 
+ pli de l'equipe 1 
+
+1 :  D de coeur 
+2 :  A de coeur 
+3 :  8 de coeur 
+4 :  R de carreau 
+5 : 10 de carreau 
+6 :  A de carreau 
+7 : 10 de pique 
+8 :  9 de carreau 
+9 :  V de pique 
+10 : 10 de trefle 
+11 :  9 de trefle 
+12 :  V de carreau 
+
+FIN

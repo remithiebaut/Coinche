@@ -5,15 +5,16 @@ Created on Tue Jul 10 23:58:04 2018
 @author: rthie le bg
 """
 
-import random
+import random #use randrange
 import copy
 import sys
 
 
-def indice(liste,element): #trouve l'indice de l'élément dans la liste attention lelement doit etre present
+def indice(liste,element): #trouve l'indice de l'élément dans la liste attention lelement doit etre present utiliser NameOfTheList.index
   for i,e in enumerate(liste):
       if e==element:
         return i
+
 
 def choix(proposition): #rajout dun quit
   """  
@@ -43,31 +44,30 @@ def verification(question, conditions) : #rajout dun quit
 
 liste_numero=['7', '8', '9', 'V', 'D', 'R', '10', 'A']
 liste_couleur=['coeur', 'pique', 'carreau', 'trefle',  'sans atout', 'tout atout']
-liste_annonce=["normal","atout","sans atout","tout atout"]
+liste_mode=["normal","atout","sans atout","tout atout"]
 
 #attention erreur
 
-liste_point[tout_atout]=[0, 0, 9, 14, 1, 2, 5, 7]
-assert(4*sum(liste_point_tout_atout))==152 and len(liste_point_tout_atout)==8
-
-liste_point[sans_atout]=[0, 0, 0, 2, 3, 4, 10, 19]
-assert(4*sum(liste_point_sans_atout))==152 and len(liste_point_sans_atout)==8
-
-liste_point["normal"]=[0, 0, 0, 2, 3, 4, 10, 11] 
-liste_point["atout"]=[0, 0, 14, 20, 3, 4, 10, 11]
-assert(3*sum(liste_point)+sum(liste_point_atout))==152 and len(liste_point_atout)==8 and len(liste_point)==8
 
 
-
+normal=[0, 0, 0, 2, 3, 4, 10, 11] 
+atout=[0, 0, 14, 20, 3, 4, 10, 11]
+sansatout=[0, 0, 0, 2, 3, 4, 10, 19]
+toutatout=[0, 0, 9, 14, 1, 2, 5, 7]
+liste_point=[normal,atout,sansatout,toutatout]
 
 points={}
-for annonce in liste_annonce :
+j=0
+for annonce in liste_mode :    
     points[annonce]={}
-    j=0
-    for numero in liste_numero:
-        points[annonce][numero]=liste_point[annonce]+j
-        j+=1
-    
+    for i in range(8):
+        points[annonce][liste_numero[i]]=liste_point[j][i]
+    assert(len(points[annonce])==8)
+    j+=1
+assert(4*sum(points[liste_mode[3]].values())==152)  
+assert(4*sum(points[liste_mode[2]].values())==152)
+assert(3*sum(points[liste_mode[0]].values())+sum(points[liste_mode[1]].values())==152)   
+
 
 liste_annonce=[str(80+10*i) for i in range(11)]
 liste_annonce.append('capot')
@@ -91,7 +91,8 @@ class carte():
 class main():
     def __init__(self,name): 
        self.name=name
-       self.cartes=[]     
+       self.cartes=[]
+       self.points=0
        #initialise les compteur
        self.reste={"cartes":0} #changé en dico
        for couleur in liste_couleur[:4]:
@@ -123,7 +124,11 @@ class main():
                pioche[y][x].reste=0
                self.reste["cartes"]+=1
         self.tri_couleur() #remet les compteurs de couleur à jour
-
+    
+    def compter_points(self):
+        for carte in self.cartes:
+            self.points+=carte.points
+        return self.points
 
 class joueur():
    def __init__(self, pioche, numero_equipe, name):
@@ -138,10 +143,11 @@ class joueur():
 
 
 class equipe():
-    def __init__(self,pioche, name1, name2, numero_equipe):
+    def __init__(self,pioche, name1, name2, numero_equipe, nom_equipe):
      
-     self.j1=joueur(pioche,numero_equipe,name1)
-     self.j2=joueur(pioche,numero_equipe,name2)
+     self.nom=nom_equipe
+     self.numero=numero_equipe
+     self.joueurs=[joueur(pioche,numero_equipe,name1), joueur(pioche,numero_equipe,name2)]
      self.pli=main("pli de l'equipe " + str(numero_equipe)) #a reinitialiser
      self.mise=None  #a reinitialiser
 
@@ -156,7 +162,7 @@ class manche():
      self.surcoinche=False
      self.pli=main("pli en cours") 
      self.pioche =[ [carte(i,j) for i in liste_numero] for j in liste_couleur] #ligne = couleur/ colonne= numero
-     self.equipe=(equipe(self.pioche,j1,j3,0),equipe(self.pioche,j2,j4,1)) #attention e1 est une variable pose potentiellement probleme
+     self.equipes=(equipe(self.pioche,j1,j3,0,e1),equipe(self.pioche,j2,j4,1,e2)) #attention e1 est une variable pose potentiellement probleme
    
     def debut(self, joueurs):
         #normal
@@ -165,40 +171,87 @@ class manche():
                 for carte in j.main.cartes:
                     if carte.couleur==self.atout:
                         carte.atout=True
-                        carte.valeur=indice(ordre_atout,carte.numero)
-                        carte.points=liste_point_atout[carte.numero]
+                        carte.valeur=ordre_atout.index(carte.numero)
+                        carte.points=points[liste_mode[1]][carte.numero]
                     else :
-                        carte.valeur=indice(liste_numero,carte.numero)
-                        carte.points=liste_point[carte.numero]
+                        carte.valeur=liste_numero.index(carte.numero)
+                        carte.points=points[liste_mode[0]][carte.numero]
         #sans atout
         elif self.atout==liste_couleur[4]:
             for j in joueurs :
                 for carte in j.main.cartes:
-                    carte.valeur=indice(liste_numero,carte.numero)
-                    carte.points=liste_point_sans_atout[carte.numero]
+                    carte.valeur=liste_numero.index(carte.numero)
+                    carte.points=points[liste_mode[2]][carte.numero]
         
         #tout atout
         elif self.atout==liste_couleur[5]:
             for j in joueurs :
                 for carte in j.main.cartes:
                     carte.atout=True
-                    carte.valeur=indice(ordre_atout,carte.numero)
-                    carte.points=liste_point_tout_atout[carte.numero]
+                    carte.valeur=ordre_atout.index(carte.numero)
+                    carte.points=points[liste_mode[3]][carte.numero]
         
+        total_points=0
+        for j in joueurs: #nest pas mis a jour par la suite
+            total_points+=j.main.compter_points()
+        assert(total_points==152)
+    
         
         
     def raccourci(self): #allège lecriture
-         j=[self.equipe[0].j1,  self.equipe[1].j1, self.equipe[0].j2, self.equipe[1].j2]
-         return j
+         joueurs=[self.equipes[0].joueurs[0],  self.equipes[1].joueurs[0], self.equipes[0].joueurs[1], self.equipes[1].joueurs[1]]
+         return joueurs
+    
+    def resultat(self,score): # attention mise est char
+        
+        assert(self.equipes[0].pli.compter_points()+self.equipes[1].pli.compter_points()==152) #compte les points par équipe pas encore de 10 de der
+        
+        if self.surcoinche :
+            multiplicateur = 4
+        elif self.coinche :
+            multiplicateur = 2
+        else :
+            multiplicateur =1
+        
+        for equipe in self.equipes :    
+            if equipe.mise != None:
+                #cas 1 : réussite du contrat
+                if equipe.mise<=equipe.pli.points:
+                    print("l'équipe {} a réussit sont contrat".format(equipe.nom))
+                    
+                    #cas 1.1 : coinché ou surcoinché
+                    if self.coinche :
+                        score[equipe.numero] += equipe.mise*multiplicateur # seulement points contrats
+                        score[(equipe.numero+1)%2] += 0 #points defense
+                    
+                    #cas 1.2 : normal
+                    else :
+                        score[equipe.numero] += equipe.mise # seulement points contrats
+                        score[(equipe.numero+1)%2] += self.equipes[(equipe.numero+1)%2].points #points defense
+                    
+                #cas 2 : échec du contrat
+                else :
+                    print("l'équipe {} a chuté ".format(equipe.nom))
+                    score[(equipe.numero+1)%2] += 160*multiplicateur
+
+                    
+
 
 class partie():
      def __init__(self,j1="joueur1",j2="joueur2",j3="joueur3",j4="joueur4",e1="e1",e2="e2",limite_score=2000):
          
          self.manche=manche(j1,j2,j3,j4,e1,e2)
          self.limite=limite_score
-         self.points=[0,0]
+         self.score=[0,0]
+     
+     def fin_manche(self):
+         
+         self.manche.resultat(self.score) #marque le score
 
-
+         
+         
+         
+        
 
 
 
@@ -214,27 +267,20 @@ def affiche_cartes(cartes,name="cartes"):
 
 
 
-
-
-
-
-
 def choisir_atout(manche): # pensez a afficher avant surcoinche
    """
    fixe l'atout et la mise d'atout
    """
    j=manche.raccourci()
-   coinche=manche.coinche
-   surcoinche=manche.surcoinche
    mise=0
    annonce_actuelle=-1
    tour=0
-   while tour!=4 and mise!='generale' and not coinche:
-      for numero_joueur in range(4):
-         if tour==4 or mise=='generale' or coinche:
+   while tour!=4 and mise!='generale' and not manche.coinche:
+      for joueur in j:
+         if tour==4 or mise=='generale' or manche.coinche:
             break
          else:
-            affiche_cartes(j[numero_joueur].main.cartes, j[numero_joueur].name )
+            affiche_cartes(joueur.main.cartes, joueur.name )
 
             if not choix('annoncer'): #local variable referenced before assignment
                tour+=1
@@ -245,47 +291,22 @@ def choisir_atout(manche): # pensez a afficher avant surcoinche
 
                while True :
                   mise = verification("Choisir la hauteur d'annonce : %s " % liste_annonce , liste_annonce)
-                  annonce_voulue=indice(liste_annonce,mise)
+                  annonce_voulue=liste_annonce.index(mise)
                   if annonce_voulue>annonce_actuelle :
+                      annonce_actuelle=annonce_voulue
                       break
-
-               annonce_actuelle=annonce_voulue
-
-
-               if numero_joueur%2==0: #faire un tour dans lautre equipe pour coinche
-                  manche.equipe[0].mise=mise #fixe la mise de lequipe attention mise est un char
-
-                  for k in [1,3]:
-                     affiche_cartes(j[k].main.cartes, j[k].name)
-                     if not coinche :
-                        coinche=choix('coincher')
-                        manche.coinche=coinche
-                        if coinche:
-                           for l in [0,2]:
-                              if not surcoinche :
-                                 surcoinche=choix('surcoincher')
-                                 manche.surcoinche=surcoinche
-
-               else : #la flemme de généraliser
-                  manche.equipe[1].mise=mise #fixe la mise de lequipe attention mise est un char
-                  for k in [0,2]:
-                     affiche_cartes(j[k].main.cartes, j[k].name)
-                     if not coinche :
-                        coinche=choix('coincher')
-                        manche.coinche=coinche
-                        if coinche:
-                           for l in [1,3]:
-                              if not surcoinche :
-                                 surcoinche=choix('surcoincher')
-                                 manche.surcoinche=surcoinche
-
-
-
-
-
-
-
-
+               
+               manche.equipes[joueur.equipe].mise=mise #fixe la mise de lequipe attention mise est un char
+               manche.equipes[(joueur.equipe+1)%2].mise=None
+               for coincheur in manche.equipes[(joueur.equipe+1)%2].joueurs:
+                 affiche_cartes(coincheur.main.cartes, coincheur.name)
+                 if not manche.coinche :
+                    manche.coinche=choix('coincher')
+                    if manche.coinche:
+                       for surcoincheur in manche.equipes[joueur.equipe].joueurs:
+                          affiche_cartes(surcoincheur.main.cartes, surcoincheur.name)
+                          if not manche.surcoinche :
+                             manche.surcoinche=choix('surcoincher')              
 
 def choisir_carte(cartes,nom): 
      """
@@ -369,7 +390,7 @@ def gain_pli(pli):
         else :
             if carte.valeur>gagnant.valeur:
                 gagnant=carte
-    return indice(pli.cartes,gagnant)
+    return pli.cartes.index(gagnant)
 
 
 
@@ -391,7 +412,7 @@ def jouer_pli(manche,joueurs): #•fonctionne
     gagnant=gain_pli(manche.pli)
     print(" Le gagnant est {} avec le {} de {}".format(joueurs[gagnant].name, manche.pli.cartes[gagnant].numero , manche.pli.cartes[gagnant].couleur ))
     nouvel_ordre=[joueurs[gagnant],joueurs[(gagnant+1)%4], joueurs[(gagnant+2)%4] ,joueurs[(gagnant+3)%4]]
-    manche.equipe[joueurs[gagnant].equipe].pli.add(manche.pli) # trouver methode pour que les plis sajoutent pour linstant ils se remplacent
+    manche.equipes[joueurs[gagnant].equipe].pli.add(manche.pli) # trouver methode pour que les plis sajoutent pour linstant ils se remplacent
     manche.pli=main(manche.pli.name) #reinitialise le pli
 
     return nouvel_ordre
@@ -406,7 +427,7 @@ for i in range(8):
     print("pli {} : \n \n".format(i))
     j=jouer_pli(partie.manche, j) #erreur dans le decompte des plis confusion avec les tas joueur bug a iteration2 a priori fonctionne : confusion entre la position dans la main et celles des cartes possibles
     for k in range(2):
-        affiche_cartes(partie.manche.equipe[k].pli.cartes, partie.manche.equipe[k].pli.name)
+        affiche_cartes(partie.manche.equipes[k].pli.cartes, partie.manche.equipes[k].pli.name)
 
 
 print("FIN")   

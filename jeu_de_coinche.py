@@ -248,7 +248,7 @@ class manche():
             if equipe.mise != None:
                 #cas 1 : réussite du contrat
                 if equipe.mise<=equipe.pli.points:
-                    print("l'équipe {} a réussit sont contrat".format(equipe.nom))
+                    print("l'équipe {} a réussit son contrat".format(equipe.nom))
                     
                     #cas 1.1 : coinché ou surcoinché
                     if self.coinche :
@@ -387,11 +387,10 @@ def jouer_carte(main,pli,carte_choisie):
 def cartes_possibles(manche, couleur_choisie, j):
     
     cartes_possible=[]
-    
     #cas 1 : la couleur demandée est atout
     if couleur_choisie==manche.atout : 
         
-        #cas 1.1 : a de latout ATTENTION on ne monte pas encore a latout, on utilisera la fonction qui determine le gagnant
+        #cas 1.1 : a de latout on comparera les valeurs des cartes dansd une boucle for if break else ATTENTION on ne monte pas encore a latout, on utilisera la fonction qui determine le gagnant
         if j.main.reste[couleur_choisie]!=0 :           #
             for carte in j.main.cartes :           #
                 if carte.couleur==couleur_choisie: # structure à généraliser !
@@ -411,8 +410,14 @@ def cartes_possibles(manche, couleur_choisie, j):
     
     #cas 2.2 : n'a  pas la couleur demandée
     
-    #cas 2.21 : a atout ATTENTION on ne peut pas encore se defaussersur la carte dun partenaire, on utilisera la fonction qui determine le gagnant
+    #cas 2.21 : a atout
     if manche.atout in liste_couleur[:4]:
+        
+        #cas 2.211 : le partenaire mène
+        if gain_pli(manche.pli)%2==len(manche.pli.cartes)%2: #permet de se defausser sur partenaire
+           return j.main.cartes
+       
+       #cas 2.212 : on doit couper
         if j.main.reste[manche.atout]!=0 :
             for carte in j.main.cartes:
                 if carte.atout: 
@@ -466,9 +471,10 @@ def jouer_pli(manche,joueurs): #•fonctionne
     return nouvel_ordre
                     
                 
-for i in range(200) :  #lance 200 parties     
+for i in range(2) :  #lance 200 parties     
     Partie=partie(j1="Remi",j2="Vincent",j3="Pierre",j4="Guilhem",e1="Les Boss", e2="les loseurs")
     Partie.jouer_manche(Partie)
+    print(Partie.manche.atout, Partie.manche.equipes[0].mise, Partie.manche.equipes[1].mise, Partie.score)
 
 print("FIN")   
 

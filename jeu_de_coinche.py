@@ -16,7 +16,7 @@ def indice(liste,element): #trouve l'indice de l'élément dans la liste attenti
         return i
 
 
-def choix(proposition): #rajout dun quit
+def question_ferme(proposition): #rajout dun quit
   """  
   souhaitez vous "proposition" ? si oui -> vrai / si non -> false
   """
@@ -31,7 +31,7 @@ def choix(proposition): #rajout dun quit
   else :
       return False
 
-def verification(question, conditions) : #rajout dun quit
+def question_ouverte(question, liste_choix_possible) : #rajout dun quit
     """
     return une proposition qui reponds aux conditions requises
     """
@@ -39,8 +39,28 @@ def verification(question, conditions) : #rajout dun quit
         proposition = input(question)
         if proposition=="quit":
             sys.exit()
-        if proposition in conditions :
+        if proposition in liste_choix_possible :
             return proposition
+
+def choix_aleatoire(liste_choix_possible) :
+    """
+    fais un choix aleatoire parmis ceux possibles
+    """
+    choix=random.randrange(len(liste_choix_possible))
+    return liste_choix_possible[choix]
+
+def decision(liste_choix_possible=[True,False], aleatoire=True, question="", ouverte=True):
+    if aleatoire :
+        return(choix_aleatoire(liste_choix_possible))
+    else :
+        if ouverte:
+            return(question_ouverte(question, liste_choix_possible))  
+        else :
+            return (question_ferme(question))
+
+        
+
+
 
 liste_numero=['7', '8', '9', 'V', 'D', 'R', '10', 'A']
 liste_couleur=['coeur', 'pique', 'carreau', 'trefle',  'sans atout', 'tout atout']
@@ -204,6 +224,7 @@ class manche():
                     
         for j in joueurs: #donne le nombre des points de chaque main nest pas mis a jour par la suite
             total_points+=j.main.compter_points()
+        print(total_points)
         assert(total_points==152)
     
         
@@ -254,12 +275,12 @@ class partie():
          self.limite=limite_score
          self.score=[0,0]
      
-     def fin_manche(self,j1,j2,j3,j4,e1,e2):
+     def fin_manche(self):
          
          self.manche.resultat(self.score) #marque le score
-         self.manche=manche(j1,j2,j3,j4,e1,e2) #attention ordre joueur
+         #self.manche=manche(j1,j2,j3,j4,e1,e2) #attention ordre joueur
     
-     def jouer_manche(self):
+     def jouer_manche(self,aleatoire=True):
          j=partie.manche.raccourci()
          choisir_atout(self.manche) #choisir valeur par defaut pour les test
          self.manche.debut(j)
@@ -269,7 +290,7 @@ class partie():
             for k in range(2):
                 affiche_cartes(self.manche.equipes[k].pli.cartes, partie.manche.equipes[k].pli.name)
          self.fin_manche(self)
-         return choix("nouvelle manche ?")
+         return decision(aleatoire=aleatoire,question="nouvelle manche ?", ouverte=False)
          
          
          
@@ -289,7 +310,7 @@ def affiche_cartes(cartes,name="cartes"):
 
 
 
-def choisir_atout(manche): # pensez a afficher avant surcoinche
+def choisir_atout(manche, aleatoire=True): # pensez a afficher avant surcoinche
    """
    fixe l'atout et la mise d'atout
    """
@@ -304,15 +325,17 @@ def choisir_atout(manche): # pensez a afficher avant surcoinche
          else:
             affiche_cartes(joueur.main.cartes, joueur.name )
 
-            if not choix('annoncer'): #local variable referenced before assignment
+            if not decision(aleatoire=aleatoire, question='annoncer', ouverte=False): #local variable referenced before assignment
                tour+=1
 
             else:
                tour=1
-               manche.atout=verification("Choisir la couleur d'atout : %s " % liste_couleur, liste_couleur)
+
+               manche.atout=decision(liste_couleur, aleatoire=aleatoire, question ="Choisir la couleur d'atout : %s " % liste_couleur)
 
                while True :
-                  mise = verification("Choisir la hauteur d'annonce : %s " % liste_annonce , liste_annonce)
+                  
+                  mise = decision(liste_annonce, aleatoire, "Choisir la hauteur d'annonce : %s " % liste_annonce )
                   annonce_voulue=liste_annonce.index(mise)
                   if annonce_voulue>annonce_actuelle :
                       annonce_actuelle=annonce_voulue
@@ -323,20 +346,20 @@ def choisir_atout(manche): # pensez a afficher avant surcoinche
                for coincheur in manche.equipes[(joueur.equipe+1)%2].joueurs:
                  affiche_cartes(coincheur.main.cartes, coincheur.name)
                  if not manche.coinche :
-                    manche.coinche=choix('coincher')
+                    manche.coinche=decision(aleatoire=aleatoire, question='coincher', ouverte=False)
                     if manche.coinche:
                        for surcoincheur in manche.equipes[joueur.equipe].joueurs:
                           affiche_cartes(surcoincheur.main.cartes, surcoincheur.name)
                           if not manche.surcoinche :
-                             manche.surcoinche=choix('surcoincher')              
+                             manche.surcoinche=decision(aleatoire=aleatoire, question='surcoincher', ouverte=False)              
 
-def choisir_carte(cartes,nom): 
+def choisir_carte(cartes,nom,aleatoire=True): 
      """
      choisie et retourne une carte
      """
      affiche_cartes(cartes,nom)
      while True :
-         position_carte = verification("Quelle carte ? 1ère, 2ème ? ",liste_entier8[:len(cartes)])
+         position_carte = decision(liste_entier8[:len(cartes)], aleatoire, "Quelle carte ? 1ère, 2ème ? ")
          position_carte = int(position_carte)-1
          if position_carte<len(cartes) :
              if cartes[position_carte].numero!=None:

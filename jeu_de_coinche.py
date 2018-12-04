@@ -192,7 +192,17 @@ class manche():
                     carte.points=points[liste_mode[3]][carte.numero]
         
         total_points=0
-        for j in joueurs: #nest pas mis a jour par la suite
+        
+        for equipe in self.equipes: #associe la mise a un nombre de points
+            if equipe.mise!= None:
+                if equipe.mise=='capot':
+                    equipe.mise=250
+                elif equipe.mise=='generale':
+                    equipe.mise=500
+                else :
+                    equipe.mise=int(equipe.mise)
+                    
+        for j in joueurs: #donne le nombre des points de chaque main nest pas mis a jour par la suite
             total_points+=j.main.compter_points()
         assert(total_points==152)
     
@@ -202,7 +212,7 @@ class manche():
          joueurs=[self.equipes[0].joueurs[0],  self.equipes[1].joueurs[0], self.equipes[0].joueurs[1], self.equipes[1].joueurs[1]]
          return joueurs
     
-    def resultat(self,score): # attention mise est char
+    def resultat(self,score): # normalement mise nest pas char
         
         assert(self.equipes[0].pli.compter_points()+self.equipes[1].pli.compter_points()==152) #compte les points par équipe pas encore de 10 de der
         
@@ -244,10 +254,22 @@ class partie():
          self.limite=limite_score
          self.score=[0,0]
      
-     def fin_manche(self):
+     def fin_manche(self,j1,j2,j3,j4,e1,e2):
          
          self.manche.resultat(self.score) #marque le score
-
+         self.manche=manche(j1,j2,j3,j4,e1,e2) #attention ordre joueur
+    
+     def jouer_manche(self):
+         j=partie.manche.raccourci()
+         choisir_atout(self.manche) #choisir valeur par defaut pour les test
+         self.manche.debut(j)
+         for i in range(8):
+            print("pli {} : \n \n".format(i))
+            j=jouer_pli(self.manche, j) #erreur dans le decompte des plis confusion avec les tas joueur bug a iteration2 a priori fonctionne : confusion entre la position dans la main et celles des cartes possibles
+            for k in range(2):
+                affiche_cartes(self.manche.equipes[k].pli.cartes, partie.manche.equipes[k].pli.name)
+         self.fin_manche(self)
+         return choix("nouvelle manche ?")
          
          
          
@@ -420,15 +442,7 @@ def jouer_pli(manche,joueurs): #•fonctionne
                 
         
 partie=partie(j1="Remi",j2="Vincent",j3="Pierre",j4="Guilhem")
-j=partie.manche.raccourci()
-choisir_atout(partie.manche) #choisir valeur par defaut pour les test
-partie.manche.debut(j)
-for i in range(8):
-    print("pli {} : \n \n".format(i))
-    j=jouer_pli(partie.manche, j) #erreur dans le decompte des plis confusion avec les tas joueur bug a iteration2 a priori fonctionne : confusion entre la position dans la main et celles des cartes possibles
-    for k in range(2):
-        affiche_cartes(partie.manche.equipes[k].pli.cartes, partie.manche.equipes[k].pli.name)
-
+partie.jouer_manche(partie)
 
 print("FIN")   
 while True :

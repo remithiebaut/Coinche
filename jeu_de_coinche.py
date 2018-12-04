@@ -271,7 +271,8 @@ class manche():
 class partie():
      def __init__(self,j1="joueur1",j2="joueur2",j3="joueur3",j4="joueur4",e1="e1",e2="e2",limite_score=2000):
          
-         self.manche=manche(j1,j2,j3,j4,e1,e2)
+         self.noms=(j1,j2,j3,j4,e1,e2)
+         self.manche=manche(self.noms) #faire un tableau de manche
          self.limite=limite_score
          self.score=[0,0]
      
@@ -292,8 +293,8 @@ class partie():
              self.fin_manche()
              return decision(aleatoire=aleatoire,question="nouvelle manche ?", ouverte=False)
              
-         
-         
+     def nouvelle_manche(self) :
+         self.manche=manche(self.noms)
         
 
 

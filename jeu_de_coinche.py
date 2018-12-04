@@ -225,7 +225,7 @@ class manche():
         for j in joueurs: #donne le nombre des points de chaque main nest pas mis a jour par la suite
             total_points+=j.main.compter_points()
         print(total_points)
-        assert(total_points==152)
+        assert(total_points==152) #probleme lorrs dune des boucles
     
         
         

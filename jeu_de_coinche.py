@@ -258,7 +258,7 @@ class manche():
                     #cas 1.2 : normal
                     else :
                         score[equipe.numero] += equipe.mise # seulement points contrats
-                        score[(equipe.numero+1)%2] += self.equipes[(equipe.numero+1)%2].points #points defense
+                        score[(equipe.numero+1)%2] += self.equipes[(equipe.numero+1)%2].pli.points #points defense
                     
                 #cas 2 : échec du contrat
                 else :
@@ -281,17 +281,17 @@ class partie():
          #self.manche=manche(j1,j2,j3,j4,e1,e2) #attention ordre joueur
     
      def jouer_manche(self,aleatoire=True):
-         j=partie.manche.raccourci()
-         choisir_atout(self.manche) #choisir valeur par defaut pour les test
-         self.manche.debut(j)
-         for i in range(8):
-            print("pli {} : \n \n".format(i))
-            j=jouer_pli(self.manche, j) #erreur dans le decompte des plis confusion avec les tas joueur bug a iteration2 a priori fonctionne : confusion entre la position dans la main et celles des cartes possibles
-            for k in range(2):
-                affiche_cartes(self.manche.equipes[k].pli.cartes, partie.manche.equipes[k].pli.name)
-         self.fin_manche(self)
-         return decision(aleatoire=aleatoire,question="nouvelle manche ?", ouverte=False)
-         
+         j=self.manche.raccourci()
+         if choisir_atout(self.manche) : #choisir valeur par defaut pour les test
+             self.manche.debut(j)
+             for i in range(8):
+                print("pli {} : \n \n".format(i))
+                j=jouer_pli(self.manche, j) #erreur dans le decompte des plis confusion avec les tas joueur bug a iteration2 a priori fonctionne : confusion entre la position dans la main et celles des cartes possibles
+                for k in range(2):
+                    affiche_cartes(self.manche.equipes[k].pli.cartes, self.manche.equipes[k].pli.name)
+             self.fin_manche()
+             return decision(aleatoire=aleatoire,question="nouvelle manche ?", ouverte=False)
+             
          
          
         
@@ -312,7 +312,7 @@ def affiche_cartes(cartes,name="cartes"):
 
 def choisir_atout(manche, aleatoire=True): # pensez a afficher avant surcoinche
    """
-   fixe l'atout et la mise d'atout
+   fixe l'atout et la mise d'atout et retourne True si tout le monde n'a pas passé
    """
    j=manche.raccourci()
    mise=0
@@ -352,6 +352,9 @@ def choisir_atout(manche, aleatoire=True): # pensez a afficher avant surcoinche
                           affiche_cartes(surcoincheur.main.cartes, surcoincheur.name)
                           if not manche.surcoinche :
                              manche.surcoinche=decision(aleatoire=aleatoire, question='surcoincher', ouverte=False)              
+   if (manche.atout==None):
+        return False
+   return True 
 
 def choisir_carte(cartes,nom,aleatoire=True): 
      """
@@ -463,13 +466,12 @@ def jouer_pli(manche,joueurs): #•fonctionne
     return nouvel_ordre
                     
                 
-        
-partie=partie(j1="Remi",j2="Vincent",j3="Pierre",j4="Guilhem")
-partie.jouer_manche(partie)
+for i in range(200) :  #lance 200 parties     
+    Partie=partie(j1="Remi",j2="Vincent",j3="Pierre",j4="Guilhem",e1="Les Boss", e2="les loseurs")
+    Partie.jouer_manche(Partie)
 
 print("FIN")   
-while True :
-    a=0
+
         
 """
 def tour_de_jeu(partie):

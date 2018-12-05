@@ -149,6 +149,16 @@ class main():
         for carte in self.cartes:
             self.points+=carte.points
         return self.points
+    
+    def couleur(self, couleur_choisie):
+        """
+        retournent toutes les cartes d'une couleur donnée
+        """
+        cartes_de_la_couleur=[]
+        for carte in self.cartes:
+            if carte.couleur==couleur_choisie: 
+                cartes_de_la_couleur.append(carte)
+        return cartes_de_la_couleur
 
 class joueur():
    def __init__(self, pioche, numero_equipe, name):
@@ -157,6 +167,8 @@ class joueur():
        self.main=main(name)
        self.main.piocher(pioche)
        self.equipe=numero_equipe
+       self.plis=0
+       self.generale=False #indicateur dannonce generale
        
        
 
@@ -236,7 +248,6 @@ class manche():
     def resultat(self,score): # normalement mise nest pas char
         
         assert(self.equipes[0].pli.compter_points()+self.equipes[1].pli.compter_points()==152) #compte les points par équipe pas encore de 10 de der
-        
         if self.surcoinche :
             multiplicateur = 4
         elif self.coinche :
@@ -246,8 +257,10 @@ class manche():
         
         for equipe in self.equipes :    
             if equipe.mise != None:
+                capot= equipe.mise==250 and len(equipe.pli.cartes)==32 #bool capot 
+                generale=(equipe.joueurs[0].plis==8 and equipe.joueur[0].generale==True ) or ( equipe.joueurs[1].plis==8 and equipe.joueur[1].generale==True) #bool generale
                 #cas 1 : réussite du contrat
-                if equipe.mise<=equipe.pli.points:
+                if equipe.mise<=equipe.pli.points or capot or generale : #faire cas général : compteur de pli gagné par joueur
                     print("l'équipe {} a réussit son contrat".format(equipe.nom))
                     
                     #cas 1.1 : coinché ou surcoinché
@@ -345,6 +358,8 @@ def choisir_atout(manche, aleatoire=True, hidden=True): # pensez a afficher avan
                
                manche.equipes[joueur.equipe].mise=mise #fixe la mise de lequipe attention mise est un char
                manche.equipes[(joueur.equipe+1)%2].mise=None
+               if mise == "generale":
+                   joueur.generale=True
                for coincheur in manche.equipes[(joueur.equipe+1)%2].joueurs:
                  if not hidden :
                      affiche_cartes(coincheur.main.cartes, coincheur.name)
@@ -388,19 +403,33 @@ def jouer_carte(main,pli,carte_choisie):
      return couleur_choisie                 
     
 
-
 def cartes_possibles(manche, couleur_choisie, j):
+    """
+    retournes les cartes jouables pour le joueur dont cest le tour dans la manche actuelle
+    """
     
-    cartes_possible=[]
     #cas 1 : la couleur demandée est atout
     if couleur_choisie==manche.atout : 
         
-        #cas 1.1 : a de latout on comparera les valeurs des cartes dansd une boucle for if break else ATTENTION on ne monte pas encore a latout, on utilisera la fonction qui determine le gagnant
-        if j.main.reste[couleur_choisie]!=0 :           #
-            for carte in j.main.cartes :           #
-                if carte.couleur==couleur_choisie: # structure à généraliser !
-                    cartes_possible.append(carte)    #
-            return cartes_possible                   #
+        #cas 1.1 : a de latout 
+        if j.main.reste[couleur_choisie]!=0 :  
+            atouts=[]
+       
+        #cas 1.11 : atout plus fort        
+            for carte in j.main.cartes :
+                if carte.atout and carte.numero!= None and carte.valeur > manche.pli.cartes[gain_pli(manche.pli)].valeur : #il faut checké que les cartes sont présentes 
+                    atouts.append(carte)
+            
+            if len(atouts)!=0:
+                return atouts
+            
+        # cas 1.12 : pas d'atouts plus forts    
+        
+            return j.main.couleur(couleur_choisie)  
+            
+
+        
+                   
         
         #cas 1.2 pas d'atout
         return j.main.cartes
@@ -408,10 +437,7 @@ def cartes_possibles(manche, couleur_choisie, j):
     
     #case 2.1 : a la couleur demandée
     if j.main.reste[couleur_choisie]!=0 :
-        for carte in j.main.cartes:
-            if carte.couleur==couleur_choisie:
-                cartes_possible.append(carte)
-        return cartes_possible
+        return j.main.couleur(couleur_choisie)
     
     #cas 2.2 : n'a  pas la couleur demandée
     
@@ -424,14 +450,11 @@ def cartes_possibles(manche, couleur_choisie, j):
        
        #cas 2.212 : on doit couper
         if j.main.reste[manche.atout]!=0 :
-            for carte in j.main.cartes:
-                if carte.atout: 
-                    cartes_possible.append(carte)
-            return cartes_possible
+            return j.main.couleur(manche.atout)
     
     #cas 2.22 pas datout
     return j.main.cartes
-
+    
 
 def gain_pli(pli): 
     """
@@ -454,7 +477,7 @@ def gain_pli(pli):
 
 
 
-def jouer_pli(manche,joueurs, aleatoire=False): #•fonctionne
+def jouer_pli(manche,joueurs, aleatoire=True): #•fonctionne
     """
     prends en entrée le tableau ORDONNEE des joueurs de ce pli et le renvoi réordonné
     """
@@ -471,13 +494,14 @@ def jouer_pli(manche,joueurs, aleatoire=False): #•fonctionne
     gagnant=gain_pli(manche.pli)
     print(" Le gagnant est {} avec le {} de {}".format(joueurs[gagnant].name, manche.pli.cartes[gagnant].numero , manche.pli.cartes[gagnant].couleur ))
     nouvel_ordre=[joueurs[gagnant],joueurs[(gagnant+1)%4], joueurs[(gagnant+2)%4] ,joueurs[(gagnant+3)%4]]
-    manche.equipes[joueurs[gagnant].equipe].pli.add(manche.pli) # trouver methode pour que les plis sajoutent pour linstant ils se remplacent
+    joueurs[gagnant].plis+=1
+    manche.equipes[joueurs[gagnant].equipe].pli.add(manche.pli) 
     manche.pli=main(manche.pli.name) #reinitialise le pli
 
     return nouvel_ordre
                     
                 
-for i in range(2) :  #lance 200 parties     
+for i in range(200) :  #lance 200 parties     
     Partie=partie(j1="Remi",j2="Vincent",j3="Pierre",j4="Guilhem",e1="Les Boss", e2="les loseurs")
     Partie.jouer_manche(Partie)
     print(Partie.manche.atout, Partie.manche.equipes[0].mise, Partie.manche.equipes[1].mise, Partie.score)

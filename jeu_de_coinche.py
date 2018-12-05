@@ -271,8 +271,8 @@ class manche():
 class partie():
      def __init__(self,j1="joueur1",j2="joueur2",j3="joueur3",j4="joueur4",e1="e1",e2="e2",limite_score=2000):
          
-         self.noms=(j1,j2,j3,j4,e1,e2)
-         self.manche=manche(self.noms) #faire un tableau de manche
+         self.noms=(j1,j2,j3,j4,e1,e2) #trouver comment utiliser tuple en parametre
+         self.manche=manche(j1,j2,j3,j4,e1,e2) #faire un tableau de manche
          self.limite=limite_score
          self.score=[0,0]
      
@@ -311,7 +311,7 @@ def affiche_cartes(cartes,name="cartes"):
 
 
 
-def choisir_atout(manche, aleatoire=True): # pensez a afficher avant surcoinche
+def choisir_atout(manche, aleatoire=True, hidden=True): # pensez a afficher avant surcoinche
    """
    fixe l'atout et la mise d'atout et retourne True si tout le monde n'a pas passé
    """
@@ -324,7 +324,8 @@ def choisir_atout(manche, aleatoire=True): # pensez a afficher avant surcoinche
          if tour==4 or mise=='generale' or manche.coinche:
             break
          else:
-            affiche_cartes(joueur.main.cartes, joueur.name )
+            if not hidden :
+                 affiche_cartes(joueur.main.cartes, joueur.name )
 
             if not decision(aleatoire=aleatoire, question='annoncer', ouverte=False): #local variable referenced before assignment
                tour+=1
@@ -345,16 +346,19 @@ def choisir_atout(manche, aleatoire=True): # pensez a afficher avant surcoinche
                manche.equipes[joueur.equipe].mise=mise #fixe la mise de lequipe attention mise est un char
                manche.equipes[(joueur.equipe+1)%2].mise=None
                for coincheur in manche.equipes[(joueur.equipe+1)%2].joueurs:
-                 affiche_cartes(coincheur.main.cartes, coincheur.name)
+                 if not hidden :
+                     affiche_cartes(coincheur.main.cartes, coincheur.name)
                  if not manche.coinche :
                     manche.coinche=decision(aleatoire=aleatoire, question='coincher', ouverte=False)
                     if manche.coinche:
                        for surcoincheur in manche.equipes[joueur.equipe].joueurs:
-                          affiche_cartes(surcoincheur.main.cartes, surcoincheur.name)
+                          if not hidden :
+                              affiche_cartes(surcoincheur.main.cartes, surcoincheur.name)
                           if not manche.surcoinche :
                              manche.surcoinche=decision(aleatoire=aleatoire, question='surcoincher', ouverte=False)              
    if (manche.atout==None):
         return False
+   print(manche.atout, manche.equipes[0].mise, manche.equipes[1].mise)
    return True 
 
 def choisir_carte(cartes,nom,aleatoire=True): 
@@ -435,6 +439,7 @@ def gain_pli(pli):
     """
     gagnant=pli.cartes[0]
     for carte in pli.cartes:
+        # la carte qui domine n'est pas un atout
         if not gagnant.atout:
             if carte.atout :
                 gagnant=carte
@@ -442,24 +447,24 @@ def gain_pli(pli):
                 gagnant=carte
         
         else :
-            if carte.valeur>gagnant.valeur:
+            if carte.valeur>gagnant.valeur and carte.atout:
                 gagnant=carte
     return pli.cartes.index(gagnant)
 
 
 
 
-def jouer_pli(manche,joueurs): #•fonctionne
+def jouer_pli(manche,joueurs, aleatoire=False): #•fonctionne
     """
     prends en entrée le tableau ORDONNEE des joueurs de ce pli et le renvoi réordonné
     """
     
     #la meilleure carte est le 1er joueur pour l'ini
-    couleur_choisie=jouer_carte(joueurs[0].main, manche.pli, choisir_carte(joueurs[0].main.cartes, joueurs[0].name))
+    couleur_choisie=jouer_carte(joueurs[0].main, manche.pli, choisir_carte(joueurs[0].main.cartes, joueurs[0].name,aleatoire=aleatoire))
 
     for j in joueurs[1:]:
         affiche_cartes(j.main.cartes, j.name)
-        carte_choisie=choisir_carte(cartes_possibles(manche, couleur_choisie, j),j.name)
+        carte_choisie=choisir_carte(cartes_possibles(manche, couleur_choisie, j),j.name,aleatoire=aleatoire)
         jouer_carte(j.main, manche.pli, carte_choisie)
     affiche_cartes(manche.pli.cartes, manche.pli.name)    
     

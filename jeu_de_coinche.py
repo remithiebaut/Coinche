@@ -175,26 +175,27 @@ class joueur():
 
 
 class equipe():
-    def __init__(self,pioche, name1, name2, numero_equipe, nom_equipe, aleatoire_1, aleatoire_2):
+    def __init__(self,pioche, j1, j2, numero_equipe):
      
-     self.nom=nom_equipe
+     self.nom=j1[1]
      self.numero=numero_equipe
-     self.joueurs=[joueur(pioche,numero_equipe,name1,aleatoire_1), joueur(pioche,numero_equipe,name2,aleatoire_2)]
+     self.joueurs=[joueur(pioche,self.numero,j1[0],j1[2]), joueur(pioche,self.numero,j2[0],j2[2])]
      self.pli=main("pli de l'equipe " + str(numero_equipe)) #a reinitialiser
      self.mise=None  #a reinitialiser
 
 
 
 class manche():
-    def __init__(self,j1,j2,j3,j4,e1,e2,aleatoire): # e1 et e2 inutiles
+    def __init__(self,j1,j2,j3,j4,hidden=False): # e1 et e2 inutiles
      
      self.atout=None
      self.coinche=False #indicateur de coinche
      self.surcoinche=False
      self.pli=main("pli en cours") 
      self.pioche =[ [carte(i,j) for i in liste_numero] for j in liste_couleur] #ligne = couleur/ colonne= numero
-     self.equipes=(equipe(self.pioche,j1,j3,0,e1,aleatoire[0],aleatoire[2]),equipe(self.pioche,j2,j4,1,e2,aleatoire[1],aleatoire[3])) #attention e1 est une variable pose potentiellement probleme
-   
+     self.equipes=[equipe(self.pioche,j1,j3,0),equipe(self.pioche,j2,j4,1)] #attention e1 est une variable pose potentiellement probleme
+     self.hidden=hidden
+     
     def debut(self, joueurs):
         #normal
         if self.atout in liste_couleur[:4]:
@@ -208,9 +209,9 @@ class manche():
                         carte.points=points[liste_mode[1]][carte.numero]
                         if carte.numero=="R" or carte.numero=="D":
                             belote+=1
-                        if belote==2:
-                            print("le joueur {} a la belote".format(j.name)) # achanger pour pas le dire direct a fonctionné deux fois ????
-                            self.equipes[j.equipe].pli.points+=20
+                            if belote==2:
+                                print("le joueur {} a la belote".format(j.name)) # achanger pour pas le dire direct a fonctionné deux fois ????
+                                self.equipes[j.equipe].pli.points+=20
                             
                     else :
                         carte.valeur=liste_numero.index(carte.numero)
@@ -253,8 +254,8 @@ class manche():
          return joueurs
     
     def resultat(self,score): # normalement mise nest pas char
-        
-        assert(self.equipes[0].pli.compter_points()+self.equipes[1].pli.compter_points()==152) #compte les points par équipe pas encore de 10 de der
+        points_totaux=self.equipes[0].pli.compter_points()+self.equipes[1].pli.compter_points()
+        assert(points_totaux==162 or points_totaux==182) #compte les points par équipe pas encore de 10 de der
         if self.surcoinche :
             multiplicateur = 4
         elif self.coinche :
@@ -265,65 +266,75 @@ class manche():
         for equipe in self.equipes :    
             if equipe.mise != None:
                 capot= equipe.mise==250 and len(equipe.pli.cartes)==32 #bool capot 
-                generale=(equipe.joueurs[0].plis==8 and equipe.joueur[0].generale==True ) or ( equipe.joueurs[1].plis==8 and equipe.joueur[1].generale==True) #bool generale
+                generale=(equipe.joueurs[0].plis==8 and equipe.joueurs[0].generale==True ) or ( equipe.joueurs[1].plis==8 and equipe.joueurs[1].generale==True) #bool generale
                 #cas 1 : réussite du contrat
                 if equipe.mise<=equipe.pli.points or capot or generale : #faire cas général : compteur de pli gagné par joueur
                     print("l'équipe {} a réussit son contrat".format(equipe.nom))
                     
                     #cas 1.1 : coinché ou surcoinché
                     if self.coinche :
-                        score[equipe.numero] += equipe.mise*multiplicateur # seulement points contrats
-                        score[(equipe.numero+1)%2] += 0 #points defense
+                        score[equipe.nom] += equipe.mise*multiplicateur # seulement points contrats
+                        score[self.equipes[(equipe.numero+1)%2].nom] += 0 #points defense
                     
                     #cas 1.2 : normal
                     else :
-                        score[equipe.numero] += equipe.mise # seulement points contrats
-                        score[(equipe.numero+1)%2] += self.equipes[(equipe.numero+1)%2].pli.points #points defense
+                        score[equipe.nom] += equipe.mise # seulement points contrats
+                        score[self.equipes[(equipe.numero+1)%2].nom] += self.equipes[(equipe.numero+1)%2].pli.points #points defense
                     
                 #cas 2 : échec du contrat
                 else :
                     print("l'équipe {} a chuté ".format(equipe.nom))
-                    score[(equipe.numero+1)%2] += 160*multiplicateur
+                    score[self.equipes[(equipe.numero+1)%2].nom] += 160*multiplicateur
 
                     
 
 
 class partie():
-     def __init__(self,j1="joueur1",j2="joueur2",j3="joueur3",j4="joueur4",e1="e1",e2="e2",limite_score=2000,aleatoire=[False,True,True,True]):
+     def __init__(self,joueurs=["joueur1","joueur2","joueur3","joueur4"],equipes=["e1","e2"],limite_score=2000,aleatoire=[False,True,True,True],hidden=False):
          
-         self.noms=(j1,j2,j3,j4,e1,e2) #trouver comment utiliser tuple en parametre
-         self.manche=manche(j1,j2,j3,j4,e1,e2,aleatoire) #faire un tableau de manche
+         self.data=[(joueurs[0],equipes[0],aleatoire[0]), (joueurs[1],equipes[1],aleatoire[1]),(joueurs[2],equipes[0],aleatoire[2]),(joueurs[3],equipes[1],aleatoire[3])] #trouver comment utiliser tuple en parametre
+         self.manche=manche(self.data[0], self.data[1], self.data[2], self.data[3], hidden ) #faire un tableau de manche
          self.limite=limite_score
-         self.score=[0,0]
-     
-     def fin_manche(self):
-         
-         self.manche.resultat(self.score) #marque le score
-         #self.manche=manche(j1,j2,j3,j4,e1,e2) #attention ordre joueur
+         self.score={equipes[0]:0,equipes[1]:0}
+         self.hidden=hidden
     
-     def jouer_manche(self):
+     def jouer_partie(self):
          j=self.manche.raccourci()
          if choisir_atout(self.manche) : #choisir valeur par defaut pour les test
              self.manche.debut(j)
              for i in range(8):
-                print("pli {} : \n \n".format(i))
-                j=jouer_pli(self.manche, j) #erreur dans le decompte des plis confusion avec les tas joueur bug a iteration2 a priori fonctionne : confusion entre la position dans la main et celles des cartes possibles
+                if not self.hidden:
+                    print("pli {} : \n \n".format(i))
+                j=jouer_pli(self.manche, j, i+1) #erreur dans le decompte des plis confusion avec les tas joueur bug a iteration2 a priori fonctionne : confusion entre la position dans la main et celles des cartes possibles
              for k in range(2):
                 affiche_cartes(self.manche.equipes[k].pli.cartes, self.manche.equipes[k].pli.name)   
              self.fin_manche()
-             return decision(question="nouvelle manche ?", ouverte=False)
+         self.nouvelle_manche()
+                 
              
-     def nouvelle_manche(self) :
-         self.manche=manche(self.noms)
+     def fin_manche(self) :
+         self.manche.resultat(self.score)
+         print(self.score)
+         for equipe in self.score:
+             if self.score[equipe]>self.limite:
+                 print( " l'équipe {} a gagné avec {} ".format(equipe, self.score))
+                 return 0
+             
+     def nouvelle_manche(self) :       
+                
+         if decision(question="nouvelle manche ?", ouverte=False,aleatoire=self.hidden):
+             self.data=[self.data[1],self.data[2],self.data[3],self.data[0]]
+             self.manche=manche(self.data[0], self.data[1], self.data[2], self.data[3],self.hidden)
+             self.jouer_partie()
         
 
 
 
-def affiche_cartes(cartes,name="cartes",not_hidden=False):
+def affiche_cartes(cartes,name="cartes",hidden=False):
    """
    affiche un tableau de cartes
    """
-   if not not_hidden :
+   if not hidden :
        print("\n \n {:^15} \n".format(name))
        for i in range(len(cartes)):
            if not cartes[i].numero==None :
@@ -332,7 +343,7 @@ def affiche_cartes(cartes,name="cartes",not_hidden=False):
 
 
 
-def choisir_atout(manche, aleatoire=True): # pensez a afficher avant surcoinche
+def choisir_atout(manche, aleatoire=True): # pensez a afficher avant surcoinche empecher danooncer 170 180 tout atout sans atout 
    """
    fixe l'atout et la mise d'atout et retourne True si tout le monde n'a pas passé
    """
@@ -482,7 +493,7 @@ def gain_pli(pli):
 
 
 
-def jouer_pli(manche,joueurs, aleatoire=True): #•fonctionne
+def jouer_pli(manche,joueurs, nombre_plis, aleatoire=True): #•fonctionne
     """
     prends en entrée le tableau ORDONNEE des joueurs de ce pli et le renvoi réordonné
     """
@@ -492,32 +503,33 @@ def jouer_pli(manche,joueurs, aleatoire=True): #•fonctionne
 
     for j in joueurs[1:]:
         affiche_cartes(manche.pli.cartes, manche.pli.name,j.aleatoire)    
-        affiche_cartes(j.main.cartes, j.name, j.aleatoire)
         carte_choisie=choisir_carte(cartes_possibles(manche, couleur_choisie, j),j.name,aleatoire=j.aleatoire)
         jouer_carte(j.main, manche.pli, carte_choisie)
-    affiche_cartes(manche.pli.cartes, manche.pli.name)    
+    affiche_cartes(manche.pli.cartes, manche.pli.name, manche.hidden)    
     
     gagnant=gain_pli(manche.pli)
-    print(" Le gagnant est {} avec le {} de {}".format(joueurs[gagnant].name, manche.pli.cartes[gagnant].numero , manche.pli.cartes[gagnant].couleur ))
+    if not manche.hidden :
+        print(" Le gagnant est {} avec le {} de {}".format(joueurs[gagnant].name, manche.pli.cartes[gagnant].numero , manche.pli.cartes[gagnant].couleur ))
     nouvel_ordre=[joueurs[gagnant],joueurs[(gagnant+1)%4], joueurs[(gagnant+2)%4] ,joueurs[(gagnant+3)%4]]
     joueurs[gagnant].plis+=1
     manche.equipes[joueurs[gagnant].equipe].pli.add(manche.pli) 
     
-     #compter 10 de der
-    if len(manche.equipes[0].pli.cartes)+len(manche.equipes[0].pli.cartes)==32:
+     #compter 10 de der    
+    if nombre_plis==8 :
         manche.equipes[joueurs[gagnant].equipe].pli.points+=10 
+    
         
     manche.pli=main(manche.pli.name) #reinitialise le pli
 
     return nouvel_ordre
                     
                 
-for i in range(200) :  #lance 200 parties     
-    Partie=partie(j1="Remi",j2="Vincent",j3="Pierre",j4="Guilhem",e1="Les Boss", e2="les loseurs")
-    Partie.jouer_manche()
+for i in range(20) :  #lance 200 parties 
+    print("NEW GAME")    
+    Partie=partie(joueurs=["Yan le pd","Vincent","Pierre","Guilhem"],equipes=["Les Boss","les loseurs"],aleatoire=[False,True,True,True])
+    Partie.jouer_partie()
     print(Partie.manche.atout, Partie.manche.equipes[0].mise, Partie.manche.equipes[1].mise, Partie.score)
-
-print("FIN")   
+    print("END GAME")   
 
         
 """

@@ -5,13 +5,8 @@ Created on Tue Feb 26 15:30:05 2019
 
 @author: rthiebaut
 """
-
-import random #use randrange
-import sys
 import coinche_constant as const
-import coinche_class 
 import generical_function as generic
-import copy
 
 """
 Functions

@@ -14,3 +14,4 @@ class Carte():
   self.valeur=None #ordre de puissance dans lannonce actuelle 16 valet datout et 1:7 normal
   self.atout=False
   self.points=0
+  self.ID=numero+couleur  #ATENTION SI Numero = None ne devrait pas marcher

@@ -25,10 +25,10 @@ for i in range(1,5):
     
 for j in range(8):
         #position["J1"][j]=( (screen_size[1],screen_size[1]-card_size[1]), (card_size[0]*j, 2*card_size[0]+card_size[0]*j) )
-        position["J1"][j]=(card_size[0]+card_size[0]*j,screen_size[1]-card_size[1])
-        position["J2"][j]=(0,card_size[0]+card_size[0]*j)
-        position["J3"][j]=(screen_size[0]-card_size[0]-card_size[0]*j,0)
-        position["J4"][j]=(screen_size[0],card_size[0]+card_size[0]*j)
+        position["J1"][j]=(card_size[0]+card_size[0]*j,screen_size[1]-card_size[0])
+        position["J2"][j]=(-card_size[0]/2,3*card_size[0]+card_size[0]*j/2)
+        position["J3"][j]=(screen_size[0]-4*card_size[0]-card_size[0]*j/2,-card_size[0]/2)
+        position["J4"][j]=(screen_size[0]-card_size[0],screen_size[1]-4*card_size[0]-card_size[0]*j/2)
 
 
 
@@ -40,8 +40,10 @@ image = pygame.image.load('images/{}.jpg'.format(ID))
 image = pygame.transform.scale(image,card_size)
 list_image[ID] = image
 
-
-
+ID ="Dos_inverse"   
+image = pygame.image.load('images/{}.jpg'.format(ID))
+image = pygame.transform.scale(image,(card_size[1],card_size[0]))
+list_image[ID] = image
 
 for numero in const.liste_numero :
     for couleur in const.liste_couleur[:4]:
@@ -49,3 +51,4 @@ for numero in const.liste_numero :
         image = pygame.image.load('images/{}.jpg'.format(ID))
         image = pygame.transform.scale(image,card_size)
         list_image[ID] = image
+

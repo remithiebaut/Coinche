@@ -10,7 +10,7 @@ Created on Tue Feb 26 15:32:38 2019
 Constante
 """
 
-liste_numero=['7', '8', '9', 'V', 'D', 'R', '10', 'A']
+liste_numero=['7', '8', '9', 'V', 'D', 'R', '10', 'As'] #As=A
 liste_couleur=['coeur', 'pique', 'carreau', 'trefle',  'sans atout', 'tout atout']
 liste_mode=["normal","atout","sans atout","tout atout"]
 #attention erreur
@@ -40,4 +40,4 @@ liste_annonce.append('generale')
 liste_entier8=[]
 for i in range(1,9):
     liste_entier8.append(str(i))
-ordre_atout=['7', '8', 'D', 'R', '10', 'A', '9', 'V']
+ordre_atout=['7', '8', 'D', 'R', '10', 'As', '9', 'V']

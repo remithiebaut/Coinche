@@ -54,14 +54,17 @@ class Graphic_Carte(Carte):
 
 
 def afficher_cartes(screen, cartes):
-    for j in range(1,5):
-      if j%2==0:
-        inverse=True
-      else :
-        inverse = False
-      for i in range(len(cartes)):
-        screen.blit(cartes[i].affichage(inverse), gconst.position["J"+str(j)][i]) #rendre transparent
+  """
+  Print the hand of cards for each player
+  """
 
+  for j in range(1,5):
+    if j%2==0:
+      inverse=True
+    else :
+      inverse = False
+    for i in range(len(cartes)):
+      screen.blit(cartes[i].affichage(inverse), gconst.position["J"+str(j)][i]) #rendre transparent
 
 
 def draw_rect(screen,size,position,color=(255,255,255)):    

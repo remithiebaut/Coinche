@@ -19,8 +19,8 @@ class Hand():
      self.name=name
      self.cards=cards #array of cards
      self.points=0
-     #initialise les compteur
-     self.rest={"cards":len(cards)} #changé en dico
+     #initialise th counter
+     self.rest={"cards":len(cards)} 
      for color in const.liste_couleur[:4]:
        self.rest[color]=0 
        for card in self.cards:
@@ -30,18 +30,18 @@ class Hand():
      
   def __iadd__(self, oldhand):
     """
-    add a Hand of Card sort them and reinitialize the oldhand
+    this is the defintion of += : add a Hand of Card sort them and reinitialize the oldhand
     """
     self.cards+=oldhand.cards
     for key in self.rest:
       self.rest[key]+=oldhand.rest[key]
-    oldhand.reinitialize() #dont work
+    oldhand.reinitialize() 
     self.color_sort()
     return self
 
   def color_sort(self):
       """
-      trie les cartes par couleur et mets a jour les compteurs de restes à jour
+      sort cards by color
       """
       newcards=[]
       for color in const.liste_couleur[:4] :
@@ -54,7 +54,7 @@ class Hand():
     "reinitialize the Hand with no cards"
     self.cards=list() #array of cards
     self.points=0
-    #initialise les compteur
+    #reinitialize counters
     for key in self.rest:
       self.rest[key]=0
   
@@ -68,12 +68,12 @@ class Hand():
              self.reste["cartes"]+=1
       self.tri_couleur() #remet les compteurs de couleur à jour
   
-  def compter_points(self):
+  def count_points(self):
     """
     count points in the hand
     """
-    for carte in self.cartes:
-        self.points+=carte.points
+    for card in self.cards:
+        self.points += card.points
     return self.points
 
   def couleur(self, couleur_choisie):
@@ -144,8 +144,11 @@ class Hand():
     return self.cartes.index(gagnant) 
 
 if __name__=="__main__"   :
+  
   "ini and sort test"
-  myhand2=Hand(name="Pli",cards=[Card("7","carreau"),Card("7","coeur")])
+  mycard1=Card("7","carreau")
+  mycard2=Card("7","coeur")
+  myhand2=Hand(name="Pli",cards=[mycard1,mycard2])
   assert(myhand2.name=="Pli")
   assert(len(myhand2.cards)==2)
   assert(myhand2.points==0) 
@@ -187,6 +190,16 @@ if __name__=="__main__"   :
   for key in myhand2.rest :
     assert(myhand2.rest[key]==0)
   assert(len(myhand2.rest)==5)
+  
+  
+  "count_points test"
+  mycard1.points+=4
+  mycard2.points+=5
+  assert(myhand.count_points()==9==myhand.points)
+  assert(myhand.points==9)
+  assert(myhand2.count_points()==myhand2.points==0)
+
+  
 
   pioche =[ Card(i,j) for j in const.liste_couleur[:4] for i in const.liste_numero] 
   mypioche=Hand(cards=pioche,name="pioche")

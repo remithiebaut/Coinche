@@ -9,42 +9,54 @@ import random
 import copy
 import coinche_constant as const
 import generical_function as generic
+from Card import Card
 
 class Hand():
   """
   Hand of Game Cards
   """
-  def __init__(self,name="Cards"): #cards nest pas vide
+  def __init__(self, name="Cards", cards=list()): #cards nest pas vide
      self.name=name
-     self.cards=[]
+     self.cards=cards #array of cards
      self.points=0
      #initialise les compteur
-     self.rest={"cards":0} #changé en dico
+     self.rest={"cards":len(cards)} #changé en dico
      for color in const.liste_couleur[:4]:
-         self.rest[color]=0 
-         
-  def add_cartes(self, cartes):
-      for carte in cartes :
-          self.cartes.append(carte)
-          self.reste["cartes"]+=1
-      self.tri_couleur()   
-          
-  def add(self, supplement):
-      self.cartes+=supplement.cartes
-      for key in self.reste:
-          self.reste[key]+=supplement.reste[key]
-          
-  def tri_couleur(self):
+       self.rest[color]=0 
+       for card in self.cards:
+         if card.color==color:
+           self.rest[color]+=1
+     self.color_sort()
+     
+  def __iadd__(self, oldhand):
+    """
+    add a Hand of Card sort them and reinitialize the oldhand
+    """
+    self.cards+=oldhand.cards
+    for key in self.rest:
+      self.rest[key]+=oldhand.rest[key]
+    oldhand.reinitialize() #dont work
+    self.color_sort()
+    return self
+
+  def color_sort(self):
       """
       trie les cartes par couleur et mets a jour les compteurs de restes à jour
       """
-      new_cartes=[]
-      for couleur in const.liste_couleur[:4] :
-          for carte in self.cartes:
-              if carte.couleur==couleur:
-                  new_cartes.append(carte)
-                  self.reste[couleur]+=1
-      self.cartes=new_cartes
+      newcards=[]
+      for color in const.liste_couleur[:4] :
+        for card in self.cards:
+          if card.color==color:
+            newcards.append(card)
+      self.cards=newcards
+      
+  def reinitialize(self):
+    "reinitialize the Hand with no cards"
+    self.cards=list() #array of cards
+    self.points=0
+    #initialise les compteur
+    for key in self.rest:
+      self.rest[key]=0
   
   def piocher(self,pioche): 
       while not self.reste["cartes"]==8 : #on peut probablement faire plus rapide(prendre aleatoirement dans les cartes restantes)
@@ -131,15 +143,62 @@ class Hand():
                 gagnant=carte
     return self.cartes.index(gagnant) 
 
-if __name__=="__main__"   :             
-  myhand=Hand("Pli")
-  myhand2=Hand()
-  assert(myhand.name=="Pli")
-  assert(myhand2.name=="Cards")
+if __name__=="__main__"   :
+  "ini and sort test"
+  myhand2=Hand(name="Pli",cards=[Card("7","carreau"),Card("7","coeur")])
+  assert(myhand2.name=="Pli")
+  assert(len(myhand2.cards)==2)
+  assert(myhand2.points==0) 
+  assert(myhand2.rest["coeur"]==1)
+  assert(myhand2.rest["cards"]==2)
+  assert(myhand2.rest["pique"]==0)
+  assert(myhand2.rest["trefle"]==0)
+  assert(myhand2.rest["carreau"]==1)
+  assert(myhand2.cards[0].color=="coeur")
+  assert(myhand2.cards[1].color=="carreau")
+  assert(len(myhand2.rest)==5)
+  
+  myhand=Hand()
+  assert(myhand.name=="Cards")
   assert(len(myhand.cards)==0)
   assert(myhand.points==0) 
   for key in myhand.rest :
     assert(myhand.rest[key]==0)
   assert(len(myhand.rest)==5)
+  
+  "add test"
+  myhand += myhand2
+  assert(myhand.name=="Cards")
+  assert(len(myhand.cards)==2)
+  assert(myhand.points==0) 
+  assert(myhand.rest["coeur"]==1)
+  assert(myhand.rest["cards"]==2)
+  assert(myhand.rest["pique"]==0)
+  assert(myhand.rest["trefle"]==0)
+  assert(myhand.rest["carreau"]==1)
+  assert(myhand.cards[0].color=="coeur")
+  assert(myhand.cards[1].color=="carreau")
+  assert(len(myhand.rest)==5)
+  
+  "reintialize test"
+  assert(myhand2.name=="Pli")
+  assert(len(myhand2.cards)==0)
+  assert(myhand2.points==0) 
+  for key in myhand2.rest :
+    assert(myhand2.rest[key]==0)
+  assert(len(myhand2.rest)==5)
+
+  pioche =[ Card(i,j) for j in const.liste_couleur[:4] for i in const.liste_numero] 
+  mypioche=Hand(cards=pioche,name="pioche")
+  assert(mypioche.name=="pioche")
+  assert(len(mypioche.cards)==32)
+  assert(mypioche.rest["cards"]==32)
+  assert(mypioche.cards==pioche)
+  for color in const.liste_couleur[:4]:
+    assert(mypioche.rest[color]==8)
+    
+    
+  
+
   
   print("test OK")

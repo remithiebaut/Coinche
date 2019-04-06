@@ -66,15 +66,16 @@ class Hand():
         self.points += card.points
     return self.points
 
-  def couleur(self, couleur_choisie):
+  def color(self, chosen_color):
     """
-    retournent toutes les cartes d'une couleur donnée
+    return all the cards of a given color => it is now returning a Hand !!
     """
-    cartes_de_la_couleur=[]
-    for carte in self.cartes:
-        if carte.couleur==couleur_choisie: 
-            cartes_de_la_couleur.append(carte)
-    return cartes_de_la_couleur
+    cards_of_this_color=[]
+    for card in self.cards:
+        if card.color==chosen_color: 
+            cards_of_this_color.append(card)
+    colorhand=Hand(cards=cards_of_this_color, name =chosen_color)
+    return colorhand
   
   def jouer_carte(self,pli,carte_choisie):
    """

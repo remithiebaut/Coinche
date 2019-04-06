@@ -57,17 +57,7 @@ class Hand():
     #reinitialize counters
     for key in self.rest:
       self.rest[key]=0
-  
-  def piocher(self,pioche): 
-      while not self.reste["cartes"]==8 : #on peut probablement faire plus rapide(prendre aleatoirement dans les cartes restantes)
-         x=int(1000*random.random()%8) # il est possible que le bug survienne apres plusieurs boucles (apres test)
-         y=int(1000*random.random()%4)
-         if pioche[y][x].reste==1:
-             self.cartes.append(pioche[y][x])
-             pioche[y][x].reste=0
-             self.reste["cartes"]+=1
-      self.tri_couleur() #remet les compteurs de couleur à jour
-  
+
   def count_points(self):
     """
     count points in the hand
@@ -199,7 +189,6 @@ if __name__=="__main__"   :
   assert(myhand.points==9)
   assert(myhand2.count_points()==myhand2.points==0)
 
-  
 
   pioche =[ Card(i,j) for j in const.liste_couleur[:4] for i in const.liste_numero] 
   mypioche=Hand(cards=pioche,name="pioche")
@@ -215,3 +204,5 @@ if __name__=="__main__"   :
 
   
   print("test OK")
+  
+  

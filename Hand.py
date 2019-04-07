@@ -5,7 +5,6 @@ Created on Sun Mar 24 14:40:42 2019
 @author: rthie
 """
 
-import random
 import copy
 import coinche_constant as const
 import generical_function as generic
@@ -28,6 +27,17 @@ class Hand():
            self.rest[color]+=1
      self.color_sort()
      
+  def display(self,hidden=False):
+     """
+     display an array of cards
+     """
+     if not hidden :
+         print("\n \n {:^15} \n".format(self.name))
+         for i in range(len(self.cards)):
+             if self.cards[i].rest :
+              print("{} : {:>2} de {} ".format(str(i+1),self.cards[i].number,self.cards[i].color))
+         print()
+     
   def __iadd__(self, oldhand):
     """
     this is the defintion of += : add a Hand of Card sort them and reinitialize the oldhand
@@ -46,6 +56,7 @@ class Hand():
       newcards=[]
       for color in const.liste_couleur[:4] :
         for card in self.cards:
+
           if card.color==color:
             newcards.append(card)
       self.cards=newcards
@@ -77,6 +88,17 @@ class Hand():
     colorhand=Hand(cards=cards_of_this_color, name =chosen_color)
     return colorhand
   
+  def choose_card(self,random=True): 
+     """
+     choose and return a card
+     """
+     while True :
+         card_position = generic.decision(const.liste_entier8[:len(self.cards)], random, "Quelle carte ? 1ère, 2ème ? ")
+         card_position = int(card_position)-1
+         if card_position<len(self.cards) :
+             if self.cards[card_position].rest:
+                 return self.cards[card_position]
+  
   def jouer_carte(self,pli,carte_choisie):
    """
    joue la carte choisie et retourne sa couleur
@@ -90,31 +112,6 @@ class Hand():
    carte_choisie.numero=None 
    
    return couleur_choisie
- 
-  def afficher(self,hidden=False):
-     """
-     affiche un tableau de self.cartes
-     """
-     if not hidden :
-         print("\n \n {:^15} \n".format(self.name))
-         for i in range(len(self.cartes)):
-             if not self.cartes[i].numero==None :
-              print("{} : {:>2} de {} ".format(str(i+1),self.cartes[i].numero,self.cartes[i].couleur))
-         print()
- 
-
-  def choisir(self,aleatoire=True): 
-     """
-     choisie et retourne une carte
-     """
-     self.afficher(hidden=aleatoire)
-     while True :
-         position_carte = generic.decision(const.liste_entier8[:len(self.cartes)], aleatoire, "Quelle carte ? 1ère, 2ème ? ")
-         position_carte = int(position_carte)-1
-         if position_carte<len(self.cartes) :
-             if self.cartes[position_carte].numero!=None:
-                 return self.cartes[position_carte]
-  
 
   def gagnant(self): 
     """
@@ -210,6 +207,11 @@ if __name__=="__main__"   :
     assert(mycolor.rest["cards"]==8)
     assert(mycolor.rest[color]==8)
     assert(len(mycolor.rest)==5)
+    
+  "display test"
+  mypioche.display()
+  myhand.display()
+  myhand2.display(hidden=True)
   
 
   

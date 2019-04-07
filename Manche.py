@@ -244,3 +244,17 @@ class Manche():
             
         self.pli=Main(self.pli.name) #reinitialise le pli
         return nouvel_ordre
+'''
+  def draw(self,pioche):
+    """
+    #draw randomly in an array of cards
+    """
+      while not self.reste["cartes"]==8 : #on peut probablement faire plus rapide(prendre aleatoirement dans les cartes restantes)
+         x=int(1000*random.random()%8) # il est possible que le bug survienne apres plusieurs boucles (apres test)
+         y=int(1000*random.random()%4)
+         if pioche[y][x].reste==1:
+             self.cartes.append(pioche[y][x])
+             pioche[y][x].reste=0
+             self.reste["cartes"]+=1
+      self.tri_couleur() #remet les compteurs de couleur à jour
+'''

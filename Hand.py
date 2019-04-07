@@ -246,7 +246,11 @@ if __name__=="__main__"   :
   assert(mypioche.rest["trefle"]==8)
   assert(mypioche.rest["carreau"]==8)
 
+  "choose test"
   
+  for i in range (100):
+    card=mypioche.choose_card()
+    assert(card.rest)
 
   
 

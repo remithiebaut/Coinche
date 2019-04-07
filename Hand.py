@@ -34,8 +34,7 @@ class Hand():
      if not hidden :
          print("\n \n {:^15} \n".format(self.name))
          for i in range(len(self.cards)):
-             if self.cards[i].rest :
-              print("{} : {:>2} de {} ".format(str(i+1),self.cards[i].number,self.cards[i].color))
+           print("{} : {:>2} de {} ".format(str(i+1),self.cards[i].number,self.cards[i].color))
          print()
      
   def __iadd__(self, oldhand):
@@ -50,17 +49,29 @@ class Hand():
     return self
 
   def color_sort(self):
-      """
-      sort cards by color
-      """
-      newcards=[]
-      for color in const.liste_couleur[:4] :
-        for card in self.cards:
+    """
+    sort cards by color 
+    """
+    newcards=[]
+    for color in const.liste_couleur[:4] :
+      for card in self.cards:
+        if card.color==color :
+          newcards.append(card)
+    self.cards=newcards
 
-          if card.color==color:
-            newcards.append(card)
-      self.cards=newcards
-      
+  def remove_cards(self):
+    """
+    remove all cards of the hand which have a rest=False
+    """
+    newcards=[]
+    for card in self.cards:
+      if card.rest :
+        newcards.append(card)
+      else :
+        self.rest[card.color]-=1
+        self.rest["cards"]-=1
+    self.cards=newcards
+  
   def reinitialize(self):
     "reinitialize the Hand with no cards"
     self.cards=list() #array of cards
@@ -207,12 +218,38 @@ if __name__=="__main__"   :
     assert(mycolor.rest["cards"]==8)
     assert(mycolor.rest[color]==8)
     assert(len(mycolor.rest)==5)
-    
+  
   "display test"
   mypioche.display()
   myhand.display()
   myhand2.display(hidden=True)
   
+  print("remove test")
+  mypioche.cards[4].rest=False
+  mypioche.remove_cards()
+  assert(mypioche.name=="pioche")
+  assert(len(mypioche.cards)==31)
+  assert(mypioche.rest["cards"]==31)
+  assert(mypioche.rest["coeur"]==7)
+  assert(mypioche.rest["pique"]==8)
+  assert(mypioche.rest["trefle"]==8)
+  assert(mypioche.rest["carreau"]==8)
+  
+  mypioche.cards[4].rest=False
+  mypioche.cards[7].rest=False
+  mypioche.remove_cards()
+  assert(mypioche.name=="pioche")
+  assert(len(mypioche.cards)==29)
+  assert(mypioche.rest["cards"]==29)
+  assert(mypioche.rest["coeur"]==6)
+  assert(mypioche.rest["pique"]==7)
+  assert(mypioche.rest["trefle"]==8)
+  assert(mypioche.rest["carreau"]==8)
+
+  
+
+  
+
 
   
   print("test OK")

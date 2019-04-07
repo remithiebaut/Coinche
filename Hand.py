@@ -202,6 +202,14 @@ if __name__=="__main__"   :
     
     
   "color test"
+  for color in const.liste_couleur[:4]:
+    mycolor=mypioche.color(color)
+    assert(mycolor.name==color)
+    assert(len(mycolor.cards)==8)
+    assert(mycolor.points==0) 
+    assert(mycolor.rest["cards"]==8)
+    assert(mycolor.rest[color]==8)
+    assert(len(mycolor.rest)==5)
   
 
   

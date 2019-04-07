@@ -201,6 +201,7 @@ if __name__=="__main__"   :
     assert(mypioche.rest[color]==8)
     
     
+  "color test"
   
 
   

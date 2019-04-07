@@ -110,19 +110,19 @@ class Hand():
              if self.cards[card_position].rest:
                  return self.cards[card_position]
   
-  def jouer_carte(self,pli,carte_choisie):
+  def play_card(self ,pli ,choosen_card):
    """
-   joue la carte choisie et retourne sa couleur
+   add choosen card to pli and return its color
    """
-   pli.cartes.append(copy.deepcopy(carte_choisie)) # a priori marche voir doc deepcopy
-   couleur_choisie=carte_choisie.couleur
-   pli.reste[couleur_choisie]+=1
-   pli.reste["cartes"]+=1
-   self.reste[couleur_choisie]-=1
-   self.reste["cartes"]-=1
-   carte_choisie.numero=None 
+   # before used copy.deepcopy
+   temphand=Hand(cards=[choosen_card]) #use it to add cleanly the card to pli
+   pli+=temphand
+   choosen_color=choosen_card.color
+   choosen_card.rest=False # use it to remove cleanly the card from self
+   self.remove_cards()
+   choosen_card.rest=True
    
-   return couleur_choisie
+   return choosen_color
 
   def gagnant(self): 
     """
@@ -252,6 +252,61 @@ if __name__=="__main__"   :
     card=mypioche.choose_card()
     assert(card.rest)
 
+  "play test"
+  mycard3=Card("7","carreau")
+  mycard4=Card("7","coeur")
+  mycard5=Card("As","coeur")
+  mycard6=Card("R","pique")
+  
+  myhand3=Hand(cards=[mycard3,mycard4])
+  mypli=Hand(name="Pli", cards=[mycard5,mycard6])
+  
+  myhand3.play_card(pli=mypli, choosen_card=mycard3)
+  
+  assert(myhand3.name=="Cards")
+  assert(len(myhand3.cards)==1)
+  assert(myhand3.points==mypli.points==0)
+  assert(myhand3.rest["cards"]==1)
+  assert(myhand3.rest["coeur"]==1)
+  assert(myhand3.rest["pique"]==0)
+  assert(myhand3.rest["trefle"]==0)
+  assert(myhand3.rest["carreau"]==0)
+  assert(len(myhand3.rest)==5)
+  
+  assert(mypli.name=="Pli")
+  assert(len(mypli.cards)==3)
+  assert(mypli.rest["cards"]==3)
+  assert(mypli.rest["coeur"]==1)
+  assert(mypli.rest["pique"]==1)
+  assert(mypli.rest["trefle"]==0)
+  assert(mypli.rest["carreau"]==1)
+  assert(len(mypli.rest)==5)
+  
+  mypli.play_card(pli=myhand3, choosen_card=mycard3)
+  mypli.play_card(pli=myhand3, choosen_card=mycard5)
+  mypli.play_card(pli=myhand3, choosen_card=mycard6)
+  
+  assert(myhand3.name=="Cards")
+  assert(len(myhand3.cards)==4)
+  assert(myhand3.points==mypli.points==0)
+  assert(myhand3.rest["cards"]==4)
+  assert(myhand3.rest["coeur"]==2)
+  assert(myhand3.rest["pique"]==1)
+  assert(myhand3.rest["trefle"]==0)
+  assert(myhand3.rest["carreau"]==1)
+  assert(len(myhand3.rest)==5)
+  
+  assert(mypli.name=="Pli")
+  assert(len(mypli.cards)==0)
+  assert(mypli.rest["cards"]==0)
+  assert(mypli.rest["coeur"]==0)
+  assert(mypli.rest["pique"]==0)
+  assert(mypli.rest["trefle"]==0)
+  assert(mypli.rest["carreau"]==0)
+  assert(len(mypli.rest)==5)
+
+
+  
   
 
 

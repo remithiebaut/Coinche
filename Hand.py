@@ -38,16 +38,15 @@ class Hand():
            print("{} : {:>2} de {} ".format(str(i+1),self.cards[i].number,self.cards[i].color))
          print()
      
-  def __iadd__(self, oldhand, sort=True):
+  def __iadd__(self, oldhand):
     """
-    this is the defintion of += : add a Hand of Card sort them and reinitialize the oldhand
+    this is the defintion of += : add a Hand of Card and reinitialize the oldhand
     """
     self.cards+=oldhand.cards
     for key in self.rest:
       self.rest[key]+=oldhand.rest[key]
     oldhand.reinitialize()
-    if sort :
-      self.color_sort()
+
     return self
 
   def color_sort(self):
@@ -128,7 +127,7 @@ class Hand():
 
   def winner(self): 
     """
-    give the winner number in the current pli order 
+    give the winner number in the current pli order really important that the pli is not sorted
     """
     winner=self.cards[0]
     for card in self.cards:
@@ -138,7 +137,6 @@ class Hand():
                 winner=card
             elif winner.color==card.color and card.value>winner.value:
                 winner=card
-        
         else :
             if card.value>winner.value and card.atout:
                 winner=card

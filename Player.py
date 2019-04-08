@@ -39,6 +39,22 @@ if __name__=="__main__"   :
   assert(myplayer.generale==False)
   assert(myplayer.random==True)
 
+  myplayer=Player(team_number=0, name="Fred", random = True, cards=list())
+  assert(myplayer.Hand.name==myplayer.name=="Fred")
+  assert(len(myplayer.Hand.cards)==0)
+  assert(myplayer.Hand.points==0)
+  assert(myplayer.Hand.rest["coeur"]==0)
+  assert(myplayer.Hand.rest["cards"]==0)
+  assert(myplayer.Hand.rest["pique"]==0)
+  assert(myplayer.Hand.rest["trefle"]==0)
+  assert(myplayer.Hand.rest["carreau"]==0)
+  assert(len(myplayer.Hand.rest)==5)
+  assert(myplayer.plis==0)
+  assert(myplayer.team==0)
+  assert(myplayer.generale==False)
+  assert(myplayer.random==True)
+
+
 
 
   print("test OK")

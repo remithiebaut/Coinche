@@ -11,8 +11,13 @@ from Card import Card
 
 
 class Player():
+  """
+  a game player
+  """
   def __init__(self, team_number, name, random, cards):
-
+    """
+    team number =1 or 0 / random = T or F / cards is an array of cards
+    """
     self.name=name
     self.Hand=Hand(name=name, cards=cards) #bug with cards
     self.team=team_number
@@ -21,7 +26,9 @@ class Player():
     self.random=random
 
   def reinitialize(self, cards):
-
+    """
+    reintialize player for a new round or a new game
+    """
     self.Hand=Hand(name=self.name, cards=cards) #bug with cards
     self.plis=0
     self.generale=False #indicator of genereale annonce

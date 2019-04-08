@@ -5,7 +5,6 @@ Created on Sun Mar 24 14:40:42 2019
 @author: rthie
 """
 
-import copy
 import coinche_constant as const
 import generical_function as generic
 from Card import Card
@@ -19,15 +18,15 @@ class Hand():
      self.cards=cards #array of cards
      self.points=0
      #initialise th counter
-     self.rest={"cards":len(cards)} 
+     self.rest={"cards":len(cards)}
      for color in const.liste_couleur[:4]:
-       self.rest[color]=0 
+       self.rest[color]=0
        for card in self.cards:
          if card.color==color:
            self.rest[color]+=1
      if sort :
        self.color_sort()
-     
+
   def display(self,hidden=False):
      """
      display an array of cards
@@ -37,7 +36,7 @@ class Hand():
          for i in range(len(self.cards)):
            print("{} : {:>2} de {} ".format(str(i+1),self.cards[i].number,self.cards[i].color))
          print()
-     
+
   def __iadd__(self, oldhand):
     """
     this is the defintion of += : add a Hand of Card and reinitialize the oldhand
@@ -51,7 +50,7 @@ class Hand():
 
   def color_sort(self):
     """
-    sort cards by color 
+    sort cards by color
     """
     newcards=[]
     for color in const.liste_couleur[:4] :
@@ -72,7 +71,7 @@ class Hand():
         self.rest[card.color]-=1
         self.rest["cards"]-=1
     self.cards=newcards
-  
+
   def reinitialize(self):
     "reinitialize the Hand with no cards"
     self.cards=list() #array of cards
@@ -95,12 +94,12 @@ class Hand():
     """
     cards_of_this_color=[]
     for card in self.cards:
-        if card.color==chosen_color: 
+        if card.color==chosen_color:
             cards_of_this_color.append(card)
     colorhand=Hand(cards=cards_of_this_color, name =chosen_color)
     return colorhand
-  
-  def choose_card(self,random=True): 
+
+  def choose_card(self,random=True):
      """
      choose and return a card
      """
@@ -110,7 +109,7 @@ class Hand():
          if card_position<len(self.cards) :
              if self.cards[card_position].rest:
                  return self.cards[card_position]
-  
+
   def play_card(self ,pli ,choosen_card):
    """
    add choosen card to pli and return its color
@@ -122,10 +121,10 @@ class Hand():
    choosen_card.rest=False # use it to remove cleanly the card from self
    self.remove_cards()
    choosen_card.rest=True
-   
+
    return choosen_color
 
-  def winner(self): 
+  def winner(self):
     """
     give the winner number in the current pli order really important that the pli is not sorted
     """
@@ -140,17 +139,17 @@ class Hand():
         else :
             if card.value>winner.value and card.atout:
                 winner=card
-    return self.cards.index(winner) 
+    return self.cards.index(winner)
 
 if __name__=="__main__"   :
-  
+
   print("ini and color_sort test")
   mycard1=Card("7","carreau")
   mycard2=Card("7","coeur")
   myhand2=Hand(name="Pli",cards=[mycard2,mycard1])
   assert(myhand2.name=="Pli")
   assert(len(myhand2.cards)==2)
-  assert(myhand2.points==0) 
+  assert(myhand2.points==0)
   assert(myhand2.rest["coeur"]==1)
   assert(myhand2.rest["cards"]==2)
   assert(myhand2.rest["pique"]==0)
@@ -159,15 +158,15 @@ if __name__=="__main__"   :
   assert(myhand2.cards[0].color=="coeur")
   assert(myhand2.cards[1].color=="carreau")
   assert(len(myhand2.rest)==5)
-  
+
   myhand=Hand()
   assert(myhand.name=="Cards")
   assert(len(myhand.cards)==0)
-  assert(myhand.points==0) 
+  assert(myhand.points==0)
   for key in myhand.rest :
     assert(myhand.rest[key]==0)
   assert(len(myhand.rest)==5)
-  
+
   print("Test OK")
 
 
@@ -175,7 +174,7 @@ if __name__=="__main__"   :
   myhand += myhand2
   assert(myhand.name=="Cards")
   assert(len(myhand.cards)==2)
-  assert(myhand.points==0) 
+  assert(myhand.points==0)
   assert(myhand.rest["coeur"]==1)
   assert(myhand.rest["cards"]==2)
   assert(myhand.rest["pique"]==0)
@@ -190,13 +189,13 @@ if __name__=="__main__"   :
   print("reintialize test")
   assert(myhand2.name=="Pli")
   assert(len(myhand2.cards)==0)
-  assert(myhand2.points==0) 
+  assert(myhand2.points==0)
   for key in myhand2.rest :
     assert(myhand2.rest[key]==0)
   assert(len(myhand2.rest)==5)
   print("Test OK")
 
-  
+
   print("count_points test")
   mycard1.points+=4
   mycard2.points+=5
@@ -205,7 +204,7 @@ if __name__=="__main__"   :
   assert(myhand2.count_points()==myhand2.points==0)
 
 
-  pioche =[ Card(i,j) for j in const.liste_couleur[:4] for i in const.liste_numero] 
+  pioche =[ Card(i,j) for j in const.liste_couleur[:4] for i in const.liste_numero]
   mypioche=Hand(cards=pioche,name="pioche")
   assert(mypioche.name=="pioche")
   assert(len(mypioche.cards)==32)
@@ -215,27 +214,27 @@ if __name__=="__main__"   :
     assert(mypioche.rest[color]==8)
   print("Test OK")
 
-    
+
   print("color test")
   for color in const.liste_couleur[:4]:
     mycolor=mypioche.color(color)
     assert(mycolor.name==color)
     assert(len(mycolor.cards)==8)
-    assert(mycolor.points==0) 
+    assert(mycolor.points==0)
     assert(mycolor.rest["cards"]==8)
     assert(mycolor.rest[color]==8)
     assert(len(mycolor.rest)==5)
-  
+
   print("Test OK")
 
-  
+
   print("display test")
   mypioche.display(hidden=True)
   myhand.display(hidden=True)
   myhand2.display(hidden=True)
   print("No Test")
 
-  
+
   print("remove test")
   mypioche.cards[4].rest=False
   mypioche.remove_cards()
@@ -246,7 +245,7 @@ if __name__=="__main__"   :
   assert(mypioche.rest["pique"]==8)
   assert(mypioche.rest["trefle"]==8)
   assert(mypioche.rest["carreau"]==8)
-  
+
   mypioche.cards[4].rest=False
   mypioche.cards[7].rest=False
   mypioche.remove_cards()
@@ -261,7 +260,7 @@ if __name__=="__main__"   :
 
 
   print("choose test")
-  
+
   for i in range (100):
     card=mypioche.choose_card()
     assert(card.rest)
@@ -271,12 +270,12 @@ if __name__=="__main__"   :
   mycard4=Card("7","coeur")
   mycard5=Card("As","coeur")
   mycard6=Card("R","pique")
-  
+
   myhand3=Hand(cards=[mycard3,mycard4])
   mypli=Hand(name="Pli", cards=[mycard5,mycard6])
-  
+
   myhand3.play_card(pli=mypli, choosen_card=mycard3)
-  
+
   assert(myhand3.name=="Cards")
   assert(len(myhand3.cards)==1)
   assert(myhand3.points==mypli.points==0)
@@ -286,7 +285,7 @@ if __name__=="__main__"   :
   assert(myhand3.rest["trefle"]==0)
   assert(myhand3.rest["carreau"]==0)
   assert(len(myhand3.rest)==5)
-  
+
   assert(mypli.name=="Pli")
   assert(len(mypli.cards)==3)
   assert(mypli.rest["cards"]==3)
@@ -295,11 +294,11 @@ if __name__=="__main__"   :
   assert(mypli.rest["trefle"]==0)
   assert(mypli.rest["carreau"]==1)
   assert(len(mypli.rest)==5)
-  
+
   mypli.play_card(pli=myhand3, choosen_card=mycard3)
   mypli.play_card(pli=myhand3, choosen_card=mycard5)
   mypli.play_card(pli=myhand3, choosen_card=mycard6)
-  
+
   assert(myhand3.name=="Cards")
   assert(len(myhand3.cards)==4)
   assert(myhand3.points==mypli.points==0)
@@ -309,7 +308,7 @@ if __name__=="__main__"   :
   assert(myhand3.rest["trefle"]==0)
   assert(myhand3.rest["carreau"]==1)
   assert(len(myhand3.rest)==5)
-  
+
   assert(mypli.name=="Pli")
   assert(len(mypli.cards)==0)
   assert(mypli.rest["cards"]==0)
@@ -322,20 +321,20 @@ if __name__=="__main__"   :
 
 
   print("winner test")
-  
+
   aspique=Card("As","pique")
   dpique=Card("D","pique")
   septcoeur=Card("7","coeur")
-  
+
   mypli2=Hand(name="Pli", sort=False, cards=[aspique,dpique,septcoeur])
-  
+
   "atout coeur"
   septcoeur.atout=True
   aspique.value=8
   septcoeur.value=9
   dpique.value=5
   assert(mypli2.winner()==2)
-  
+
   "atout pique"
   septcoeur.atout=False
   aspique.atout=True
@@ -354,7 +353,7 @@ if __name__=="__main__"   :
   septcoeur.value=1
   dpique.value=5
   assert(mypli2.winner()==0)
-  
+
   "no atout coeur first"
   mypli3=Hand(name="Pli" ,sort=False, cards=[septcoeur,aspique,dpique])
   aspique.value=8
@@ -362,10 +361,10 @@ if __name__=="__main__"   :
   dpique.value=5
   assert(mypli3.winner()==0)
 
-  
 
 
-  
+
+
   print("Test OK")
-  
-  
+
+

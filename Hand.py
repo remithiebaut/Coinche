@@ -104,7 +104,7 @@ class Hand():
      choose and return a card
      """
      while True :
-         card_position = generic.decision(const.liste_entier8[:len(self.cards)], random, "Quelle carte ? 1ère, 2ème ? ")
+         card_position = generic.decision(const.liste_entier32[:len(self.cards)], random, "Quelle carte ? 1ère, 2ème ? ")
          card_position = int(card_position)-1
          if card_position<len(self.cards) :
              if self.cards[card_position].rest:

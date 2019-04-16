@@ -11,6 +11,7 @@ from Hand import Hand
 from Card import Card
 from Team import Team
 
+
 class Round():
   def __init__(self, team1_name, j1_name, j1_random, j3_name, j3_random,
                team2_name, j2_name, j2_random, j4_name, j4_random, hidden=False): # e1 et e2 inutiles
@@ -21,10 +22,12 @@ class Round():
    self.pli=Hand(name="Pli in progress", sort=False)
    self.pioche =Hand(name="pioche",cards=[Card(i,j) for i in const.liste_numero for j in const.liste_couleur]) #first game
    players=self.random_draw()
-   self.teams=[Team(team_name=team1_name, team_number=0, j1_name=j1_name, j1_random=j1_random, j1_cards=players[0],
-                      j2_name=j3_name, j2_random=j3_random, j2_cards=players[2]),
-                 Team(team_name=team2_name, team_number=1, j1_name=j2_name, j1_random=j2_random, j1_cards=players[1],
-                      j2_name=j4_name, j2_random=j4_random, j2_cards=players[3])]
+   self.teams=[Team(team_name=team1_name, team_number=0,
+                    j1_name=j1_name, j1_random=j1_random, j1_cards=players[0],
+                    j2_name=j3_name, j2_random=j3_random, j2_cards=players[2]),
+               Team(team_name=team2_name, team_number=1,
+                    j1_name=j2_name, j1_random=j2_random, j1_cards=players[1],
+                    j2_name=j4_name, j2_random=j4_random, j2_cards=players[3])]
    self.hidden=hidden
 
   def random_draw(self):
@@ -43,6 +46,19 @@ class Round():
     for player in players:
       for card in player:
         card.rest=True
+
+    self.pioche.reinitialize()
+    return players
+
+  def classic_draw(self, cut=False):
+    """
+    simulate the classic distribution in 3 3 2 self.pioche must countain the card in the rigth order
+    """
+    if cut :
+      print("ct")
+
+    players=[(self.pioche.cards[3*i:3*i+3]+self.pioche.cards[3*i+12:3*i+15]+self.pioche.cards[2*i+24:2*i+26])
+            for i in range(4)]
 
     self.pioche.reinitialize()
     return players
@@ -277,6 +293,17 @@ if __name__=="__main__"   :
   myround = Round( team1_name ="Les winners", j1_name="Bob", j1_random=True, j3_name="Fred", j3_random=True,
                    team2_name="Les loseurs", j2_name = "Bill", j2_random=True, j4_name="John", j4_random=True, hidden=False) # e1 et e2 inutiles
 
+  "check if pioche is empty"
+  
+  assert(len(myround.pli.cards)==0)
+  assert(myround.pli.points==0)
+  assert(myround.pli.rest["coeur"]==0)
+  assert(myround.pli.rest["cards"]==0)
+  assert(myround.pli.rest["pique"]==0)
+  assert(myround.pli.rest["trefle"]==0)
+  assert(myround.pli.rest["carreau"]==0)
+  assert(len(myround.pli.rest)==5)
+
   "random draw cards assert that all cards are drawing"
   countinghand=Hand()
   for team in myround.teams :
@@ -295,6 +322,35 @@ if __name__=="__main__"   :
   assert(len(countinghand.rest)==5)
   for i in range(32):
     assert(countinghand.cards[i] not in (countinghand.cards[:i]+countinghand.cards[i+1:])) #check for double
+  
+  
+
+  "check classic_drawing "
+  
+  myround.pioche = Hand(name="pioche",cards=[Card(i,j) for i in const.liste_numero for j in const.liste_couleur])
+  players=myround.classic_draw()
+  
+  "check if pioche is empty"
+  
+  assert(len(myround.pli.cards)==0)
+  assert(myround.pli.points==0)
+  assert(myround.pli.rest["coeur"]==0)
+  assert(myround.pli.rest["cards"]==0)
+  assert(myround.pli.rest["pique"]==0)
+  assert(myround.pli.rest["trefle"]==0)
+  assert(myround.pli.rest["carreau"]==0)
+  assert(len(myround.pli.rest)==5)
+
+
+  
+  "check drawing"
+  for player in players :
+    "7 8 9 coeur d r 10 pique 7 8 trefle"
+    "v d r coeur As pique 7 8 carreau 9 v trefle"
+    "10 as coeur 7 pique 9 v d carreau d r trefle"
+    "8 9 v pique r 10 as carreau 10 as trefle"
+    myhand=Hand(cards=player)
+    myhand.display()
 
 
   """

@@ -18,7 +18,13 @@ class Card():
     self.atout=False
     self.points=0
     self.ID=number+color  #ATENTION SI Numero = None ne devrait pas marcher
-  
+    
+  def __eq__(self, other):
+    """
+    check if self and oher have the same ID
+    """
+    return (self.ID==other.ID)
+    
 if __name__=="__main__"   :             
   mycard=Card("7","Coeur")
   mycard2=Card("7","Coeur",False)
@@ -31,5 +37,17 @@ if __name__=="__main__"   :
   assert(mycard.value==None)
   assert(mycard.points==0)
   assert(mycard.ID=="7Coeur")
+  
+  print("test OK")
+  
+  print("test __eq__")
+
+  assert(mycard==mycard2)
+  cards=[mycard]*5
+  assert( mycard2 in cards)
+  
+  assert(Card("7","Coeur") in cards)
+  
+  
   
   print("test OK")

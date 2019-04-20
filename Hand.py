@@ -141,7 +141,24 @@ class Hand():
                 winner=card
     return self.cards.index(winner)
 
+  def test(self, name="Cards", coeur=0, pique=0, carreau=0, trefle=0, points=0):
+    """
+    assert that the hand is as it should be. It is set by default as empty
+    """
+    assert(self.name==name)
+    assert(self.points==points)
+    assert(len(self.rest)==5)
+    assert(self.rest["coeur"]==coeur)
+    assert(self.rest["pique"]==pique)
+    assert(self.rest["carreau"]==carreau)
+    assert(self.rest["trefle"]==trefle)
+    assert(len(self.cards)==self.rest["cards"]==coeur+pique+carreau+trefle)
+
+
 if __name__=="__main__"   :
+  
+
+
 
   print("ini and color_sort test")
   mycard1=Card("7","carreau")
@@ -166,33 +183,26 @@ if __name__=="__main__"   :
   for key in myhand.rest :
     assert(myhand.rest[key]==0)
   assert(len(myhand.rest)==5)
+  
+  print("Test OK")
+
+  
+  print("assert that test work correctly")
+    
+  myhand2.test("Pli",1,0,1,0,0)
+  myhand.test()
 
   print("Test OK")
 
 
   print("add test")
   myhand += myhand2
-  assert(myhand.name=="Cards")
-  assert(len(myhand.cards)==2)
-  assert(myhand.points==0)
-  assert(myhand.rest["coeur"]==1)
-  assert(myhand.rest["cards"]==2)
-  assert(myhand.rest["pique"]==0)
-  assert(myhand.rest["trefle"]==0)
-  assert(myhand.rest["carreau"]==1)
-  assert(myhand.cards[0].color=="coeur")
-  assert(myhand.cards[1].color=="carreau")
-  assert(len(myhand.rest)==5)
+  myhand.test(carreau=1,coeur=1)
   print("Test OK")
 
 
   print("reintialize test")
-  assert(myhand2.name=="Pli")
-  assert(len(myhand2.cards)==0)
-  assert(myhand2.points==0)
-  for key in myhand2.rest :
-    assert(myhand2.rest[key]==0)
-  assert(len(myhand2.rest)==5)
+  myhand2.test(name="Pli")
   print("Test OK")
 
 
@@ -200,30 +210,24 @@ if __name__=="__main__"   :
   mycard1.points+=4
   mycard2.points+=5
   assert(myhand.count_points()==9==myhand.points)
-  assert(myhand.points==9)
   assert(myhand2.count_points()==myhand2.points==0)
 
 
   pioche =[ Card(i,j) for j in const.liste_couleur[:4] for i in const.liste_numero]
   mypioche=Hand(cards=pioche,name="pioche")
-  assert(mypioche.name=="pioche")
-  assert(len(mypioche.cards)==32)
-  assert(mypioche.rest["cards"]==32)
-  assert(mypioche.cards==pioche)
-  for color in const.liste_couleur[:4]:
-    assert(mypioche.rest[color]==8)
+  mypioche.test("pioche",8,8,8,8,0)
   print("Test OK")
 
 
   print("color test")
+  mycolor={}
   for color in const.liste_couleur[:4]:
-    mycolor=mypioche.color(color)
-    assert(mycolor.name==color)
-    assert(len(mycolor.cards)==8)
-    assert(mycolor.points==0)
-    assert(mycolor.rest["cards"]==8)
-    assert(mycolor.rest[color]==8)
-    assert(len(mycolor.rest)==5)
+    mycolor[color]=mypioche.color(color)
+  mycolor["coeur"].test(name="coeur",coeur=8)
+  mycolor["pique"].test(name="pique",pique=8)
+  mycolor["carreau"].test(name="carreau",carreau=8)
+  mycolor["trefle"].test(name="trefle",trefle=8)
+
 
   print("Test OK")
 
@@ -238,24 +242,14 @@ if __name__=="__main__"   :
   print("remove test")
   mypioche.cards[4].rest=False
   mypioche.remove_cards()
-  assert(mypioche.name=="pioche")
-  assert(len(mypioche.cards)==31)
-  assert(mypioche.rest["cards"]==31)
-  assert(mypioche.rest["coeur"]==7)
-  assert(mypioche.rest["pique"]==8)
-  assert(mypioche.rest["trefle"]==8)
-  assert(mypioche.rest["carreau"]==8)
+  mypioche.test("pioche",7,8,8,8)
+
 
   mypioche.cards[4].rest=False
   mypioche.cards[7].rest=False
   mypioche.remove_cards()
-  assert(mypioche.name=="pioche")
-  assert(len(mypioche.cards)==29)
-  assert(mypioche.rest["cards"]==29)
-  assert(mypioche.rest["coeur"]==6)
-  assert(mypioche.rest["pique"]==7)
-  assert(mypioche.rest["trefle"]==8)
-  assert(mypioche.rest["carreau"]==8)
+  mypioche.test("pioche",6,7,8,8)
+
   print("Test OK")
 
 
@@ -276,47 +270,18 @@ if __name__=="__main__"   :
 
   myhand3.play_card(pli=mypli, choosen_card=mycard3)
 
-  assert(myhand3.name=="Cards")
-  assert(len(myhand3.cards)==1)
-  assert(myhand3.points==mypli.points==0)
-  assert(myhand3.rest["cards"]==1)
-  assert(myhand3.rest["coeur"]==1)
-  assert(myhand3.rest["pique"]==0)
-  assert(myhand3.rest["trefle"]==0)
-  assert(myhand3.rest["carreau"]==0)
-  assert(len(myhand3.rest)==5)
+  myhand3.test(coeur=1)
 
-  assert(mypli.name=="Pli")
-  assert(len(mypli.cards)==3)
-  assert(mypli.rest["cards"]==3)
-  assert(mypli.rest["coeur"]==1)
-  assert(mypli.rest["pique"]==1)
-  assert(mypli.rest["trefle"]==0)
-  assert(mypli.rest["carreau"]==1)
-  assert(len(mypli.rest)==5)
+  mypli.test("Pli",coeur=1,pique=1,carreau=1)
+
 
   mypli.play_card(pli=myhand3, choosen_card=mycard3)
   mypli.play_card(pli=myhand3, choosen_card=mycard5)
   mypli.play_card(pli=myhand3, choosen_card=mycard6)
 
-  assert(myhand3.name=="Cards")
-  assert(len(myhand3.cards)==4)
-  assert(myhand3.points==mypli.points==0)
-  assert(myhand3.rest["cards"]==4)
-  assert(myhand3.rest["coeur"]==2)
-  assert(myhand3.rest["pique"]==1)
-  assert(myhand3.rest["trefle"]==0)
-  assert(myhand3.rest["carreau"]==1)
-  assert(len(myhand3.rest)==5)
+  myhand3.test(coeur=2,pique=1,carreau=1)
+  mypli.test("Pli")
 
-  assert(mypli.name=="Pli")
-  assert(len(mypli.cards)==0)
-  assert(mypli.rest["cards"]==0)
-  assert(mypli.rest["coeur"]==0)
-  assert(mypli.rest["pique"]==0)
-  assert(mypli.rest["trefle"]==0)
-  assert(mypli.rest["carreau"]==0)
-  assert(len(mypli.rest)==5)
   print("Test OK")
 
 

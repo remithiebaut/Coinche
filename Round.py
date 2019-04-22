@@ -10,6 +10,7 @@ import generical_function as generic
 from Hand import Hand
 from Card import Card
 from Team import Team
+import random as rand
 
 
 class Round():
@@ -55,7 +56,10 @@ class Round():
     simulate the classic distribution in 3 3 2 self.pioche must countain the card in the rigth order
     """
     if cut :
-      print("ct")
+      k=rand.randrange(32)#random cut the kieme card become the first the k-1 ieme become the last
+
+      self.pioche.cards = self.pioche.cards[k:] + self.pioche.cards[:k]
+
 
     players=[(self.pioche.cards[3*i:3*i+3]+self.pioche.cards[3*i+12:3*i+15]+self.pioche.cards[2*i+24:2*i+26])
             for i in range(4)]
@@ -314,11 +318,10 @@ if __name__=="__main__"   :
     assert(countinghand.cards[i] not in (countinghand.cards[:i]+countinghand.cards[i+1:])) #check for double
     assert(countinghand.check_card(cards_of_pioche[i]))
 
-  
 
-  "check classic_drawing "
+  print("check classic_drawing ")
   
-  myround.pioche = Hand(name="pioche",cards=[Card(i,j) for i in const.liste_numero for j in const.liste_couleur])
+  myround.pioche = Hand(name="pioche",cards=[Card(i,j) for i in const.liste_numero for j in const.liste_couleur[:4]])
   players=myround.classic_draw()
   
   "check if pioche is empty"
@@ -326,7 +329,6 @@ if __name__=="__main__"   :
   myround.pli.test("Pli in progress")
 
 
-  
   "check drawing"
   
   "the order should be"
@@ -353,10 +355,27 @@ if __name__=="__main__"   :
 
   for p in range(4) :
     myhand=Hand(cards=players[p])
-    myhand.display()
     for i in range(8):
       assert(myhand.check_card(players_cards[p][i]))
 
+  print("test ok")
+  
+  print("cut test")
+  
+  myround.pioche = Hand(name="pioche",cards=[Card(i,j) for i in const.liste_numero for j in const.liste_couleur[:4]])
+  players=myround.classic_draw(cut=True)
+
+  countinghand=Hand(cards= (players[0]+players[1]+players[2]+players[3]) )
+  cards_of_pioche=[Card(i,j) for i in const.liste_numero for j in const.liste_couleur[:4]]
+
+  countinghand.test("Cards",8,8,8,8)
+
+
+  for i in range(32):
+    assert(countinghand.cards[i] not in (countinghand.cards[:i]+countinghand.cards[i+1:])) #check for double
+    assert(countinghand.check_card(cards_of_pioche[i]))
+
+  
   """
   mycard1=Card("7","carreau")
   mycard2=Card("7","coeur")

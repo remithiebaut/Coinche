@@ -14,6 +14,9 @@ import random as rand
 
 
 class Round():
+  """
+  One Round of coinche
+  """
   def __init__(self, team1_name, j1_name, j1_random, j3_name, j3_random,
                team2_name, j2_name, j2_random, j4_name, j4_random, hidden=False): # e1 et e2 inutiles
 
@@ -30,6 +33,8 @@ class Round():
                     j1_name=j2_name, j1_random=j2_random, j1_cards=players[1],
                     j2_name=j4_name, j2_random=j4_random, j2_cards=players[3])]
    self.hidden=hidden
+
+
 
   def random_draw(self):
     """
@@ -51,6 +56,8 @@ class Round():
     self.pioche.reinitialize()
     return players
 
+
+
   def classic_draw(self, cut=False):
     """
     simulate the classic distribution in 3 3 2 self.pioche must countain the card in the rigth order
@@ -69,13 +76,76 @@ class Round():
 
 
 
+  def shortkey(self): #write quicker
+    """
+    In order to write quicker return an array of four players j1 j2 j3 j4
+    """
+    players=[self.teams[0].players[0],  self.teams[1].players[0], self.teams[0].players[1], self.teams[1].players[1]]
+    return players
 
 
-  def debut(self, joueurs):
+
+  def choose_atout(self, random=True): # pensez a afficher avant surcoinche empecher danooncer 170 180 tout atout sans atout
+     """
+     fixe the atout and return true if someone didnt pass his turn
+     """
+     j=self.shortkey()
+     mise=0
+     annonce_actuelle=-1
+     tour=0
+     while tour!=4 and mise!='generale' and not self.coinche:
+        for player in j:
+           if tour==4 or mise=='generale' or self.coinche:
+              break
+           else:
+
+              player.main.afficher(player.aleatoire)
+
+              if not generic.decision(aleatoire=player.aleatoire, question='annoncer', ouverte=False): #local variable referenced before assignment
+                 tour+=1
+
+              else:
+                 tour=1
+
+                 self.atout=generic.decision(const.liste_couleur, aleatoire=player.aleatoire, question ="Choisir la couleur d'atout : %s " % const.liste_couleur)
+
+                 while True :
+
+                    mise = generic.decision(const.liste_annonce, aleatoire=player.aleatoire, question="Choisir la hauteur d'annonce : %s " % const.liste_annonce )
+                    annonce_voulue=const.liste_annonce.index(mise)
+                    if annonce_voulue>annonce_actuelle :
+                        annonce_actuelle=annonce_voulue
+                        print('le player {} prend à {} {} !'.format(player.name,mise,self.atout))
+                        break
+
+                 self.teams[player.team].mise=mise #fixe la mise de lteam attention mise est un char
+                 self.teams[(player.team+1)%2].mise=None
+                 if mise == "generale":
+                     player.generale=True
+                 for coincheur in self.teams[(player.team+1)%2].players:
+                   coincheur.main.afficher(coincheur.aleatoire)
+                   if not self.coinche :
+                      self.coinche=generic.decision(aleatoire=coincheur.aleatoire, question='coincher sur {} {} ?'.format(mise,self.atout), ouverte=False)
+                      if self.coinche:
+                         for surcoincheur in self.teams[player.team].players:
+                            surcoincheur.main.afficher(surcoincheur.aleatoire)
+                            if not self.surcoinche :
+                               self.surcoinche=generic.decision(aleatoire=surcoincheur.aleatoire, question='surcoincher sur {} {} ?'.format(mise,self.atout), ouverte=False)
+     if (self.atout==None):
+          return False
+     for team in self.teams :
+          if team.mise!=None:
+              print("l'équipe {} a pris {} à {} ".format(team.nom, team.mise, self.atout))
+     return True
+
+
+
+  def debut(self, players):
+    
       #normal
       if self.atout in const.liste_couleur[:4]:
 
-          for j in joueurs:
+          for j in players:
               belote=0
               for carte in j.main.cartes:
                   if carte.couleur==self.atout:
@@ -93,14 +163,14 @@ class Round():
                       carte.points=const.points[const.liste_mode[0]][carte.numero]
       #sans atout
       elif self.atout==const.liste_couleur[4]:
-          for j in joueurs :
+          for j in players :
               for carte in j.main.cartes:
                   carte.valeur=const.liste_numero.index(carte.numero)
                   carte.points=const.points[const.liste_mode[2]][carte.numero]
 
       #tout atout
       elif self.atout==const.liste_couleur[5]:
-          for j in joueurs :
+          for j in players :
               for carte in j.main.cartes:
                   carte.atout=True
                   carte.valeur=const.ordre_atout.index(carte.numero)
@@ -117,68 +187,13 @@ class Round():
               else :
                   equipe.mise=int(equipe.mise)
 
-      for j in joueurs: #donne le nombre des points de chaque main nest pas mis a jour par la suite
+      for j in players: #donne le nombre des points de chaque main nest pas mis a jour par la suite
           j.main.afficher()
           total_points+=j.main.compter_points()
 
       assert(total_points==152) #probleme lorrs dune des boucles
 
-  def choisir_atout(manche, aleatoire=True): # pensez a afficher avant surcoinche empecher danooncer 170 180 tout atout sans atout
-     """
-     fixe l'atout et la mise d'atout et retourne True si tout le monde n'a pas passé
-     """
-     j=manche.raccourci()
-     mise=0
-     annonce_actuelle=-1
-     tour=0
-     while tour!=4 and mise!='generale' and not manche.coinche:
-        for joueur in j:
-           if tour==4 or mise=='generale' or manche.coinche:
-              break
-           else:
 
-              joueur.main.afficher(joueur.aleatoire)
-
-              if not generic.decision(aleatoire=joueur.aleatoire, question='annoncer', ouverte=False): #local variable referenced before assignment
-                 tour+=1
-
-              else:
-                 tour=1
-
-                 manche.atout=generic.decision(const.liste_couleur, aleatoire=joueur.aleatoire, question ="Choisir la couleur d'atout : %s " % const.liste_couleur)
-
-                 while True :
-
-                    mise = generic.decision(const.liste_annonce, aleatoire=joueur.aleatoire, question="Choisir la hauteur d'annonce : %s " % const.liste_annonce )
-                    annonce_voulue=const.liste_annonce.index(mise)
-                    if annonce_voulue>annonce_actuelle :
-                        annonce_actuelle=annonce_voulue
-                        print('le joueur {} prend à {} {} !'.format(joueur.name,mise,manche.atout))
-                        break
-
-                 manche.equipes[joueur.equipe].mise=mise #fixe la mise de lequipe attention mise est un char
-                 manche.equipes[(joueur.equipe+1)%2].mise=None
-                 if mise == "generale":
-                     joueur.generale=True
-                 for coincheur in manche.equipes[(joueur.equipe+1)%2].joueurs:
-                   coincheur.main.afficher(coincheur.aleatoire)
-                   if not manche.coinche :
-                      manche.coinche=generic.decision(aleatoire=coincheur.aleatoire, question='coincher sur {} {} ?'.format(mise,manche.atout), ouverte=False)
-                      if manche.coinche:
-                         for surcoincheur in manche.equipes[joueur.equipe].joueurs:
-                            surcoincheur.main.afficher(surcoincheur.aleatoire)
-                            if not manche.surcoinche :
-                               manche.surcoinche=generic.decision(aleatoire=surcoincheur.aleatoire, question='surcoincher sur {} {} ?'.format(mise,manche.atout), ouverte=False)
-     if (manche.atout==None):
-          return False
-     for equipe in manche.equipes :
-          if equipe.mise!=None:
-              print("l'équipe {} a pris {} à {} ".format(equipe.nom, equipe.mise, manche.atout))
-     return True
-
-  def raccourci(self): #allège lecriture
-       joueurs=[self.equipes[0].joueurs[0],  self.equipes[1].joueurs[0], self.equipes[0].joueurs[1], self.equipes[1].joueurs[1]]
-       return joueurs
 
   def resultat(self,score): # normalement mise nest pas char
       points_totaux=self.equipes[0].pli.compter_points()+self.equipes[1].pli.compter_points()
@@ -212,6 +227,8 @@ class Round():
               else :
                   print("l'équipe {} a chuté ".format(equipe.nom))
                   score[self.equipes[(equipe.numero+1)%2].nom] += 160*multiplicateur
+
+
 
   def cartes_possibles(self, couleur_choisie, j):
       """
@@ -261,6 +278,8 @@ class Round():
       #cas 2.22 pas datout
       return j.main.cartes
 
+
+
   def jouer_pli(self,joueurs, nombre_plis, aleatoire=True): #•fonctionne
       """
       prends en entrée le tableau ORDONNEE des joueurs de ce pli et le renvoi réordonné
@@ -288,19 +307,24 @@ class Round():
       if nombre_plis==8 :
           self.equipes[joueurs[winner].equipe].pli.points+=10
 
-
       self.pli=Hand(self.pli.name) #reinitialise le pli
       return nouvel_ordre
 
+
+
+
+
+
+
 if __name__=="__main__"   :
 
+  print("test init and random draw")
   myround = Round( team1_name ="Les winners", j1_name="Bob", j1_random=True, j3_name="Fred", j3_random=True,
                    team2_name="Les loseurs", j2_name = "Bill", j2_random=True, j4_name="John", j4_random=True, hidden=False) # e1 et e2 inutiles
 
   "check if pioche is empty"
   
   myround.pli.test("Pli in progress")
-
 
   "random draw cards assert that all cards are drawing"
   countinghand=Hand()
@@ -313,10 +337,12 @@ if __name__=="__main__"   :
 
   countinghand.test("Cards",8,8,8,8)
 
-
   for i in range(32):
     assert(countinghand.cards[i] not in (countinghand.cards[:i]+countinghand.cards[i+1:])) #check for double
     assert(countinghand.check_card(cards_of_pioche[i]))
+
+  print("test ok")
+
 
 
   print("check classic_drawing ")
@@ -327,7 +353,6 @@ if __name__=="__main__"   :
   "check if pioche is empty"
   
   myround.pli.test("Pli in progress")
-
 
   "check drawing"
   
@@ -360,139 +385,35 @@ if __name__=="__main__"   :
 
   print("test ok")
   
+  
+  
   print("cut test")
+
+  for nb_of_try in range(100):
+    
+    myround.pioche = Hand(name="pioche",cards=[Card(i,j) for i in const.liste_numero for j in const.liste_couleur[:4]])
+    players=myround.classic_draw(cut=True)
   
-  myround.pioche = Hand(name="pioche",cards=[Card(i,j) for i in const.liste_numero for j in const.liste_couleur[:4]])
-  players=myround.classic_draw(cut=True)
-
-  countinghand=Hand(cards= (players[0]+players[1]+players[2]+players[3]) )
-  cards_of_pioche=[Card(i,j) for i in const.liste_numero for j in const.liste_couleur[:4]]
-
-  countinghand.test("Cards",8,8,8,8)
-
-
-  for i in range(32):
-    assert(countinghand.cards[i] not in (countinghand.cards[:i]+countinghand.cards[i+1:])) #check for double
-    assert(countinghand.check_card(cards_of_pioche[i]))
-
+    countinghand=Hand(cards= (players[0]+players[1]+players[2]+players[3]) )
+    cards_of_pioche=[Card(i,j) for i in const.liste_numero for j in const.liste_couleur[:4]]
   
-  """
-  mycard1=Card("7","carreau")
-  mycard2=Card("7","coeur")
-  myteam=Team(team_name="Les winners", team_number=0, j1_name="Bob", j1_random = True, j1_cards=[mycard1, mycard2],
-              j2_name="Fred", j2_random = True, j2_cards=[])
-
-  assert(myteam.number==0)
-  assert(myteam.name=="Les winners")
-  assert(myteam.bet==None)# == mise
-
-
-  "pli test"
-  assert(myteam.pli.name=="plis de l'equipe 0")
-  assert(len(myteam.pli.cards)==0)
-  assert(myteam.pli.points==0)
-  assert(myteam.pli.rest["coeur"]==0)
-  assert(myteam.pli.rest["cards"]==0)
-  assert(myteam.pli.rest["pique"]==0)
-  assert(myteam.pli.rest["trefle"]==0)
-  assert(myteam.pli.rest["carreau"]==0)
-  assert(len(myteam.pli.rest)==5)
-
-
-  "player 1 test"
-  assert(myteam.players[0].Hand.name==myteam.players[0].name=="Bob")
-  assert(len(myteam.players[0].Hand.cards)==2)
-  assert(myteam.players[0].Hand.points==0)
-  assert(myteam.players[0].Hand.rest["coeur"]==1)
-  assert(myteam.players[0].Hand.rest["cards"]==2)
-  assert(myteam.players[0].Hand.rest["pique"]==0)
-  assert(myteam.players[0].Hand.rest["trefle"]==0)
-  assert(myteam.players[0].Hand.rest["carreau"]==1)
-  assert(myteam.players[0].Hand.cards[0].color=="coeur")
-  assert(myteam.players[0].Hand.cards[1].color=="carreau")
-  assert(len(myteam.players[0].Hand.rest)==5)
-  assert(myteam.players[0].plis==0)
-  assert(myteam.players[0].team==0)
-  assert(myteam.players[0].generale==False)
-  assert(myteam.players[0].random==True)
-
-
-  "player 2 test"
-
-  assert(myteam.players[1].Hand.name==myteam.players[1].name=="Fred")
-  assert(len(myteam.players[1].Hand.cards)==0)
-  assert(myteam.players[1].Hand.points==0)
-  assert(myteam.players[1].Hand.rest["coeur"]==0)
-  assert(myteam.players[1].Hand.rest["cards"]==0)
-  assert(myteam.players[1].Hand.rest["pique"]==0)
-  assert(myteam.players[1].Hand.rest["trefle"]==0)
-  assert(myteam.players[1].Hand.rest["carreau"]==0)
-  assert(len(myteam.players[1].Hand.rest)==5)
-  assert(myteam.players[1].plis==0)
-  assert(myteam.players[1].team==0)
-  assert(myteam.players[1].generale==False)
-  assert(myteam.players[1].random==True)
-
-  myteam.players[1].reinitialize(cards=[mycard1, mycard2])
-  assert(myteam.players[1].Hand.name==myteam.players[1].name=="Fred")
-  assert(len(myteam.players[1].Hand.cards)==2)
-  assert(myteam.players[1].Hand.points==0)
-  assert(myteam.players[1].Hand.rest["coeur"]==1)
-  assert(myteam.players[1].Hand.rest["cards"]==2)
-  assert(myteam.players[1].Hand.rest["pique"]==0)
-  assert(myteam.players[1].Hand.rest["trefle"]==0)
-  assert(myteam.players[1].Hand.rest["carreau"]==1)
-  assert(len(myteam.players[1].Hand.rest)==5)
-  assert(myteam.players[1].plis==0)
-  assert(myteam.players[1].team==0)
-  assert(myteam.players[1].generale==False)
-  assert(myteam.players[1].random==True)
-
-  "test reinitialize"
-  myteam.reinitialize(j1_cards=[mycard1, mycard2], j2_cards=[])
-
-  assert(myteam.pli.name=="plis de l'equipe 0")
-  assert(len(myteam.pli.cards)==0)
-  assert(myteam.pli.points==0)
-  assert(myteam.pli.rest["coeur"]==0)
-  assert(myteam.pli.rest["cards"]==0)
-  assert(myteam.pli.rest["pique"]==0)
-  assert(myteam.pli.rest["trefle"]==0)
-  assert(myteam.pli.rest["carreau"]==0)
-  assert(len(myteam.pli.rest)==5)
-
-
-  assert(myteam.players[0].Hand.name==myteam.players[0].name=="Bob")
-  assert(len(myteam.players[0].Hand.cards)==2)
-  assert(myteam.players[0].Hand.points==0)
-  assert(myteam.players[0].Hand.rest["coeur"]==1)
-  assert(myteam.players[0].Hand.rest["cards"]==2)
-  assert(myteam.players[0].Hand.rest["pique"]==0)
-  assert(myteam.players[0].Hand.rest["trefle"]==0)
-  assert(myteam.players[0].Hand.rest["carreau"]==1)
-  assert(myteam.players[0].Hand.cards[0].color=="coeur")
-  assert(myteam.players[0].Hand.cards[1].color=="carreau")
-  assert(len(myteam.players[0].Hand.rest)==5)
-  assert(myteam.players[0].plis==0)
-  assert(myteam.players[0].team==0)
-  assert(myteam.players[0].generale==False)
-  assert(myteam.players[0].random==True)
-
-
-  assert(myteam.players[1].Hand.name==myteam.players[1].name=="Fred")
-  assert(len(myteam.players[1].Hand.cards)==0)
-  assert(myteam.players[1].Hand.points==0)
-  assert(myteam.players[1].Hand.rest["coeur"]==0)
-  assert(myteam.players[1].Hand.rest["cards"]==0)
-  assert(myteam.players[1].Hand.rest["pique"]==0)
-  assert(myteam.players[1].Hand.rest["trefle"]==0)
-  assert(myteam.players[1].Hand.rest["carreau"]==0)
-  assert(len(myteam.players[1].Hand.rest)==5)
-  assert(myteam.players[1].plis==0)
-  assert(myteam.players[1].team==0)
-  assert(myteam.players[1].generale==False)
-  assert(myteam.players[1].random==True)
-  """
-
+    countinghand.test("Cards",8,8,8,8)
+  
+  
+    for i in range(32):
+      assert(countinghand.cards[i] not in (countinghand.cards[:i]+countinghand.cards[i+1:])) #check for double
+      assert(countinghand.check_card(cards_of_pioche[i]))
 
   print("test OK")
+  
+  
+  
+  print("shortcut test")
+  
+  p=myround.shortkey()
+  p[1].Hand=Hand(cards=[Card("7","trefle")])
+  assert(myround.teams[1].players[0].Hand.check_card(Card("7","trefle")))
+  
+  print("test OK")
+
+

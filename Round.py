@@ -295,14 +295,8 @@ if __name__=="__main__"   :
 
   "check if pioche is empty"
   
-  assert(len(myround.pli.cards)==0)
-  assert(myround.pli.points==0)
-  assert(myround.pli.rest["coeur"]==0)
-  assert(myround.pli.rest["cards"]==0)
-  assert(myround.pli.rest["pique"]==0)
-  assert(myround.pli.rest["trefle"]==0)
-  assert(myround.pli.rest["carreau"]==0)
-  assert(len(myround.pli.rest)==5)
+  myround.pli.test("Pli in progress")
+
 
   "random draw cards assert that all cards are drawing"
   countinghand=Hand()
@@ -310,19 +304,17 @@ if __name__=="__main__"   :
     for player in team.players :
       assert(len(player.Hand.cards)==player.Hand.rest["cards"]==8)
       countinghand+=player.Hand
+      
+  cards_of_pioche=[Card(i,j) for i in const.liste_numero for j in const.liste_couleur[:4]]
+
+  countinghand.test("Cards",8,8,8,8)
 
 
-  assert(len(countinghand.cards)==32)
-  assert(countinghand.points==0)
-  assert(countinghand.rest["coeur"]==8)
-  assert(countinghand.rest["cards"]==32)
-  assert(countinghand.rest["pique"]==8)
-  assert(countinghand.rest["trefle"]==8)
-  assert(countinghand.rest["carreau"]==8)
-  assert(len(countinghand.rest)==5)
+  countinghand.display()
   for i in range(32):
     assert(countinghand.cards[i] not in (countinghand.cards[:i]+countinghand.cards[i+1:])) #check for double
-  
+    assert(countinghand.check_card(cards_of_pioche[i]))
+
   
 
   "check classic_drawing "

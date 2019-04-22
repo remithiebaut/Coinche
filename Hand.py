@@ -153,6 +153,16 @@ class Hand():
     assert(self.rest["carreau"]==carreau)
     assert(self.rest["trefle"]==trefle)
     assert(len(self.cards)==self.rest["cards"]==coeur+pique+carreau+trefle)
+    
+  def check_card(self,card):
+    """
+    check if a card with the same ID is in the hand
+    """
+    for i in range(self.rest["cards"]):
+      if card.ID==self.cards[i].ID:
+        return True
+    else :
+      return False
 
 
 if __name__=="__main__"   :
@@ -325,6 +335,19 @@ if __name__=="__main__"   :
   septcoeur.value=1
   dpique.value=5
   assert(mypli3.winner()==0)
+  
+  print("Test OK")
+
+  print("Check check_card")
+
+  myhand=Hand(cards=[aspique,dpique])
+  assert(myhand.check_card(Card("As","pique")))
+  assert(myhand.check_card(Card("D","pique")))
+  assert(not myhand.check_card(Card("7","pique")))
+  assert(myhand.check_card(aspique))
+  assert(myhand.check_card(dpique))
+
+
 
 
 

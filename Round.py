@@ -310,7 +310,6 @@ if __name__=="__main__"   :
   countinghand.test("Cards",8,8,8,8)
 
 
-  countinghand.display()
   for i in range(32):
     assert(countinghand.cards[i] not in (countinghand.cards[:i]+countinghand.cards[i+1:])) #check for double
     assert(countinghand.check_card(cards_of_pioche[i]))
@@ -324,26 +323,39 @@ if __name__=="__main__"   :
   
   "check if pioche is empty"
   
-  assert(len(myround.pli.cards)==0)
-  assert(myround.pli.points==0)
-  assert(myround.pli.rest["coeur"]==0)
-  assert(myround.pli.rest["cards"]==0)
-  assert(myround.pli.rest["pique"]==0)
-  assert(myround.pli.rest["trefle"]==0)
-  assert(myround.pli.rest["carreau"]==0)
-  assert(len(myround.pli.rest)==5)
+  myround.pli.test("Pli in progress")
 
 
   
   "check drawing"
-  for player in players :
-    "7 8 9 coeur d r 10 pique 7 8 trefle"
-    "v d r coeur As pique 7 8 carreau 9 v trefle"
-    "10 as coeur 7 pique 9 v d carreau d r trefle"
-    "8 9 v pique r 10 as carreau 10 as trefle"
-    myhand=Hand(cards=player)
-    myhand.display()
+  
+  "the order should be"
+  "7 8 9 coeur d r 10 pique 7 8 trefle"
+  "v d r coeur As pique 7 8 carreau 9 v trefle"
+  "10 as coeur 7 pique 9 v d carreau d r trefle"
+  "8 9 v pique r 10 as carreau 10 as trefle"
+  players_cards=[]
+  players_cards.append([Card("7", "coeur"),Card("8", "coeur"),Card("9", "coeur"),
+           Card("D", "pique"),Card("R", "pique"),Card("10", "pique"),
+           Card("7", "trefle"),Card("8", "trefle")])
+  
+  players_cards.append([Card("V", "coeur"),Card("D", "coeur"),Card("R", "coeur"),
+           Card("As", "pique"),Card("7", "carreau"),Card("8", "carreau"),
+           Card("9", "trefle"),Card("V", "trefle")])
+  
+  players_cards.append([Card("10", "coeur"),Card("As", "coeur"),Card("7", "pique"),
+           Card("9", "carreau"),Card("V", "carreau"),Card("D", "carreau"),
+           Card("D", "trefle"),Card("R", "trefle")])
+  
+  players_cards.append([Card("8", "pique"),Card("9", "pique"),Card("V", "pique"),
+           Card("R", "carreau"),Card("10", "carreau"),Card("As", "carreau"),
+           Card("10", "trefle"),Card("As", "trefle")])
 
+  for p in range(4) :
+    myhand=Hand(cards=players[p])
+    myhand.display()
+    for i in range(8):
+      assert(myhand.check_card(players_cards[p][i]))
 
   """
   mycard1=Card("7","carreau")

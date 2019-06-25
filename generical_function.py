@@ -52,8 +52,8 @@ def choix_aleatoire(liste_choix_possible) :
     choix=random.randrange(len(liste_choix_possible))
     return liste_choix_possible[choix]
 
-def decision(liste_choix_possible=[True,False], aleatoire=True, question="", ouverte=True):
-    if aleatoire :
+def decision(liste_choix_possible=[True,False], random=True, question="", ouverte=True):
+    if random :
         return(choix_aleatoire(liste_choix_possible))
     else :
         if ouverte:

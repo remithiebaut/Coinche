@@ -23,7 +23,8 @@ class Round():
    self.atout=None
    self.coinche=False #indicator of coinche
    self.surcoinche=False
-   self.pli=Hand(name="Pli in progress", sort=False)
+   self.pli=Hand(name="Pli in progress",cards=[], sort=False)
+   assert(self.pli.rest["cards"]==0)
    self.pioche =Hand(name="pioche",cards=[Card(i,j) for i in const.liste_numero for j in const.liste_couleur]) #first game
    players=self.random_draw()
    self.teams=[Team(team_name=team1_name, team_number=0,
@@ -85,230 +86,240 @@ class Round():
 
 
 
-  def choose_atout(self, random=True): # pensez a afficher avant surcoinche empecher danooncer 170 180 tout atout sans atout
+  def choose_atout(self, hidden=True): # pensez a display avant surcoinche empecher danooncer 170 180 tout atout sans atout
      """
-     fixe the atout and return true if someone didnt pass his turn
+     fix the atout and return true if someone didnt pass his turn
      """
      j=self.shortkey()
-     mise=0
+     bet=0
      annonce_actuelle=-1
-     tour=0
-     while tour!=4 and mise!='generale' and not self.coinche:
+     turn=0
+     while turn!=4 and bet!='generale' and not self.coinche:
         for player in j:
-           if tour==4 or mise=='generale' or self.coinche:
+           if turn==4 or bet=='generale' or self.coinche:
               break
            else:
+              if not hidden :  #GRAPHIC
+                player.Hand.display(player.random)
 
-              player.main.afficher(player.aleatoire)
-
-              if not generic.decision(aleatoire=player.aleatoire, question='annoncer', ouverte=False): #local variable referenced before assignment
-                 tour+=1
+              if not generic.decision(random=player.random, question='annoncer', ouverte=False): #local variable referenced before assignment
+                 turn+=1
 
               else:
-                 tour=1
+                 turn=1
 
-                 self.atout=generic.decision(const.liste_couleur, aleatoire=player.aleatoire, question ="Choisir la couleur d'atout : %s " % const.liste_couleur)
+                 self.atout=generic.decision(const.liste_couleur, random=player.random, question ="Choisir la couleur d'atout : %s " % const.liste_couleur)
 
                  while True :
 
-                    mise = generic.decision(const.liste_annonce, aleatoire=player.aleatoire, question="Choisir la hauteur d'annonce : %s " % const.liste_annonce )
-                    annonce_voulue=const.liste_annonce.index(mise)
+                    bet = generic.decision(const.liste_annonce, random=player.random, question="Choisir la hauteur d'annonce : %s " % const.liste_annonce )
+                    annonce_voulue=const.liste_annonce.index(bet)
                     if annonce_voulue>annonce_actuelle :
                         annonce_actuelle=annonce_voulue
-                        print('le player {} prend à {} {} !'.format(player.name,mise,self.atout))
+                        
+                        if not hidden :  #GRAPHIC                          
+                          print(' {} prend à {} {} !'.format(player.name,bet,self.atout)) 
+                          
                         break
 
-                 self.teams[player.team].mise=mise #fixe la mise de lteam attention mise est un char
-                 self.teams[(player.team+1)%2].mise=None
-                 if mise == "generale":
+                 self.teams[player.team].bet=bet #fixe la bet de lteam attention bet est un char
+                 self.teams[(player.team+1)%2].bet=None
+                 if bet == "generale":
                      player.generale=True
                  for coincheur in self.teams[(player.team+1)%2].players:
-                   coincheur.main.afficher(coincheur.aleatoire)
+                   
+                   if not hidden :  #GRAPHIC
+                     coincheur.Hand.display(coincheur.random)
+                     
                    if not self.coinche :
-                      self.coinche=generic.decision(aleatoire=coincheur.aleatoire, question='coincher sur {} {} ?'.format(mise,self.atout), ouverte=False)
+                      self.coinche=generic.decision(random=coincheur.random, question='coincher sur {} {} ?'.format(bet,self.atout), ouverte=False)
                       if self.coinche:
                          for surcoincheur in self.teams[player.team].players:
-                            surcoincheur.main.afficher(surcoincheur.aleatoire)
-                            if not self.surcoinche :
-                               self.surcoinche=generic.decision(aleatoire=surcoincheur.aleatoire, question='surcoincher sur {} {} ?'.format(mise,self.atout), ouverte=False)
+                           
+                           if not hidden : #GRAPHIC
+                             surcoincheur.Hand.display(surcoincheur.random)
+                             
+                           if not self.surcoinche :
+                               self.surcoinche=generic.decision(random=surcoincheur.random, question='surcoincher sur {} {} ?'.format(bet,self.atout), ouverte=False)
      if (self.atout==None):
           return False
-     for team in self.teams :
-          if team.mise!=None:
-              print("l'équipe {} a pris {} à {} ".format(team.nom, team.mise, self.atout))
+        
+     if not hidden :  #GRAPHIC
+       for team in self.teams :
+            if team.bet!=None:
+                print("L'équipe '{}' a pris {} à {} !!!".format(team.name, team.bet, self.atout))
+                
      return True
 
 
 
-  def debut(self, players):
-    
-      #normal
-      if self.atout in const.liste_couleur[:4]:
+  def cards_update(self,hidden=True): #memory leak => the next round will start with a pli of 40 cards for no reason
+    """
+    Update the cards after the trump color is choosen
+    """
+    players=self.shortkey()
+    #normal
+    if self.atout in const.liste_couleur[:4]:
 
-          for j in players:
-              belote=0
-              for carte in j.main.cartes:
-                  if carte.couleur==self.atout:
-                      carte.atout=True
-                      carte.valeur=const.ordre_atout.index(carte.numero)
-                      carte.points=const.points[const.liste_mode[1]][carte.numero]
-                      if carte.numero=="R" or carte.numero=="D":
-                          belote+=1
-                          if belote==2:
-                              print("le joueur {} a la belote".format(j.name)) # achanger pour pas le dire direct a fonctionné deux fois ????
-                              self.equipes[j.equipe].pli.points+=20
+        for j in players:
+            belote=0
+            for card in j.Hand.cards:
+                if card.color==self.atout:
+                    card.atout=True
+                    card.value=const.ordre_atout.index(card.number)
+                    card.points=const.points[const.liste_mode[1]][card.number]
+                    if card.number=="R" or card.number=="D":
+                        belote+=1
+                        if belote==2:
+                            if not hidden :  #GRAPHIC
+                              print("le joueur {} a la belote".format(j.name)) # do not tell it right away
+                            self.teams[j.team].pli.points+=20
 
-                  else :
-                      carte.valeur=const.liste_numero.index(carte.numero)
-                      carte.points=const.points[const.liste_mode[0]][carte.numero]
-      #sans atout
-      elif self.atout==const.liste_couleur[4]:
-          for j in players :
-              for carte in j.main.cartes:
-                  carte.valeur=const.liste_numero.index(carte.numero)
-                  carte.points=const.points[const.liste_mode[2]][carte.numero]
+                else :
+                    card.value=const.liste_numero.index(card.number)
+                    card.points=const.points[const.liste_mode[0]][card.number]
+    #sans atout
+    elif self.atout==const.liste_couleur[4]:
+        for j in players :
+            for card in j.Hand.cards:
+                card.value=const.liste_numero.index(card.number)
+                card.points=const.points[const.liste_mode[2]][card.number]
 
-      #tout atout
-      elif self.atout==const.liste_couleur[5]:
-          for j in players :
-              for carte in j.main.cartes:
-                  carte.atout=True
-                  carte.valeur=const.ordre_atout.index(carte.numero)
-                  carte.points=const.points[const.liste_mode[3]][carte.numero]
+    #tout atout
+    elif self.atout==const.liste_couleur[5]:
+        for j in players :
+            for card in j.Hand.cards:
+                card.atout=True
+                card.value=const.ordre_atout.index(card.number)
+                card.points=const.points[const.liste_mode[3]][card.number]
 
-      total_points=0
+    total_points=0
 
-      for equipe in self.equipes: #associe la mise a un nombre de points
-          if equipe.mise!= None:
-              if equipe.mise=='capot':
-                  equipe.mise=250
-              elif equipe.mise=='generale':
-                  equipe.mise=500
-              else :
-                  equipe.mise=int(equipe.mise)
+    for team in self.teams: #associe la bet a un nombre de points
+        if team.bet!= None:
+            if team.bet=='capot':
+                team.bet=250
+            elif team.bet=='generale':
+                team.bet=500
+            else :
+                team.bet=int(team.bet)
 
-      for j in players: #donne le nombre des points de chaque main nest pas mis a jour par la suite
-          j.main.afficher()
-          total_points+=j.main.compter_points()
+    for j in players: #donne le nombre des points de chaque Hand nest pas mis a jour par la suite
+      
+      if not hidden :  #GRAPHIC
+        j.Hand.display() 
+        
+      total_points+=j.Hand.count_points()
 
-      assert(total_points==152) #probleme lorrs dune des boucles
-
-
-
-  def resultat(self,score): # normalement mise nest pas char
-      points_totaux=self.equipes[0].pli.compter_points()+self.equipes[1].pli.compter_points()
-      assert(points_totaux==162 or points_totaux==182) #compte les points par équipe pas encore de 10 de der
-      if self.surcoinche :
-          multiplicateur = 4
-      elif self.coinche :
-          multiplicateur = 2
-      else :
-          multiplicateur =1
-
-      for equipe in self.equipes :
-          if equipe.mise != None:
-              capot= equipe.mise==250 and len(equipe.pli.cartes)==32 #bool capot
-              generale=(equipe.joueurs[0].plis==8 and equipe.joueurs[0].generale==True ) or ( equipe.joueurs[1].plis==8 and equipe.joueurs[1].generale==True) #bool generale
-              #cas 1 : réussite du contrat
-              if equipe.mise<=equipe.pli.points or capot or generale : #faire cas général : compteur de pli gagné par joueur
-                  print("l'équipe {} a réussit son contrat".format(equipe.nom))
-
-                  #cas 1.1 : coinché ou surcoinché
-                  if self.coinche :
-                      score[equipe.nom] += equipe.mise*multiplicateur # seulement points contrats
-                      score[self.equipes[(equipe.numero+1)%2].nom] += 0 #points defense
-
-                  #cas 1.2 : normal
-                  else :
-                      score[equipe.nom] += equipe.mise # seulement points contrats
-                      score[self.equipes[(equipe.numero+1)%2].nom] += self.equipes[(equipe.numero+1)%2].pli.points #points defense
-
-              #cas 2 : échec du contrat
-              else :
-                  print("l'équipe {} a chuté ".format(equipe.nom))
-                  score[self.equipes[(equipe.numero+1)%2].nom] += 160*multiplicateur
+    assert(total_points==152)
 
 
-
-  def cartes_possibles(self, couleur_choisie, j):
+  def allowed_cards(self, choosen_color, j):
       """
-      retournes les cartes jouables pour le joueur dont cest le tour dans la self actuelle
+      return cards allowed to play by the player who has to play 
       """
 
-      #cas 1 : la couleur demandée est atout
-      if couleur_choisie==self.atout :
+      #cas 1 : la color demandée est atout
+      if choosen_color==self.atout :
 
           #cas 1.1 : a de latout
-          if j.main.reste[couleur_choisie]!=0 :
+          if j.Hand.rest[choosen_color]!=0 :
               atouts=[]
 
           #cas 1.11 : atout plus fort
-              for carte in j.main.cartes :
-                  if carte.atout and carte.numero!= None and carte.valeur > self.pli.cartes[self.pli.winner()].valeur : #il faut checké que les cartes sont présentes
+              for carte in j.Hand.cards :
+                  if carte.atout and carte.number!= None and carte.value > self.pli.cards[self.pli.winner()].value : #il faut checké que les cards sont présentes
                       atouts.append(carte)
 
               if len(atouts)!=0:
-                  return atouts
+                  return Hand("Cards allowed",cards=atouts)
 
           # cas 1.12 : pas d'atouts plus forts
 
-              return j.main.couleur(couleur_choisie)
+              return j.Hand.color(choosen_color)
 
           #cas 1.2 pas d'atout
-          return j.main.cartes
-      #cas 2 : la couleur demandée n'est pas latout
+          return Hand("Cards allowed",cards=j.Hand.cards)
+      #cas 2 : la color demandée n'est pas latout
 
-      #case 2.1 : a la couleur demandée
-      if j.main.reste[couleur_choisie]!=0 :
-          return j.main.couleur(couleur_choisie)
+      #case 2.1 : a la color demandée
+      if j.Hand.rest[choosen_color]!=0 :
+          return j.Hand.color(choosen_color)
 
-      #cas 2.2 : n'a  pas la couleur demandée
+      #cas 2.2 : n'a  pas la color demandée
 
       #cas 2.21 : a atout
       if self.atout in const.liste_couleur[:4]:
 
           #cas 2.211 : le partenaire mène
-          if self.pli.winner()%2==len(self.pli.cartes)%2: #permet de se defausser sur partenaire
-             return j.main.cartes
+          if self.pli.winner()%2==len(self.pli.cards)%2: #permet de se defausser sur partenaire
+             return Hand("Cards allowed",cards=j.Hand.cards)
+
 
          #cas 2.212 : on doit couper
-          if j.main.reste[self.atout]!=0 :
-              return j.main.couleur(self.atout)
+          if j.Hand.rest[self.atout]!=0 :
+              return j.Hand.color(self.atout)
 
       #cas 2.22 pas datout
-      return j.main.cartes
+      return Hand("Cards allowed",cards=j.Hand.cards)
 
 
 
-  def jouer_pli(self,joueurs, nombre_plis, aleatoire=True): #•fonctionne
+
+  def play_pli(self, players, pli_number, hidden=True): #•fonctionne
       """
-      prends en entrée le tableau ORDONNEE des joueurs de ce pli et le renvoi réordonné
+      prends en entrée le tableau ORDONNEE des players de ce pli et le renvoi réordonné
       """
 
-      #la meilleure carte est le 1er joueur pour l'ini
-      couleur_choisie=joueurs[0].main.jouer_carte( self.pli, joueurs[0].main.choisir(aleatoire=joueurs[0].aleatoire))
+      #la meilleure card est le 1er joueur pour l'ini
+      choosen_color=players[0].Hand.play_card( self.pli, players[0].Hand.choose_card(random=players[0].random))
 
-      for j in joueurs[1:]:
-          self.pli.afficher(j.aleatoire)
-          cartespossibles=Hand("Cards possibles")
-          cartespossibles.add_cartes(self.cartes_possibles( couleur_choisie, j))
-          carte_choisie=cartespossibles.choisir(aleatoire=j.aleatoire)           # trois lignes a verifier
-          j.main.jouer_carte( self.pli, carte_choisie)
-      self.pli.afficher(self.hidden)
+      for j in players[1:]:
+          if not hidden :#GRAPHIC
+            self.pli.display(j.random)
+          allowed_hand=self.allowed_cards( choosen_color, j)
+          choosen_card=allowed_hand.choose_card(random=j.random)           # trois lignes a verifier
+          j.Hand.play_card( self.pli, choosen_card)
+      if not hidden :# GRAPHIC
+        self.pli.display(self.hidden)
 
       winner=self.pli.winner()
-      if not self.hidden :
-          print(" Le winner est {} avec le {} de {}".format(joueurs[winner].name, self.pli.cartes[winner].numero , self.pli.cartes[winner].couleur ))
-      nouvel_ordre=[joueurs[winner],joueurs[(winner+1)%4], joueurs[(winner+2)%4] ,joueurs[(winner+3)%4]]
-      joueurs[winner].plis+=1
-      self.equipes[joueurs[winner].equipe].pli.add(self.pli)
+
+      if not hidden :#GRAPHIC
+          print("{} a gagné avec le {} de {}".format(players[winner].name, self.pli.cards[winner].number , self.pli.cards[winner].color ))
+      new_order=[players[winner],players[(winner+1)%4], players[(winner+2)%4] ,players[(winner+3)%4]]
+      players[winner].plis+=1
+      self.teams[players[winner].team].pli+=self.pli #reinitialise le pli
+      assert(self.pli.rest["cards"]==0)
 
        #compter 10 de der
-      if nombre_plis==8 :
-          self.equipes[joueurs[winner].equipe].pli.points+=10
+      if pli_number==8 :
+          self.teams[players[winner].team].pli.points+=10
 
-      self.pli=Hand(self.pli.name) #reinitialise le pli
-      return nouvel_ordre
+      return new_order
+    
+
+def test_choose_atout(hidden=True): #random test
+   myround = Round( team1_name ="Les winners", j1_name="Bob", j1_random=True, j3_name="Fred", j3_random=True,
+                   team2_name="Les loseurs", j2_name = "Bill", j2_random=True, j4_name="John", j4_random=True, hidden=False)
+   myround.choose_atout(hidden=hidden)
+    
+def test_cards_update(): #random test
+   myround = Round( team1_name ="Les winners", j1_name="Bob", j1_random=True, j3_name="Fred", j3_random=True,
+                   team2_name="Les loseurs", j2_name = "Bill", j2_random=True, j4_name="John", j4_random=True, hidden=False)
+   if myround.choose_atout() :
+     myround.cards_update()
+
+def test_play_pli(hidden=True): #•fonctionne
+   myround = Round( team1_name ="Les winners", j1_name="Bob", j1_random=True, j3_name="Fred", j3_random=True,
+                   team2_name="Les loseurs", j2_name = "Bill", j2_random=True, j4_name="John", j4_random=True, hidden=False)
+   if myround.choose_atout() :
+     myround.cards_update()
+     players=myround.shortkey()
+     for i in range(8):
+       players=myround.play_pli(pli_number=i,players=players,hidden=hidden)
+
+
 
 
 
@@ -415,5 +426,22 @@ if __name__=="__main__"   :
   assert(myround.teams[1].players[0].Hand.check_card(Card("7","trefle")))
   
   print("test OK")
+  
+  print("choose_atout test")
+  for i in range(500):
+    test_choose_atout()
+  print("test OK")
+  
+  print("cards_update test")
+  for i in range(500):
+    test_cards_update()
+  print("test OK")
+  
+  print("play_pli test")
+  for i in range(500):
+    test_play_pli()
+  print("test OK")
+
+
 
 

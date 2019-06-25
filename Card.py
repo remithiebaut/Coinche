@@ -14,7 +14,7 @@ class Card():
     self.number=number #prend la valeur none quand inexistant ACHANGER
     self.color=color
     self.rest=rest #utilisé seulement dans la distribution de cartes, lutiliser a la place de none ?
-    self.value=None #ordor of power in teh actual announcing 16 atout Jacket and 1:7 normal
+    self.value=None #order of power in teh actual announcing 16 atout Jacket and 1:7 normal
     self.atout=False
     self.points=0
     self.ID=number+color  #ATENTION SI Numero = None ne devrait pas marcher

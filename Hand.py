@@ -13,7 +13,7 @@ class Hand():
   """
   Hand of Game Cards
   """
-  def __init__(self, name="Cards", cards=list(), sort=True): #cards nest pas vide
+  def __init__(self, name="Cards", cards=[], sort=True): #cards nest pas vide
      self.name=name
      self.cards=cards #array of cards
      self.points=0
@@ -96,8 +96,7 @@ class Hand():
     for card in self.cards:
         if card.color==chosen_color:
             cards_of_this_color.append(card)
-    colorhand=Hand(cards=cards_of_this_color, name =chosen_color)
-    return colorhand
+    return Hand(cards=cards_of_this_color, name =chosen_color)
 
   def choose_card(self,random=True):
      """
@@ -139,6 +138,8 @@ class Hand():
         else :
             if card.value>winner.value and card.atout:
                 winner=card
+                
+    assert(self.cards.index(winner)<4)
     return self.cards.index(winner)
 
   def test(self, name="Cards", coeur=0, pique=0, carreau=0, trefle=0, points=0):

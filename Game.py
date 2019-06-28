@@ -5,76 +5,151 @@ Created on Tue Feb 26 15:49:30 2019
 
 @author: rthiebaut
 """
-from Manche import Manche
+from Round import Round
+from Hand import Hand
+from Card import Card
+
 import generical_function as generic
+import coinche_constant as const
+
+
 
 
 class Game():
-     def __init__(self,joueurs=["joueur1","joueur2","joueur3","joueur4"],equipes=["e1","e2"],limite_score=2000,aleatoire=[False,True,True,True],hidden=False):
-         
-         self.data=[(joueurs[0],equipes[0],aleatoire[0]), (joueurs[1],equipes[1],aleatoire[1]),(joueurs[2],equipes[0],aleatoire[2]),(joueurs[3],equipes[1],aleatoire[3])] #trouver comment utiliser tuple en parametre
-         self.Round=Round(self.data[0], self.data[1], self.data[2], self.data[3], hidden ) #faire un tableau de manche
-         self.limite=limite_score
-         self.score={equipes[0]:0,equipes[1]:0}
-         self.hidden=hidden
-    
-     def jouer_partie(self):
-         j=self.manche.raccourci()
-         if self.manche.choisir_atout() : #choisir valeur par defaut pour les test
-             self.manche.debut(j)
-             for i in range(8):
-                if not self.hidden:
-                    print("pli {} : \n \n".format(i))
-                j=self.manche.jouer_pli( j, i+1) #erreur dans le decompte des plis confusion avec les tas joueur bug a iteration2 a priori fonctionne : confusion entre la position dans la main et celles des cartes possibles
-             for k in range(2):
-                self.manche.equipes[k].pli.afficher()   
-             self.fin_manche()
-         self.nouvelle_manche()
-                 
-    def result(self): # normalement mise nest pas char
-        points_totaux=self.equipes[0].pli.compter_points()+self.equipes[1].pli.compter_points()
-        assert(points_totaux==162 or points_totaux==182) #compte les points par équipe pas encore de 10 de der
-        if self.surcoinche :
-            multiplicateur = 4
-        elif self.coinche :
-            multiplicateur = 2
-        else :
-            multiplicateur =1
-  
-        for equipe in self.equipes :
-            if equipe.mise != None:
-                capot= equipe.mise==250 and len(equipe.pli.cartes)==32 #bool capot
-                generale=(equipe.joueurs[0].plis==8 and equipe.joueurs[0].generale==True ) or ( equipe.joueurs[1].plis==8 and equipe.joueurs[1].generale==True) #bool generale
-                #cas 1 : réussite du contrat
-                if equipe.mise<=equipe.pli.points or capot or generale : #faire cas général : compteur de pli gagné par joueur
-                    print("l'équipe {} a réussit son contrat".format(equipe.nom))
-  
-                    #cas 1.1 : coinché ou surcoinché
-                    if self.coinche :
-                        score[equipe.nom] += equipe.mise*multiplicateur # seulement points contrats
-                        score[self.equipes[(equipe.numero+1)%2].nom] += 0 #points defense
-  
-                    #cas 1.2 : normal
-                    else :
-                        score[equipe.nom] += equipe.mise # seulement points contrats
-                        score[self.equipes[(equipe.numero+1)%2].nom] += self.equipes[(equipe.numero+1)%2].pli.points #points defense
-  
-                #cas 2 : échec du contrat
+   def __init__(self, team1_name="e1", j1_name="joueur1", j1_random=False, j3_name="joueur3", j3_random=True,
+             team2_name="e2", j2_name="joueur2", j2_random=True,j4_name="joueur4", j4_random=True,
+             score_limit=2000,hidden=False):
+     
+     self.data={"team1_name":team1_name, "j1_name":j1_name, "j1_random":j1_random, "j3_name":j3_name, "j3_random":j3_random,
+             "team2_name":team2_name, "j2_name":j2_name, "j2_random":j2_random,"j4_name":j4_name, "j4_random":j4_random}
+     
+     self.Round=Round(team1_name=self.data["team1_name"], j1_name=self.data["j1_name"], j1_random=self.data["j1_random"],
+                j3_name=self.data["j3_name"], j3_random=self.data["j3_random"],
+                team2_name=self.data["team2_name"], j2_name=self.data["j2_name"], j2_random=self.data["j2_random"],
+                j4_name=self.data["j4_name"], j4_random=self.data["j4_random"],
+                number=0,pioche=Hand(name="pioche",cards=[Card(i,j) for i in const.liste_numero for j in const.liste_couleur]),hidden=hidden)
+     
+     #self.Round=Round(team1_name=team1_name, j1_name=j1_name, j1_random=j1_random, j3_name=j3_name, j3_random=j3_random,
+     #team2_name=team2_name, j2_name=j2_name, j2_random=j2_random,j4_name=j4_name, j4_random=j4_random, hidden=hidden ) #faire un tableau de manche
+     self.limit=score_limit
+     self.score={team1_name:0,team2_name:0}
+     self.hidden=hidden
+
+
+   def result(self): # normalement mise nest pas char
+      total_points=self.Round.teams[0].pli.count_points()+self.Round.teams[1].pli.count_points()
+      assert(total_points==162 or total_points==182) #compte les points par équipe pas encore de 10 de der
+      if self.Round.surcoinche :
+          multiplicator = 4
+      elif self.Round.coinche :
+          multiplicator = 2
+      else :
+          multiplicator =1
+
+      for team in self.Round.teams :
+          if team.bet != None:
+              capot= team.bet==250 and len(team.pli.cards)==32 #bool capot
+              generale=(team.players[0].plis==8 and team.players[0].generale==True ) or ( team.players[1].plis==8 and team.players[1].generale==True) #bool generale
+              #cas 1 : réussite du contrat
+              if team.bet<=team.pli.points or capot or generale : #faire cas général : compteur de pli gagné par player
+                if not self.hidden: #GRAPHIC
+                  print("l'équipe {} a réussit son contrat".format(team.name))
+
+                #cas 1.1 : coinché ou surcoinché
+                if self.Round.coinche :
+                    self.score[team.name] += team.bet*multiplicator # seulement points contrats
+                    self.score[self.Round.teams[(team.number+1)%2].name] += 0 #points defense
+
+                #cas 1.2 : normal
                 else :
-                    print("l'équipe {} a chuté ".format(equipe.nom))
-                    score[self.equipes[(equipe.numero+1)%2].nom] += 160*multiplicateur
-                    
-     def fin_manche(self) :
-         self.result()
+                    self.score[team.name] += team.bet # seulement points contrats
+                    self.score[self.Round.teams[(team.number+1)%2].name] += self.Round.teams[(team.number+1)%2].pli.points #points defense
+
+              #cas 2 : échec du contrat
+              else :
+                  if not self.hidden: #GRAPHIC
+                    print("l'équipe {} a chuté ".format(team.name))
+                  self.score[self.Round.teams[(team.number+1)%2].name] += 160*multiplicator
+
+   def end_round(self) :
+     
+       self.result()
+       if not self.hidden: #GRAPHIC
          print(self.score)
-         for equipe in self.score:
-             if self.score[equipe]>self.limite:
-                 print( " l'équipe {} a gagné avec {} ".format(equipe, self.score))
-                 return 0
+       for team in self.score:
+         if self.score[team]>self.limit: #error
+               if not self.hidden: #GRAPHIC
+                 print(self.Round.atout, self.Round.teams[0].bet, self.Round.teams[1].bet)
+                 print( " l'équipe {} a gagné avec {} ".format(team, self.score))
+               return False
+       return True
+
+   def new_round(self,round_number) :
+
+    pioche=Hand(name="pioche",cards=[],sort=False)
+      # the last round was played
+    pioche+=self.Round.teams[0].pli
+    pioche+=self.Round.teams[1].pli
+      # the last round wasn't played
+    players_in_order=self.Round.shortkey() #changer ordre a chaque manche ????
+    for player in players_in_order :
+      pioche+=player.Hand
+    assert(pioche.rest["cards"]==32)
+
+    self.Round=Round(team1_name=self.data["team1_name"], j1_name=self.data["j1_name"], j1_random=self.data["j1_random"],
+                        j3_name=self.data["j3_name"], j3_random=self.data["j3_random"],
+                        team2_name=self.data["team2_name"], j2_name=self.data["j2_name"], j2_random=self.data["j2_random"],
+                        j4_name=self.data["j4_name"], j4_random=self.data["j4_random"],
+                        number=round_number,pioche=pioche,hidden=self.hidden)
+
+
+   def play(self):
+       if self.Round.choose_atout() : #choisir valeur par defaut pour les test
+         players_in_order=self.Round.shortkey() #changer ordre a chaque manche ????
+         self.Round.cards_update()
+         for i in range(8):
+            if not self.hidden: #GRAPHIC
+                print("pli {} : \n \n".format(i))
+            players_in_order=self.Round.play_pli( players=players_in_order, pli_number=i+1) #erreur dans le decompte des plis confusion avec les tas player bug a iteration2 a priori fonctionne : confusion entre la position dans la main et celles des cartes possibles
+         for k in range(2):
+            if not self.hidden: #GRAPHIC
+              self.Round.teams[k].pli.display()
+         return True #a trump was picked
+       else :
+         return False #nobody picked a trump : it's a white round
+              
+   def reinitialize(self):
+     self.new_round(round_number=0)
+     self.score={self.data["team1_name"]:0,self.data["team2_name"]:0}
+
+ 
              
-     def nouvelle_manche(self) :       
-                
-         if generic.decision(question="nouvelle manche ?", ouverte=False,aleatoire=self.hidden):
-             self.data=[self.data[1],self.data[2],self.data[3],self.data[0]]
-             self.manche=Manche(self.data[0], self.data[1], self.data[2], self.data[3],self.hidden)
-             self.jouer_partie()
+   def run(self):
+     while True : #game root
+       round_number = -1 # to start the first at 0
+       played = True
+       while True: # round root
+         while True : #round of assertion : is a trump is taken or not
+           round_number+=1
+           self.new_round(round_number)
+           played=self.play()
+           if played :
+             break
+         if not self.end_round():
+           break
+       if not generic.decision(question="une nouvelle partie", ouverte=False,random=self.hidden):
+         break
+       else :
+         self.reinitialize()
+
+def random_test():
+    mygame=Game(j1_random=True,hidden=True)
+    mygame.run()
+         
+if __name__=="__main__"   :
+  
+  print("random test")
+  for i in range(500):
+    random_test()
+  print("test OK")
+

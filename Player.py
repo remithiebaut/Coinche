@@ -32,7 +32,7 @@ class Player():
     self.Hand=Hand(name=self.name, cards=cards) #bug with cards
     self.plis=0
     self.generale=False #indicator of genereale annonce
-    
+
   def test(self, name, coeur=0, pique=0, carreau=0, trefle=0, points=0,
            team_number=0, generale=False, plis=0, random=True):
     """
@@ -48,7 +48,7 @@ class Player():
 
 
 if __name__=="__main__"   :
-  
+
   print ("check test")
   mycard1=Card("7","carreau")
   mycard2=Card("7","coeur")
@@ -57,7 +57,7 @@ if __name__=="__main__"   :
   myplayer.test("Bob",coeur=1,carreau=1)
   print("Test OK")
 
-  
+
   print("check color sort")
   assert(myplayer.Hand.cards[0].color=="coeur")
   assert(myplayer.Hand.cards[1].color=="carreau")

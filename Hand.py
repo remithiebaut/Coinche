@@ -103,7 +103,9 @@ class Hand():
      choose and return a card
      """
      while True :
-         card_position = generic.decision(const.liste_entier32[:len(self.cards)], random, "Quelle carte ? 1ère, 2ème ? ")
+         if not random : #GRAPHIC
+           self.display()
+         card_position = generic.decision(liste_choix_possible=const.liste_entier32[:len(self.cards)], random=random, question="Quelle carte ? 1ère, 2ème ? ")
          card_position = int(card_position)-1
          if card_position<len(self.cards) :
              if self.cards[card_position].rest:
@@ -138,7 +140,7 @@ class Hand():
         else :
             if card.value>winner.value and card.atout:
                 winner=card
-                
+
     assert(self.cards.index(winner)<4)
     return self.cards.index(winner)
 
@@ -154,7 +156,7 @@ class Hand():
     assert(self.rest["carreau"]==carreau)
     assert(self.rest["trefle"]==trefle)
     assert(len(self.cards)==self.rest["cards"]==coeur+pique+carreau+trefle)
-    
+
   def check_card(self,card):
     """
     check if a card with the same ID is in the hand
@@ -167,7 +169,7 @@ class Hand():
 
 
 if __name__=="__main__"   :
-  
+
 
 
 
@@ -194,12 +196,12 @@ if __name__=="__main__"   :
   for key in myhand.rest :
     assert(myhand.rest[key]==0)
   assert(len(myhand.rest)==5)
-  
+
   print("Test OK")
 
-  
+
   print("assert that test work correctly")
-    
+
   myhand2.test("Pli",1,0,1,0,0)
   myhand.test()
 
@@ -336,7 +338,7 @@ if __name__=="__main__"   :
   septcoeur.value=1
   dpique.value=5
   assert(mypli3.winner()==0)
-  
+
   print("Test OK")
 
   print("Check check_card")

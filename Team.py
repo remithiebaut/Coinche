@@ -17,7 +17,7 @@ class Team():
    self.number=team_number
    self.players=[Player(team_number=team_number, name=j1_name, random=j1_random, cards=j1_cards),
                  Player(team_number=team_number, name=j2_name, random=j2_random, cards=j2_cards)]
-   self.pli=Hand(name=( "plis de l'equipe " + str(team_number) ), sort=False) #a reinitialiser
+   self.pli=Hand(name=( "plis de l'equipe " + str(team_number) ),cards=[], sort=False) #a reinitialiser
    self.bet=None  # == mise
 
   def reinitialize(self, j1_cards, j2_cards):
@@ -28,7 +28,7 @@ class Team():
     self.players[1].reinitialize(cards=j2_cards)
     self.pli.reinitialize()
     self.bet=None
-    
+
   def test(self, name1, name2, team_name, team_number=0, bet=None,
            coeur1=0, pique1=0, carreau1=0, trefle1=0, points1=0, generale1=False, plis1=0, random1=True,
            coeur2=0, pique2=0, carreau2=0, trefle2=0, points2=0, generale2=False, plis2=0, random2=True,
@@ -39,10 +39,10 @@ class Team():
     """
     self.pli.test(name=( "plis de l'equipe " + str(team_number) ),
                   coeur=pli_coeur,pique=pli_pique,carreau=pli_carreau,trefle=pli_trefle,points=pli_points)
-    
+
     self.players[0].test(name=name1,coeur=coeur1,pique=pique1,carreau=carreau1,trefle=trefle1,points=points1,
                          team_number=team_number, generale=generale1, plis=plis1, random=random1)
-    
+
     self.players[1].test(name=name2,coeur=coeur2,pique=pique2,carreau=carreau2,trefle=trefle2,points=points2,
                          team_number=team_number, generale=generale2, plis=plis2, random=random2)
 
@@ -112,18 +112,18 @@ if __name__=="__main__"   :
   assert(myteam.players[1].team==0)
   assert(myteam.players[1].generale==False)
   assert(myteam.players[1].random==True)
-  
-  
+
+
   print("check  test")
-  
+
   myteam.test(name1="Bob",name2="Fred", team_name="Les winners",carreau1=1,coeur1=1)
-  
+
   print("test ok")
 
   myteam.players[1].reinitialize(cards=[mycard1, mycard2])
-  
-  
-  
+
+
+
   assert(myteam.players[1].Hand.name==myteam.players[1].name=="Fred")
   assert(len(myteam.players[1].Hand.cards)==2)
   assert(myteam.players[1].Hand.points==0)

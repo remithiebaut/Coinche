@@ -8,8 +8,11 @@ Created on Tue Feb 26 15:27:19 2019
 
 import pygame 
 import graphic_constant as gconst
-from Carte import Carte
 import coinche_constant as const
+
+
+'''
+from Carte import Carte
 from Main import Main
 
 class Graphic_Main(Main):
@@ -50,7 +53,7 @@ class Graphic_Carte(Carte):
     self.effacer(screen)
     screen.blit(self.image,position_table) #rendre transparent
     
-
+'''
 
 
 def afficher_cartes(screen, cartes):

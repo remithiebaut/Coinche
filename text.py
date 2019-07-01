@@ -6,10 +6,11 @@ Created on Thu Mar 28 16:00:35 2019
 """
 import pygame 
 import graphic_constant as gconst
+'''
 from Carte import Carte
 import coinche_constant as const
 from Main import Main
-
+'''
 
 class Game():
 

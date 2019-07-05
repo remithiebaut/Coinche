@@ -56,24 +56,7 @@ def test_graphic_card():
     event = pygame.event.poll()
     if event.type == pygame.QUIT or event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE: #escape
             break
-    if event.type == pygame.KEYDOWN and event.key == pygame.K_LEFT: #test
-      screen.fill(gconst.YELLOW,(100,100,100,100))
 
-    if event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE:
-        screen.fill(gconst.BLUE,(gconst.card_size[0],gconst.screen_size[1]-gconst.card_size[1],110,110))
-        
-    if event.type == pygame.KEYDOWN and event.key == pygame.K_DOWN:
-        screen.fill(gconst.BLUE,gconst.grid[31][17])
-        
-        """
-    if event.type == pygame.KEYDOWN and event.key == pygame.K_RIGHT : 
-        draw_rect(screen,gconst.card_size,(0,0))
-        
-    if event.type == pygame.KEYDOWN and event.key == pygame.K_UP :
-      
-        afficher_cartes(screen, cartes)
-        """
-    #if pygame.mouse.get_pos()[1]<(gconst.area["cards"]["J1"][1]):
     for card in cards:
       mouse=pygame.mouse.get_pos()
       if mouse[0]>card.position[0] and mouse[0]<(card.position[0]+card.position[2]) and mouse[1]>card.position[1] and mouse[1]<(card.position[1]+card.position[3]):
@@ -108,11 +91,6 @@ def test_graphic_card():
     if event.type == pygame.KEYDOWN and event.key == pygame.K_9 :
         screen.fill(gconst.GREEN)
         
-    if event.type == pygame.KEYDOWN and event.key == pygame.K_KP7 :
-        screen.fill(gconst.YELLOW,gconst.area["cards"]["J1"][7])
-
-    if event.type == pygame.KEYDOWN and event.key == pygame.K_KP0 :
-        screen.fill(gconst.YELLOW,gconst.area["cards"]["J1"][0])
     pygame.display.flip()
     
   pygame.quit()

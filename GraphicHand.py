@@ -15,25 +15,17 @@ import sys
 
 
 class GraphicHand(Hand):
-
-    
-  def jouer_carte(self,pli,carte_choisie, screen, position_table= gconst.area["cards"]["board"]["j1"]):
-   """
-   joue la carte choisie et retourne sa couleur affiche cetteaction graphiquement
-   """
-   Hand.playcard(self,pli,carte_choisie)
-   carte_choisie.jouer(screen, position_table= position_table)
-   delete=self.cartes.index(carte_choisie)
-   self.cartes=self.cartes[:delete]+self.cartes[delete+1:]
-   
+  
   def display(self,screen,player):
      """
      display the board of cards
      """
      i=0
      for card in self.cards:
-      card.play(screen=screen,new_position=gconst.area["cards"][player][i])
-      i+=1
+       card.play(screen=screen,new_position=gconst.area["cards"][player][i])
+       i+=1
+     pygame.display.flip()
+
 
   def choose_card(self,random=True):
     """
@@ -51,7 +43,8 @@ class GraphicHand(Hand):
           if mouse[0]>card.position[0] and mouse[0]<(card.position[0]+card.position[2]) and mouse[1]>card.position[1] and mouse[1]<(card.position[1]+card.position[3]):
             if  event.type == pygame.MOUSEBUTTONDOWN : 
                if card.rest:
-                   return card
+                 pygame.display.flip()
+                 return card
 
     else: #BOT
          card_position = generic.decision(liste_choix_possible=const.liste_entier32[:len(self.cards)], random=random, question="Quelle carte ? 1ère, 2ème ? ")
@@ -60,43 +53,32 @@ class GraphicHand(Hand):
              if self.cards[card_position].rest:
                  return self.cards[card_position]
 
-"""
 def test_graphic_hand():
   cards=[]
   i=0
   for numero in const.liste_numero :
     cards.append(GraphicCard(numero,"carreau", position=gconst.area["cards"]["j1"][i]))
     i+=1
+  myhand=GraphicHand(name="Pli",cards=cards)
   pygame.init() 
   screen=pygame.display.set_mode(gconst.screen_size)
-  screen.fill(gconst.GREEN)                   
+
+  screen.fill(gconst.GREEN)
+  pygame.display.flip()
+
+
   while True:
     event = pygame.event.poll()
+    
+
     if event.type == pygame.QUIT or event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE: #escape
             break
-    if event.type == pygame.KEYDOWN and event.key == pygame.K_LEFT: #test
-      screen.fill(gconst.YELLOW,(100,100,100,100))
 
-    if event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE:
-        screen.fill(gconst.BLUE,(gconst.card_size[0],gconst.screen_size[1]-gconst.card_size[1],110,110))
-        
-    if event.type == pygame.KEYDOWN and event.key == pygame.K_DOWN:
-        screen.fill(gconst.BLUE,gconst.grid[31][17])
-        
-        
-        
     if event.type == pygame.KEYDOWN and event.key == pygame.K_UP :
-      
-        afficher_cartes(screen, cartes)
-        
-    #if pygame.mouse.get_pos()[1]<(gconst.area["cards"]["J1"][1]):
-    for card in cards:
-      if pygame.mouse.get_pos()[0]>(card.position[0]) and pygame.mouse.get_pos()[0]<(card.position[0]+gconst.card_size[0]):
-        if  event.type == pygame.MOUSEBUTTONDOWN : 
-          
-           card.play(screen)
-           delete=cards.index(card)
-           cards=cards[:delete]+cards[delete+1:]
+        print(4)
+        myhand.display(screen=screen,player="j1")
+        card=myhand.choose_card(random=False)
+        card.play(screen,new_position=gconst.area["cards"]["board"]["j1"])
             
              
     if event.type == pygame.KEYDOWN and event.key == pygame.K_1 :
@@ -122,16 +104,10 @@ def test_graphic_hand():
         
     if event.type == pygame.KEYDOWN and event.key == pygame.K_9 :
         screen.fill(gconst.GREEN)
-        
-    if event.type == pygame.KEYDOWN and event.key == pygame.K_KP7 :
-        screen.fill(gconst.YELLOW,gconst.area["cards"]["J1"][7])
 
-    if event.type == pygame.KEYDOWN and event.key == pygame.K_KP0 :
-        screen.fill(gconst.YELLOW,gconst.area["cards"]["J1"][0])
     pygame.display.flip()
     
   pygame.quit()
- """
  
 if __name__=="__main__"   :
 
@@ -313,9 +289,7 @@ if __name__=="__main__"   :
 
   print("Test OK")
 
-  print("display test")
-  mypioche.display(hidden=True)
-  myhand.display(hidden=True)
-  myhand2.display(hidden=True)
+  print("graphic test")
+  test_graphic_hand()
   print("No Test")
 

@@ -8,7 +8,7 @@ Created on Tue Feb 26 15:27:19 2019
 
 import pygame 
 import graphic_constant as gconst
-import Core.coinche_constant as const
+import coinche_constant as const
 from GraphicCard import GraphicCard
 
 

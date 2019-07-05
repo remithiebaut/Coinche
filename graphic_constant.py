@@ -5,7 +5,7 @@ Created on Sun Mar 24 17:07:46 2019
 @author: rthie
 """
 import pygame 
-import Core.coinche_constant as const
+import coinche_constant as const
 
 resolution=(16*2,9*2) #32*18 cell
 cell_size=(43,43)
@@ -56,21 +56,25 @@ area["j3"]=surface(11,0,18,1)
 area["j4"]=surface(30,8,31,15)
 
 
+area["cards"]={"board":{}}
+
+area["cards"]["board"]["j1"]=(area["middle"][0]+int(area["middle"][2]/2),area["middle"][1]+int(area["middle"][3]/2),card_size[0],card_size[1])
+area["cards"]["board"]["j2"]=(area["middle"][0]+card_size[0],area["middle"][1],card_size[0],card_size[1])
+area["cards"]["board"]["j3"]=(area["middle"][0]+card_size[0],area["middle"][1],card_size[0],card_size[1])
+area["cards"]["board"]["j4"]=(area["middle"][0]+card_size[0],area["middle"][1],card_size[0],card_size[1])
 
 
-
-
-
-area["cards"]={}
 
 for i in range(1,5):
-    area["cards"]["J"+str(i)]={}
+    area["cards"]["j"+str(i)]={}
+
+
     
 for j in range(8):
-        area["cards"]["J1"][j]=(area["j1"][0]+card_size[0]*j,area["j1"][1],card_size[0],card_size[1])
-        area["cards"]["J2"][j]=(area["j2"][0],area["j2"][1]+card_size[1]*j,card_size[0],card_size[1])
-        area["cards"]["J3"][j]=(area["j3"][0]+card_size[0]*j,area["j3"][1],card_size[0],card_size[1])
-        area["cards"]["J4"][j]=(area["j4"][0],area["j4"][1]+card_size[1]*j,card_size[0],card_size[1])
+        area["cards"]["j1"][j]=(area["j1"][0]+card_size[0]*j,area["j1"][1],card_size[0],card_size[1])
+        area["cards"]["j2"][j]=(area["j2"][0],area["j2"][1]+card_size[1]*j,card_size[0],card_size[1])
+        area["cards"]["j3"][j]=(area["j3"][0]+card_size[0]*j,area["j3"][1],card_size[0],card_size[1])
+        area["cards"]["j4"][j]=(area["j4"][0],area["j4"][1]+card_size[1]*j,card_size[0],card_size[1])
         '''
         (card_size[0]+card_size[0]*j,screen_size[1]-card_size[0])
         area["cards"]["J2"][j]=(-card_size[0]/2,3*card_size[0]+card_size[0]*j/2)

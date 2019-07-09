@@ -20,9 +20,15 @@ class GraphicHand(Hand):
      """
      display the board of cards
      """
+     inverse=False
+     hidden=False
+     if( player == "j2" )or( player == "j4") :
+       inverse=True
+     if( player != "j1") :
+       hidden=True
      i=0
      for card in self.cards:
-       card.play(screen=screen,new_position=gconst.area["cards"][player][i])
+       card.play(screen=screen,new_position=gconst.area["cards"][player][i],inverse=inverse,hidden=hidden)
        i+=1
      pygame.display.flip()
 
@@ -52,6 +58,17 @@ class GraphicHand(Hand):
          if card_position<len(self.cards) :
              if self.cards[card_position].rest:
                  return self.cards[card_position]
+               
+  def play(self,screen,player,random,pli): # could not work // dont play a empty hand with bots
+    """
+    play a graphic card
+    """
+    self.display(screen=screen,player=player)
+    card=self.choose_card(random=random)
+    card.play(screen,new_position=gconst.area["cards"]["board"][player])
+    choosen_color=self.play_card(pli=pli,choosen_card=card)
+    self.display(screen=screen,player=player)
+    return choosen_color
 
 def test_graphic_hand():
   cards=[]
@@ -60,6 +77,7 @@ def test_graphic_hand():
     cards.append(GraphicCard(numero,"carreau", position=gconst.area["cards"]["j1"][i]))
     i+=1
   myhand=GraphicHand(name="Pli",cards=cards)
+  mypli=GraphicHand(name="Pli",cards=[])
   pygame.init() 
   screen=pygame.display.set_mode(gconst.screen_size)
 
@@ -75,11 +93,7 @@ def test_graphic_hand():
             break
 
     if event.type == pygame.KEYDOWN and event.key == pygame.K_UP :
-        print(4)
-        myhand.display(screen=screen,player="j1")
-        card=myhand.choose_card(random=False)
-        card.play(screen,new_position=gconst.area["cards"]["board"]["j1"])
-            
+        myhand.play(screen,player="j1",random=False,pli=mypli)
              
     if event.type == pygame.KEYDOWN and event.key == pygame.K_1 :
         screen.fill(gconst.BLUE,gconst.area["j1"])

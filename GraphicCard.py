@@ -17,10 +17,9 @@ class GraphicCard(Card):
     Card.__init__(self, number=number, color=color, rest=rest)
     self.picture = gconst.list_picture[self.ID] 
     self.position=position
-    self.hidden=True
     
-  def display(self, inverse=False):
-      if self.hidden :
+  def display(self, inverse=False, hidden=False):
+      if hidden :
         if not inverse :
           return gconst.list_picture["Dos"] #J3
         else :
@@ -34,13 +33,13 @@ class GraphicCard(Card):
     """
     screen.fill(color,self.position)
 
-  def play(self, screen, new_position):
+  def play(self, screen, new_position,inverse=False,hidden=False):
     """
     play the card at a given position
     """
     self.erase(screen)
     self.position=new_position
-    screen.blit(self.picture,new_position) #rendre transparent
+    screen.blit(self.display(inverse=inverse,hidden=hidden),new_position) #rendre transparent
 
 
 def test_graphic_card():  

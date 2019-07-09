@@ -72,9 +72,9 @@ for i in range(1,5):
     
 for j in range(8):
         area["cards"]["j1"][j]=(area["j1"][0]+card_size[0]*j,area["j1"][1],card_size[0],card_size[1])
-        area["cards"]["j2"][j]=(area["j2"][0],area["j2"][1]+card_size[1]*j,card_size[0],card_size[1])
-        area["cards"]["j3"][j]=(area["j3"][0]+card_size[0]*j,area["j3"][1],card_size[0],card_size[1])
-        area["cards"]["j4"][j]=(area["j4"][0],area["j4"][1]+card_size[1]*j,card_size[0],card_size[1])
+        area["cards"]["j2"][j]=(area["j2"][0],area["j2"][1]+card_size[0]/2*j,card_size[1],card_size[0])
+        area["cards"]["j3"][j]=(area["j3"][0]+card_size[0]/2*j,area["j3"][1],card_size[0],card_size[1])
+        area["cards"]["j4"][j]=(area["j4"][0],area["j4"][1]+card_size[0]/2*j,card_size[1],card_size[0])
         '''
         (card_size[0]+card_size[0]*j,screen_size[1]-card_size[0])
         area["cards"]["J2"][j]=(-card_size[0]/2,3*card_size[0]+card_size[0]*j/2)

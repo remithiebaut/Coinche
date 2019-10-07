@@ -19,7 +19,7 @@ class Round():
   """
   def __init__(self, team1_name, j1_name, j1_random, j3_name, j3_random,
                team2_name, j2_name, j2_random, j4_name, j4_random ,
-               number,pioche, hidden=False,): # e1 et e2 inutiles
+               number,pioche, hidden=False): # e1 et e2 inutiles
     
    self.number=number
    self.atout=None

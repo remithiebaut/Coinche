@@ -7,6 +7,8 @@ Created on Tue Feb 26 15:30:05 2019
 """
 import coinche_constant as const
 import generical_function as generic
+import graphic_constant as gconst
+
 from GraphicPlayer import GraphicPlayer
 from GraphicHand import GraphicHand
 from GraphicCard import GraphicCard
@@ -23,7 +25,7 @@ class GraphicRound(Round):
   def __init__(self, team1_name, j1_name, j1_random, j3_name, j3_random,
                team2_name, j2_name, j2_random, j4_name, j4_random ,
                number,pioche, hidden=False,): # e1 et e2 inutiles
-    
+
    self.number=number
    self.atout=None
    self.coinche=False #indicator of coinche
@@ -43,26 +45,43 @@ class GraphicRound(Round):
                     j2_name=j4_name, j2_random=j4_random, j2_cards=players[3])]
    self.hidden=hidden
 
-  def choose_atout(self): # pensez a display avant surcoinche empecher danooncer 170 180 tout atout sans atout
-     """
-     fix the atout and return true if someone didnt pass his turn
-     """
-     j=self.shortkey()
-     bet=0
-     annonce_actuelle=-1
-     turn=0
-     while turn!=4 and bet!='generale' and not self.coinche:
-        for player in j:
-           if turn==4 or bet=='generale' or self.coinche:
-              break
-           else:
-              if not self.hidden :  #GRAPHIC
-                player.Hand.display(player.random)
+  def choose_atout(self,screen,background_color="GREEN"): # pensez a display avant surcoinche empecher danooncer 170 180 tout atout sans atout
+    """
+    select the atout and return true if someone didnt pass his turn
+    """
+    j=self.shortkey()
+    screen.fill(gconst.PURPLE,gconst.area["middle"])
+    bet=0
+    annonce_actuelle=-1
+    turn=0
+    while turn!=4 and bet!='generale' and not self.coinche:
+      for player in j:
+        if turn==4 or bet=='generale' or self.coinche:
+          break
+        else:
 
-              if not generic.decision(random=player.random, question='annoncer', ouverte=False): #local variable referenced before assignment
-                 turn+=1
+          #BOT
+          if player.random:
+            if not generic.decision(random=player.random, question='annoncer', ouverte=False): #local variable referenced before assignment
+              turn+=1
+            else :
+              turn=1
 
-              else:
+          #PLAYER
+          else :
+            end=False
+            while not end :
+               event = pygame.event.poll()
+               if event.type == pygame.QUIT or event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE: #escape
+                 break
+               if gconst.get_mouse(gconst.area["middle"]):
+                 if  event.type == pygame.MOUSEBUTTONDOWN :
+                   screen.fill(gconst.GREEN,gconst.area["middle"])
+                   end=True
+               pygame.display.flip()
+
+
+                  else:
                  turn=1
 
                  self.atout=generic.decision(const.liste_couleur, random=player.random, question ="Choisir la couleur d'atout : %s " % const.liste_couleur)
@@ -407,6 +426,10 @@ if __name__=="__main__"   :
   for i in range(500):
     test_play_pli()
   print("test OK")
+
+
+
+
 
 
 

@@ -4,8 +4,9 @@ Created on Sun Mar 24 17:07:46 2019
 
 @author: rthie
 """
-import pygame 
+import pygame
 import coinche_constant as const
+from generical_function import get_mouse
 
 resolution=(16*2,9*2) #32*18 cell
 cell_size=(43,43)
@@ -33,11 +34,9 @@ for line in range(resolution[0]):
 
 def surface(x1,y1,x2,y2) :
   """
-  prends les coordonnées des deux carreaux de la grille et renvoie la surface correspondante
+  get(the coordinate of two grid's cells and return the coordinate of the corresponding surface (the first cell and the distance between the two cells)
   """
   return((grid[x1][y1][0],grid[x1][y1][1],(1+x2-x1)*cell_size[0],(1+y2-y1)*cell_size[1]))
-  
-
 
 #areas definition
 
@@ -46,6 +45,13 @@ area={}
 area["points"]=surface(0,0,9,3)
 
 area["middle"]=surface(11,4,23,13)
+
+area["choice"]={}
+area["choice"]["question"]=surface(11,4,23,9)
+area["choice"]["yes"]=surface(11,10,16,13)
+area["choice"]["no"]=surface(17,10,23,13)
+
+
 
 area["j1"]=surface(8,15,23,17)
 
@@ -69,7 +75,7 @@ for i in range(1,5):
     area["cards"]["j"+str(i)]={}
 
 
-    
+
 for j in range(8):
         area["cards"]["j1"][j]=(area["j1"][0]+card_size[0]*j,area["j1"][1],card_size[0],card_size[1])
         area["cards"]["j2"][j]=(area["j2"][0],area["j2"][1]+card_size[0]/2*j,card_size[1],card_size[0])
@@ -86,19 +92,19 @@ for j in range(8):
 
 list_picture={}
 
-ID ="Dos"   
+ID ="Dos"
 image = pygame.image.load('images/{}.jpg'.format(ID))
 image = pygame.transform.scale(image,card_size)
 list_picture[ID] = image
 
-ID ="Dos_inverse"   
+ID ="Dos_inverse"
 image = pygame.image.load('images/{}.jpg'.format(ID))
 image = pygame.transform.scale(image,(card_size[1],card_size[0]))
 list_picture[ID] = image
 
 for numero in const.liste_numero :
     for couleur in const.liste_couleur[:4]:
-        ID = numero+couleur    
+        ID = numero+couleur
         image = pygame.image.load('images/{}.jpg'.format(ID))
         image = pygame.transform.scale(image,card_size)
         list_picture[ID] = image

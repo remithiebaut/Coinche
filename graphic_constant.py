@@ -51,6 +51,15 @@ area["choice"]["question"]=surface(11,4,23,9)
 area["choice"]["yes"]=surface(11,10,16,13)
 area["choice"]["no"]=surface(17,10,23,13)
 
+
+area["j1"]=surface(8,15,23,17)
+
+area["j2"]=surface(0,8,1,15)
+
+area["j3"]=surface(11,0,18,1)
+
+area["j4"]=surface(30,8,31,15)
+
 area["announce"]={}
 #row 1
 
@@ -77,16 +86,8 @@ area["announce"]["value"]["120"]=surface(18,10,20,13)
 area["announce"]["value"]["130"]=surface(22,10,24,13)
 area["announce"]["value"]["140"]=surface(26,10,28,13)
 
-
-
-
-area["j1"]=surface(8,15,23,17)
-
-area["j2"]=surface(0,8,1,15)
-
-area["j3"]=surface(11,0,18,1)
-
-area["j4"]=surface(30,8,31,15)
+#
+area["announce"]["bet"]=area["j3"]
 
 
 area["cards"]={"board":{}}

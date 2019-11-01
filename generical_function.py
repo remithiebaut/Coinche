@@ -11,7 +11,7 @@ Useful Function
 """
 import random #use randrange
 import sys
-
+import time
 
 def indice(liste,element): #trouve l'indice de l'élément dans la liste attention lelement doit etre present utiliser NameOfTheList.index
   for i,e in enumerate(liste):
@@ -61,6 +61,23 @@ def decision(liste_choix_possible=[True,False], random=True, question="", ouvert
         else :
             return (question_ferme(question))
 
+def time_check(f,nb_iter=100,*args,**kwargs):
+  """
+  return the elapsed time during the computation of n times the function
+  """
+  total_time=0
+  for i in range(nb_iter):
+    tic = time.clock()
+    f(**kwargs)
+    toc = time.clock()
+    total_time+=toc-tic
+  return total_time
+
+def test(test_name,test_function,*args,**kwargs):
+  print("Testing ", test_name)
+  test_function(*args,**kwargs)
+  print("Test OK")
+  return 0
 
 
 

@@ -20,7 +20,7 @@ class Round():
   def __init__(self, team1_name, j1_name, j1_random, j3_name, j3_random,
                team2_name, j2_name, j2_random, j4_name, j4_random ,
                number,pioche, hidden=False): # e1 et e2 inutiles
-    
+
    self.number=number
    self.atout=None
    self.coinche=False #indicator of coinche
@@ -312,20 +312,20 @@ class Round():
 def test_choose_atout(): #random test
    myround = Round( team1_name ="Les winners", j1_name="Bob", j1_random=True, j3_name="Fred", j3_random=True,
                    team2_name="Les loseurs", j2_name = "Bill", j2_random=True, j4_name="John", j4_random=True,
-                   hidden=True,pioche=Hand(name="pioche",cards=[Card(i,j) for i in const.liste_numero for j in const.liste_couleur]),number=0)
+                   hidden=True,pioche=Hand(name="pioche",cards=[Card(i,j) for i in const.liste_numero for j in const.liste_couleur[:4]]),number=0)
    myround.choose_atout()
 
 def test_cards_update(): #random test
    myround = Round( team1_name ="Les winners", j1_name="Bob", j1_random=True, j3_name="Fred", j3_random=True,
                    team2_name="Les loseurs", j2_name = "Bill", j2_random=True, j4_name="John", j4_random=True,
-                   hidden=True,pioche=Hand(name="pioche",cards=[Card(i,j) for i in const.liste_numero for j in const.liste_couleur]),number=0)
+                   hidden=True,pioche=Hand(name="pioche",cards=[Card(i,j) for i in const.liste_numero for j in const.liste_couleur[:4]]),number=0)
    if myround.choose_atout() :
      myround.cards_update()
 
 def test_play_pli(hidden=True): #•fonctionne
    myround = Round( team1_name ="Les winners", j1_name="Bob", j1_random=True, j3_name="Fred", j3_random=True,
                    team2_name="Les loseurs", j2_name = "Bill", j2_random=True, j4_name="John", j4_random=True,
-                   hidden=True,pioche=Hand(name="pioche",cards=[Card(i,j) for i in const.liste_numero for j in const.liste_couleur]),number=0)
+                   hidden=True,pioche=Hand(name="pioche",cards=[Card(i,j) for i in const.liste_numero for j in const.liste_couleur[:4]]),number=0)
    if myround.choose_atout() :
      myround.cards_update()
      players=myround.shortkey()
@@ -345,7 +345,7 @@ if __name__=="__main__"   :
   print("test init and random draw")
   myround = Round( team1_name ="Les winners", j1_name="Bob", j1_random=True, j3_name="Fred", j3_random=True,
                    team2_name="Les loseurs", j2_name = "Bill", j2_random=True, j4_name="John", j4_random=True,
-                   hidden=False,pioche=Hand(name="pioche",cards=[Card(i,j) for i in const.liste_numero for j in const.liste_couleur]),number=0)
+                   hidden=False,pioche=Hand(name="pioche",cards=[Card(i,j) for i in const.liste_numero for j in const.liste_couleur[:4]]),number=0)
 
   "check if pioche is empty"
 

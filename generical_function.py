@@ -86,10 +86,12 @@ import pygame
 
 
 def draw_text(screen, text, position, color=(0,0,0),
-                font_type='mono', font_size = 15):
+                font_type='mono', font_size = 15,
+                background_color=(0,125,0)):
     """
     write text in window
     """
+    screen.fill(background_color,position)
     font = pygame.font.SysFont(font_type, font_size)
     surface = font.render(text, True, color)
     surface = pygame.transform.scale(surface,(position[2],position[3]))
@@ -106,14 +108,14 @@ def get_mouse(surface):
   if mouse[0]>surface[0] and mouse[0]<surface[2]+surface[0] and mouse[1]>surface[1] and mouse[1]<surface[1]+surface[3]:
     return True
 
-def graphic_yesorno(screen,question,question_surface,yes_surface,no_surface):
+def graphic_yesorno(screen,question,question_surface,yes_surface,no_surface, background_color=(0,125,0)):#Green
   """
   do you like to "question" ? if click yes -> True if click no -> False
   """
   result=None
-  draw_text(screen, text="YES", position=yes_surface)
-  draw_text(screen, text="NO", position=no_surface)
-  draw_text(screen, text=question, position=question_surface)
+  draw_text(screen, text="YES", position=yes_surface ,background_color=background_color)
+  draw_text(screen, text="NO", position=no_surface, background_color=background_color)
+  draw_text(screen, text=question, position=question_surface, background_color=background_color)
 
 
   while result!=True and result!=False :
@@ -132,4 +134,9 @@ def graphic_yesorno(screen,question,question_surface,yes_surface,no_surface):
 
 
      pygame.display.flip()
+  screen.fill(background_color,question_surface)
+  screen.fill(background_color,yes_surface)
+  screen.fill(background_color,no_surface)
+  pygame.display.flip()
+
   return result

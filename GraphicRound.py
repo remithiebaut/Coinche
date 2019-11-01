@@ -53,7 +53,6 @@ class GraphicRound(Round):
 
 
   def graphic_choose_atout(self,screen,annonce_actuelle):
-      screen.fill(gconst.PURPLE,gconst.area["middle"])
       for announce in gconst.area["announce"]["value"]:
         draw_text(screen,announce,gconst.area["announce"]["value"][announce])
       for announce in gconst.area["announce"]["color"]:
@@ -65,9 +64,11 @@ class GraphicRound(Round):
         if annonce_voulue>annonce_actuelle :
             annonce_actuelle=annonce_voulue
             break
+        draw_text(screen,"you must bet higher ! ",gconst.area["announce"]["bet"])
+
 
       screen.fill(gconst.GREEN,gconst.area["middle"])
-      draw_text(screen,bet + " " + color,gconst.area["middle"])
+      draw_text(screen,bet + " " + color,gconst.area["announce"]["bet"])
       return (color,bet,annonce_actuelle)
 
 
@@ -83,16 +84,13 @@ class GraphicRound(Round):
         if gconst.get_mouse(gconst.area["announce"][value_or_color][announce]):
           if  event.type == pygame.MOUSEBUTTONDOWN :
             if confirmation_zone==gconst.area["announce"][value_or_color][announce] : #second click
-              screen.fill(gconst.RED,gconst.area["announce"][value_or_color][announce])
-              draw_text(screen,announce,gconst.area["announce"][value_or_color][announce])
+              draw_text(screen,announce,gconst.area["announce"][value_or_color][announce],background_color=gconst.RED)
               pygame.display.flip()
               return announce
             else :
               if confirmation_zone!=None : # already click elsewhere
-                screen.fill(gconst.PURPLE,confirmation_zone)
                 draw_text(screen,confirmed_announce,confirmation_zone)
-              screen.fill(gconst.YELLOW,gconst.area["announce"][value_or_color][announce])
-              draw_text(screen,announce,gconst.area["announce"][value_or_color][announce])
+              draw_text(screen,announce,gconst.area["announce"][value_or_color][announce],background_color=gconst.YELLOW)
               pygame.display.flip()
               confirmation_zone=gconst.area["announce"][value_or_color][announce] #click once to highligth, click twice to confirm
               confirmed_announce=announce
@@ -120,7 +118,7 @@ class GraphicRound(Round):
 
 
              if not self.hidden : #GRAPHIC
-               draw_text(screen,' {} coinche sur {} {} !'.format(coincheur.name,bet,self.atout),gconst.area["middle"])
+               draw_text(screen,' {} coinche sur {} {} !'.format(coincheur.name,bet,self.atout),gconst.area["announce"]["bet"])
 
 
 
@@ -128,7 +126,7 @@ class GraphicRound(Round):
 
                if not self.surcoinche :
                  #BOT
-                 if coincheur.random:
+                 if surcoincheur.random:
                    self.surcoinche=generic.decision(random=surcoincheur.random, question='surcoincher sur {} {} ?'.format(bet,self.atout), ouverte=False)
                  #PLAYER
                  else :
@@ -136,7 +134,7 @@ class GraphicRound(Round):
                                            yes_surface=gconst.area["choice"]["yes"],no_surface=gconst.area["choice"]["no"])
                  if self.surcoinche :
                      if not self.hidden : #GRAPHIC
-                       draw_text(screen,' {} surcoinche sur {} {} !'.format(surcoincheur.name,bet,self.atout),gconst.area["middle"])
+                       draw_text(screen,' {} surcoinche sur {} {} !'.format(surcoincheur.name,bet,self.atout),gconst.area["announce"]["bet"])
 
 
 
@@ -145,7 +143,6 @@ class GraphicRound(Round):
     select the atout and return true if someone didnt pass his turn
     """
     j=self.shortkey()
-    screen.fill(gconst.PURPLE,gconst.area["middle"])
     bet=0
     annonce_actuelle=-1
     turn=0
@@ -171,7 +168,7 @@ class GraphicRound(Round):
                     annonce_actuelle=annonce_voulue
 
                     if not self.hidden :  #GRAPHIC
-                      print(' {} prend à {} {} !'.format(player.name,bet,self.atout))
+                      draw_text(screen,' {} prend à {} {} !'.format(player.name,bet,self.atout),gconst.area["announce"]["bet"])
 
                     break
               self.coincher(screen,player,bet)
@@ -193,7 +190,7 @@ class GraphicRound(Round):
     if not self.hidden :  #GRAPHIC
       for team in self.teams :
         if team.bet!=None:
-          print("L'équipe '{}' a pris {} à {} !!!".format(team.name, team.bet, self.atout))
+          draw_text(screen,"L'équipe '{}' a pris {} {} !!!".format(team.name, team.bet, self.atout),gconst.area["middle"])
 
     return True
 
@@ -226,49 +223,33 @@ def test_init():
 
 
 def test_choose_atout(): #random test
-  pygame.init()
-  screen=pygame.display.set_mode(gconst.screen_size)
-
-  screen.fill(gconst.GREEN)
-  pygame.display.flip()
   for i in range( 500):
     myround = GraphicRound( team1_name ="Les winners", j1_name="Bob", j1_random=True, j3_name="Fred", j3_random=True,
                      team2_name="Les loseurs", j2_name = "Bill", j2_random=True, j4_name="John", j4_random=True,
                      hidden=True,pioche=GraphicHand(name="pioche",cards=[GraphicCard(i,j) for i in const.liste_numero for j in const.liste_couleur[:4]]),number=0)
-    myround.choose_atout(screen)
-  pygame.quit()
+    myround.choose_atout(None)
+
 
 def test_cards_update(): #random test
-  pygame.init()
-  screen=pygame.display.set_mode(gconst.screen_size)
 
-  screen.fill(gconst.GREEN)
-  pygame.display.flip()
   for i in range( 500):
     myround = GraphicRound( team1_name ="Les winners", j1_name="Bob", j1_random=True, j3_name="Fred", j3_random=True,
                    team2_name="Les loseurs", j2_name = "Bill", j2_random=True, j4_name="John", j4_random=True,
                    hidden=True,pioche=GraphicHand(name="pioche",cards=[GraphicCard(i,j) for i in const.liste_numero for j in const.liste_couleur[:4]]),number=0)
-    if myround.choose_atout(screen) :
+    if myround.choose_atout(None) :
       myround.cards_update()
-  pygame.quit()
 
 
 def test_play_pli(hidden=True): #•fonctionne
-  pygame.init()
-  screen=pygame.display.set_mode(gconst.screen_size)
-
-  screen.fill(gconst.GREEN)
-  pygame.display.flip()
   for i in range( 500):
     myround = GraphicRound( team1_name ="Les winners", j1_name="Bob", j1_random=True, j3_name="Fred", j3_random=True,
                    team2_name="Les loseurs", j2_name = "Bill", j2_random=True, j4_name="John", j4_random=True,
                    hidden=True,pioche=GraphicHand(name="pioche",cards=[GraphicCard(i,j) for i in const.liste_numero for j in const.liste_couleur[:4]]),number=0)
-    if myround.choose_atout(screen) :
+    if myround.choose_atout(None) :
       myround.cards_update()
       players=myround.shortkey()
       for i in range(8):
         players=myround.play_pli(pli_number=i,players=players)
-  pygame.quit()
 
 
 
@@ -317,16 +298,18 @@ def test_classic_drawing():
 
 
 
-"""
-  print("cut test")
+def test_cut():
+  myround = GraphicRound( team1_name ="Les winners", j1_name="Bob", j1_random=True, j3_name="Fred", j3_random=True,
+                 team2_name="Les loseurs", j2_name = "Bill", j2_random=True, j4_name="John", j4_random=True,
+                 hidden=True,pioche=GraphicHand(name="pioche",cards=[GraphicCard(i,j) for i in const.liste_numero for j in const.liste_couleur[:4]]),number=0)
 
   for nb_of_try in range(100):
 
-    myround.pioche = Hand(name="pioche",cards=[Card(i,j) for i in const.liste_numero for j in const.liste_couleur[:4]])
+    myround.pioche = GraphicHand(name="pioche",cards=[GraphicCard(i,j) for i in const.liste_numero for j in const.liste_couleur[:4]])
     players=myround.classic_draw(cut=True)
 
-    countinghand=Hand(cards= (players[0]+players[1]+players[2]+players[3]) )
-    cards_of_pioche=[Card(i,j) for i in const.liste_numero for j in const.liste_couleur[:4]]
+    countinghand=GraphicHand(cards= (players[0]+players[1]+players[2]+players[3]) )
+    cards_of_pioche=[GraphicCard(i,j) for i in const.liste_numero for j in const.liste_couleur[:4]]
 
     countinghand.test("Cards",8,8,8,8)
 
@@ -335,22 +318,78 @@ def test_classic_drawing():
       assert(countinghand.cards[i] not in (countinghand.cards[:i]+countinghand.cards[i+1:])) #check for double
       assert(countinghand.check_card(cards_of_pioche[i]))
 
-  print("test OK")
 
+def test_shortcut():
+  myround = GraphicRound( team1_name ="Les winners", j1_name="Bob", j1_random=True, j3_name="Fred", j3_random=True,
+                 team2_name="Les loseurs", j2_name = "Bill", j2_random=True, j4_name="John", j4_random=True,
+                 hidden=True,pioche=GraphicHand(name="pioche",cards=[GraphicCard(i,j) for i in const.liste_numero for j in const.liste_couleur[:4]]),number=0)
 
-
-  print("shortcut test")
 
   p=myround.shortkey()
-  p[1].Hand=Hand(cards=[Card("7","trefle")])
-  assert(myround.teams[1].players[0].Hand.check_card(Card("7","trefle")))
-
-  print("test OK")
-
-"""
+  p[1].Hand=GraphicHand(cards=[GraphicCard("7","trefle")])
+  assert(myround.teams[1].players[0].Hand.check_card(GraphicCard("7","trefle")))
 
 
 
+def test_graphic_round():
+  """
+  Playing as Bob
+  """
+  myround = GraphicRound( team1_name ="Les winners", j1_name="Bob", j1_random=False, j3_name="Fred", j3_random=True,
+               team2_name="Les loseurs", j2_name = "Bill", j2_random=True, j4_name="John", j4_random=True,
+               hidden=False,pioche=GraphicHand(name="pioche",cards=[GraphicCard(i,j) for i in const.liste_numero for j in const.liste_couleur[:4]]),number=0)
+  cards=[]
+  i=0
+  for numero in const.liste_numero :
+    cards.append(GraphicCard(numero,"carreau", position=gconst.area["cards"]["j1"][i]))
+    i+=1
+  myhand=GraphicHand(name="Pli",cards=cards)
+  mypli=GraphicHand(name="Pli",cards=[])
+  pygame.init()
+  screen=pygame.display.set_mode(gconst.screen_size)
+
+  screen.fill(gconst.GREEN)
+  pygame.display.flip()
+
+
+  while True:
+    event = pygame.event.poll()
+
+
+    if event.type == pygame.QUIT or event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE: #escape
+            break
+
+    if event.type == pygame.KEYDOWN and event.key == pygame.K_UP :
+        myhand.play(screen,player="j1",random=False,pli=mypli)
+
+    if event.type == pygame.KEYDOWN and event.key == pygame.K_1 :
+        screen.fill(gconst.BLUE,gconst.area["j1"])
+
+    if event.type == pygame.KEYDOWN and event.key == pygame.K_2 :
+        screen.fill(gconst.BLUE,gconst.area["j2"])
+
+    if event.type == pygame.KEYDOWN and event.key == pygame.K_3 :
+        screen.fill(gconst.BLUE,gconst.area["j3"])
+
+    if event.type == pygame.KEYDOWN and event.key == pygame.K_4 :
+        screen.fill(gconst.BLUE,gconst.area["j4"])
+
+    if event.type == pygame.KEYDOWN and event.key == pygame.K_5 :
+        screen.fill(gconst.BLUE,gconst.area["middle"])
+
+    if event.type == pygame.KEYDOWN and event.key == pygame.K_6 :
+        screen.fill(gconst.BLUE,gconst.area["points"])
+
+    if event.type == pygame.KEYDOWN and event.key == pygame.K_KP1 :
+      if myround.choose_atout(screen) :
+        myround.cards_update()
+
+    if event.type == pygame.KEYDOWN and event.key == pygame.K_9 :
+        screen.fill(gconst.GREEN)
+
+    pygame.display.flip()
+
+  pygame.quit()
 
 
 
@@ -367,7 +406,10 @@ if __name__=="__main__"   :
   generic.test("cards_update",test_cards_update)
   generic.test("play_pli",test_play_pli)
   generic.test("classic_drawing",test_classic_drawing)
+  generic.test("cut",test_cut)
+  generic.test("shortcut",test_shortcut)
 
-
-
-
+  #GRAPHIC
+  """
+  generic.test("Graphic",test_graphic_round)
+  """

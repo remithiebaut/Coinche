@@ -275,28 +275,11 @@ def test_play_pli(hidden=True): #•fonctionne
 
 
 
-
-
-
-
-
-
-
-
-if __name__=="__main__"   :
-
-
-
-  generic.test("init and random draw",test_init)
-  generic.test("choose_atout",test_choose_atout)
-  generic.test("cards_update",test_cards_update)
-  generic.test("play_pli",test_play_pli)
-
-
-"""
-  print("check classic_drawing ")
-
-  myround.pioche = Hand(name="pioche",cards=[Card(i,j) for i in const.liste_numero for j in const.liste_couleur[:4]])
+def test_classic_drawing():
+  myround = GraphicRound( team1_name ="Les winners", j1_name="Bob", j1_random=True, j3_name="Fred", j3_random=True,
+                 team2_name="Les loseurs", j2_name = "Bill", j2_random=True, j4_name="John", j4_random=True,
+                 hidden=True,pioche=GraphicHand(name="pioche",cards=[GraphicCard(i,j) for i in const.liste_numero for j in const.liste_couleur[:4]]),number=0)
+  myround.pioche = GraphicHand(name="pioche",cards=[GraphicCard(i,j) for i in const.liste_numero for j in const.liste_couleur[:4]])
   players=myround.classic_draw()
 
   "check if pioche is empty"
@@ -311,31 +294,30 @@ if __name__=="__main__"   :
   "10 as coeur 7 pique 9 v d carreau d r trefle"
   "8 9 v pique r 10 as carreau 10 as trefle"
   players_cards=[]
-  players_cards.append([Card("7", "coeur"),Card("8", "coeur"),Card("9", "coeur"),
-           Card("D", "pique"),Card("R", "pique"),Card("10", "pique"),
-           Card("7", "trefle"),Card("8", "trefle")])
+  players_cards.append([GraphicCard("7", "coeur"),GraphicCard("8", "coeur"),GraphicCard("9", "coeur"),
+           GraphicCard("D", "pique"),GraphicCard("R", "pique"),GraphicCard("10", "pique"),
+           GraphicCard("7", "trefle"),GraphicCard("8", "trefle")])
 
-  players_cards.append([Card("V", "coeur"),Card("D", "coeur"),Card("R", "coeur"),
-           Card("As", "pique"),Card("7", "carreau"),Card("8", "carreau"),
-           Card("9", "trefle"),Card("V", "trefle")])
+  players_cards.append([GraphicCard("V", "coeur"),GraphicCard("D", "coeur"),GraphicCard("R", "coeur"),
+           GraphicCard("As", "pique"),GraphicCard("7", "carreau"),GraphicCard("8", "carreau"),
+           GraphicCard("9", "trefle"),GraphicCard("V", "trefle")])
 
-  players_cards.append([Card("10", "coeur"),Card("As", "coeur"),Card("7", "pique"),
-           Card("9", "carreau"),Card("V", "carreau"),Card("D", "carreau"),
-           Card("D", "trefle"),Card("R", "trefle")])
+  players_cards.append([GraphicCard("10", "coeur"),GraphicCard("As", "coeur"),GraphicCard("7", "pique"),
+           GraphicCard("9", "carreau"),GraphicCard("V", "carreau"),GraphicCard("D", "carreau"),
+           GraphicCard("D", "trefle"),GraphicCard("R", "trefle")])
 
-  players_cards.append([Card("8", "pique"),Card("9", "pique"),Card("V", "pique"),
-           Card("R", "carreau"),Card("10", "carreau"),Card("As", "carreau"),
-           Card("10", "trefle"),Card("As", "trefle")])
+  players_cards.append([GraphicCard("8", "pique"),GraphicCard("9", "pique"),GraphicCard("V", "pique"),
+           GraphicCard("R", "carreau"),GraphicCard("10", "carreau"),GraphicCard("As", "carreau"),
+           GraphicCard("10", "trefle"),GraphicCard("As", "trefle")])
 
   for p in range(4) :
-    myhand=Hand(cards=players[p])
+    myhand=GraphicHand(cards=players[p])
     for i in range(8):
       assert(myhand.check_card(players_cards[p][i]))
 
-  print("test ok")
 
 
-
+"""
   print("cut test")
 
   for nb_of_try in range(100):
@@ -366,6 +348,26 @@ if __name__=="__main__"   :
   print("test OK")
 
 """
+
+
+
+
+
+
+
+
+
+
+if __name__=="__main__"   :
+
+#ALLOWED_CARD COULD NOT WORK
+
+  generic.test("init and random draw",test_init)
+  generic.test("choose_atout",test_choose_atout)
+  generic.test("cards_update",test_cards_update)
+  generic.test("play_pli",test_play_pli)
+  generic.test("classic_drawing",test_classic_drawing)
+
 
 
 

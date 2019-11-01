@@ -8,7 +8,7 @@ Created on Tue Jul  9 07:51:36 2019
 from Player import Player
 from GraphicHand import GraphicHand
 import graphic_constant as gconst
-import pygame 
+import pygame
 from GraphicCard import GraphicCard
 import coinche_constant as const
 
@@ -29,7 +29,7 @@ class GraphicPlayer(Player):
     self.random=random
     self.number="j"+str(number)
 
-  
+
   def reinitialize(self, cards):
     """
     reintialize player for a new round or a new game
@@ -37,7 +37,7 @@ class GraphicPlayer(Player):
     self.Hand=GraphicHand(name=self.name, cards=cards) #bug with cards
     self.plis=0
     self.generale=False #indicator of genereale annonce
-  
+
   def test(self, name, coeur=0, pique=0, carreau=0, trefle=0, points=0,
            team_number=0, generale=False, plis=0, random=True):
     """
@@ -77,8 +77,8 @@ def test_graphic_player():
   myplayer3=GraphicPlayer(team_number=1, name="Fred", random = True, cards=cards3,number=2)
   myplayer4=GraphicPlayer(team_number=1, name="Fred", random = True, cards=cards4,number=4)
 
-  
-  pygame.init() 
+
+  pygame.init()
   screen=pygame.display.set_mode(gconst.screen_size)
   screen.fill(gconst.GREEN)
   pygame.display.flip()
@@ -86,7 +86,7 @@ def test_graphic_player():
 
   while True:
     event = pygame.event.poll()
-    
+
 
     if event.type == pygame.QUIT or event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE: #escape
             break
@@ -94,37 +94,37 @@ def test_graphic_player():
     if event.type == pygame.KEYDOWN and event.key == pygame.K_UP :
         myplayer1.Hand.play(screen,player=myplayer1.number,random=myplayer1.random,pli=mypli)
 
-            
-             
+
+
     if event.type == pygame.KEYDOWN and event.key == pygame.K_1 :
         screen.fill(gconst.BLUE,gconst.area["j1"])
-        
+
     if event.type == pygame.KEYDOWN and event.key == pygame.K_2 :
         screen.fill(gconst.BLUE,gconst.area["j2"])
-        
+
     if event.type == pygame.KEYDOWN and event.key == pygame.K_3 :
         screen.fill(gconst.BLUE,gconst.area["j3"])
-        
+
     if event.type == pygame.KEYDOWN and event.key == pygame.K_4 :
         screen.fill(gconst.BLUE,gconst.area["j4"])
-        
+
     if event.type == pygame.KEYDOWN and event.key == pygame.K_5 :
         screen.fill(gconst.BLUE,gconst.area["middle"])
-        
+
     if event.type == pygame.KEYDOWN and event.key == pygame.K_6 :
         screen.fill(gconst.BLUE,gconst.area["points"])
-        
-    if event.type == pygame.KEYDOWN and event.key == pygame.K_7 :
-        screen.fill(gconst.BLUE,gconst.area["test"])
-        
+
+    #if event.type == pygame.KEYDOWN and event.key == pygame.K_7 :
+        #screen.fill(gconst.BLUE,gconst.area["test"])
+
     if event.type == pygame.KEYDOWN and event.key == pygame.K_9 :
         screen.fill(gconst.GREEN)
-        
+
     if event.type == pygame.KEYDOWN and event.key == pygame.K_KP2 :
         myplayer2.Hand.play(screen,player=myplayer2.number,random=myplayer2.random,pli=mypli)
 
-        
- 
+
+
     if event.type == pygame.KEYDOWN and event.key == pygame.K_KP3 :
         myplayer3.Hand.play(screen,player=myplayer3.number,random=myplayer3.random,pli=mypli)
 
@@ -132,7 +132,7 @@ def test_graphic_player():
         myplayer4.Hand.play(screen,player=myplayer4.number,random=myplayer4.random,pli=mypli)
 
     pygame.display.flip()
-    
+
   pygame.quit()
 
 

@@ -48,6 +48,10 @@ class GraphicRound(Round):
                     j2_name=j4_name, j2_random=j4_random, j2_cards=players[3])]
    self.hidden=hidden
 
+
+
+
+
   def graphic_choose_atout(self,screen,annonce_actuelle):
       screen.fill(gconst.PURPLE,gconst.area["middle"])
       for announce in gconst.area["announce"]["value"]:
@@ -92,8 +96,6 @@ class GraphicRound(Round):
               pygame.display.flip()
               confirmation_zone=gconst.area["announce"][value_or_color][announce] #click once to highligth, click twice to confirm
               confirmed_announce=announce
-
-
 
 
   def coincher(self,screen,player,bet):
@@ -196,175 +198,82 @@ class GraphicRound(Round):
     return True
 
 
+def test_init():
+  myround = GraphicRound( team1_name ="Les winners", j1_name="Bob", j1_random=True, j3_name="Fred", j3_random=True,
+                   team2_name="Les loseurs", j2_name = "Bill", j2_random=True, j4_name="John", j4_random=True,
+                   hidden=False,pioche=GraphicHand(name="pioche",cards=[GraphicCard(i,j) for i in const.liste_numero for j in const.liste_couleur[:4]]),number=0)
+
+  "check if pioche is empty"
+
+  myround.pli.test("Pli in progress")
+
+  "random draw cards assert that all cards are drawing"
+  countinghand=GraphicHand()
+  for team in myround.teams :
+    for player in team.players :
+      assert(len(player.Hand.cards)==player.Hand.rest["cards"]==8)
+      countinghand+=player.Hand
+
+  cards_of_pioche=[GraphicCard(i,j) for i in const.liste_numero for j in const.liste_couleur[:4]]
+
+  countinghand.test("Cards",8,8,8,8)
+
+  for i in range(32):
+    assert(countinghand.cards[i] not in (countinghand.cards[:i]+countinghand.cards[i+1:])) #check for double
+    assert(countinghand.check_card(cards_of_pioche[i]))
 
 
-  def cards_update(self): #memory leak => the next round will start with a pli of 40 cards for no reason
-    """
-    Update the cards after the trump color is choosen
-    """
-    players=self.shortkey()
-    #normal
-    if self.atout in const.liste_couleur[:4]:
-
-        for j in players:
-            belote=0
-            for card in j.Hand.cards:
-                if card.color==self.atout:
-                    card.atout=True
-                    card.value=const.ordre_atout.index(card.number)
-                    card.points=const.points[const.liste_mode[1]][card.number]
-                    if card.number=="R" or card.number=="D":
-                        belote+=1
-                        if belote==2:
-                            if not self.hidden :  #GRAPHIC
-                              print("le joueur {} a la belote".format(j.name)) # do not tell it right away
-                            self.teams[j.team].pli.points+=20
-
-                else :
-                    card.value=const.liste_numero.index(card.number)
-                    card.points=const.points[const.liste_mode[0]][card.number]
-    #sans atout
-    elif self.atout==const.liste_couleur[4]:
-        for j in players :
-            for card in j.Hand.cards:
-                card.value=const.liste_numero.index(card.number)
-                card.points=const.points[const.liste_mode[2]][card.number]
-
-    #tout atout
-    elif self.atout==const.liste_couleur[5]:
-        for j in players :
-            for card in j.Hand.cards:
-                card.atout=True
-                card.value=const.ordre_atout.index(card.number)
-                card.points=const.points[const.liste_mode[3]][card.number]
-
-    total_points=0
-
-    for team in self.teams: #associe la bet a un nombre de points
-        if team.bet!= None:
-            if team.bet=='capot':
-                team.bet=250
-            elif team.bet=='generale':
-                team.bet=500
-            else :
-                team.bet=int(team.bet)
-
-    for j in players: #donne le nombre des points de chaque Hand nest pas mis a jour par la suite
-
-
-      total_points+=j.Hand.count_points()
-
-    assert(total_points==152)
-
-
-  def allowed_cards(self, choosen_color, j):
-      """
-      return cards allowed to play by the player who has to play
-      """
-
-      #cas 1 : la color demandée est atout
-      if choosen_color==self.atout :
-
-          #cas 1.1 : a de latout
-          if j.Hand.rest[choosen_color]!=0 :
-              atouts=[]
-
-          #cas 1.11 : atout plus fort
-              for carte in j.Hand.cards :
-                  if carte.atout and carte.number!= None and carte.value > self.pli.cards[self.pli.winner()].value : #il faut checké que les cards sont présentes
-                      atouts.append(carte)
-
-              if len(atouts)!=0:
-                  return Hand("Cards allowed",cards=atouts)
-
-          # cas 1.12 : pas d'atouts plus forts
-
-              return j.Hand.color(choosen_color)
-
-          #cas 1.2 pas d'atout
-          return Hand("Cards allowed",cards=j.Hand.cards)
-      #cas 2 : la color demandée n'est pas latout
-
-      #case 2.1 : a la color demandée
-      if j.Hand.rest[choosen_color]!=0 :
-          return j.Hand.color(choosen_color)
-
-      #cas 2.2 : n'a  pas la color demandée
-
-      #cas 2.21 : a atout
-      if self.atout in const.liste_couleur[:4]:
-
-          #cas 2.211 : le partenaire mène
-          if self.pli.winner()%2==len(self.pli.cards)%2: #permet de se defausser sur partenaire
-             return Hand("Cards allowed",cards=j.Hand.cards)
-
-
-         #cas 2.212 : on doit couper
-          if j.Hand.rest[self.atout]!=0 :
-              return j.Hand.color(self.atout)
-
-      #cas 2.22 pas datout
-      return Hand("Cards allowed",cards=j.Hand.cards)
-
-
-
-
-  def play_pli(self, players, pli_number): #•fonctionne
-      """
-      prends en entrée le tableau ORDONNEE des players de ce pli et le renvoi réordonné
-      """
-
-      #la meilleure card est le 1er joueur pour l'ini
-
-      choosen_color=players[0].Hand.play_card( self.pli, players[0].Hand.choose_card(random=players[0].random))
-
-      for j in players[1:]:
-          if not self.hidden :#GRAPHIC
-            self.pli.display(j.random)
-          allowed_hand=self.allowed_cards( choosen_color, j)
-          choosen_card=allowed_hand.choose_card(random=j.random)           # trois lignes a verifier
-          j.Hand.play_card( self.pli, choosen_card)
-      if not self.hidden :# GRAPHIC
-        self.pli.display(self.hidden)
-
-      winner=self.pli.winner()
-
-      if not self.hidden :#GRAPHIC
-          print("{} a gagné avec le {} de {}".format(players[winner].name, self.pli.cards[winner].number , self.pli.cards[winner].color ))
-      new_order=[players[winner],players[(winner+1)%4], players[(winner+2)%4] ,players[(winner+3)%4]]
-      players[winner].plis+=1
-      self.teams[players[winner].team].pli+=self.pli #reinitialise le pli
-      assert(self.pli.rest["cards"]==0)
-
-       #compter 10 de der
-      if pli_number==8 :
-          self.teams[players[winner].team].pli.points+=10
-
-      return new_order
 
 
 def test_choose_atout(): #random test
-   myround = Round( team1_name ="Les winners", j1_name="Bob", j1_random=True, j3_name="Fred", j3_random=True,
-                   team2_name="Les loseurs", j2_name = "Bill", j2_random=True, j4_name="John", j4_random=True,
-                   hidden=True,pioche=Hand(name="pioche",cards=[Card(i,j) for i in const.liste_numero for j in const.liste_couleur]),number=0)
-   myround.choose_atout()
+  pygame.init()
+  screen=pygame.display.set_mode(gconst.screen_size)
+
+  screen.fill(gconst.GREEN)
+  pygame.display.flip()
+  for i in range( 500):
+    myround = GraphicRound( team1_name ="Les winners", j1_name="Bob", j1_random=True, j3_name="Fred", j3_random=True,
+                     team2_name="Les loseurs", j2_name = "Bill", j2_random=True, j4_name="John", j4_random=True,
+                     hidden=True,pioche=GraphicHand(name="pioche",cards=[GraphicCard(i,j) for i in const.liste_numero for j in const.liste_couleur[:4]]),number=0)
+    myround.choose_atout(screen)
+  pygame.quit()
 
 def test_cards_update(): #random test
-   myround = Round( team1_name ="Les winners", j1_name="Bob", j1_random=True, j3_name="Fred", j3_random=True,
+  pygame.init()
+  screen=pygame.display.set_mode(gconst.screen_size)
+
+  screen.fill(gconst.GREEN)
+  pygame.display.flip()
+  for i in range( 500):
+    myround = GraphicRound( team1_name ="Les winners", j1_name="Bob", j1_random=True, j3_name="Fred", j3_random=True,
                    team2_name="Les loseurs", j2_name = "Bill", j2_random=True, j4_name="John", j4_random=True,
-                   hidden=True,pioche=Hand(name="pioche",cards=[Card(i,j) for i in const.liste_numero for j in const.liste_couleur]),number=0)
-   if myround.choose_atout() :
-     myround.cards_update()
+                   hidden=True,pioche=GraphicHand(name="pioche",cards=[GraphicCard(i,j) for i in const.liste_numero for j in const.liste_couleur[:4]]),number=0)
+    if myround.choose_atout(screen) :
+      myround.cards_update()
+  pygame.quit()
+
 
 def test_play_pli(hidden=True): #•fonctionne
-   myround = Round( team1_name ="Les winners", j1_name="Bob", j1_random=True, j3_name="Fred", j3_random=True,
+  pygame.init()
+  screen=pygame.display.set_mode(gconst.screen_size)
+
+  screen.fill(gconst.GREEN)
+  pygame.display.flip()
+  for i in range( 500):
+    myround = GraphicRound( team1_name ="Les winners", j1_name="Bob", j1_random=True, j3_name="Fred", j3_random=True,
                    team2_name="Les loseurs", j2_name = "Bill", j2_random=True, j4_name="John", j4_random=True,
-                   hidden=True,pioche=Hand(name="pioche",cards=[Card(i,j) for i in const.liste_numero for j in const.liste_couleur]),number=0)
-   if myround.choose_atout() :
-     myround.cards_update()
-     players=myround.shortkey()
-     for i in range(8):
-       players=myround.play_pli(pli_number=i,players=players)
+                   hidden=True,pioche=GraphicHand(name="pioche",cards=[GraphicCard(i,j) for i in const.liste_numero for j in const.liste_couleur[:4]]),number=0)
+    if myround.choose_atout(screen) :
+      myround.cards_update()
+      players=myround.shortkey()
+      for i in range(8):
+        players=myround.play_pli(pli_number=i,players=players)
+  pygame.quit()
+
+
+
+
+
 
 
 
@@ -376,34 +285,15 @@ def test_play_pli(hidden=True): #•fonctionne
 
 if __name__=="__main__"   :
 
-  print("test init and random draw")
-  myround = Round( team1_name ="Les winners", j1_name="Bob", j1_random=True, j3_name="Fred", j3_random=True,
-                   team2_name="Les loseurs", j2_name = "Bill", j2_random=True, j4_name="John", j4_random=True,
-                   hidden=False,pioche=Hand(name="pioche",cards=[Card(i,j) for i in const.liste_numero for j in const.liste_couleur]),number=0)
-
-  "check if pioche is empty"
-
-  myround.pli.test("Pli in progress")
-
-  "random draw cards assert that all cards are drawing"
-  countinghand=Hand()
-  for team in myround.teams :
-    for player in team.players :
-      assert(len(player.Hand.cards)==player.Hand.rest["cards"]==8)
-      countinghand+=player.Hand
-
-  cards_of_pioche=[Card(i,j) for i in const.liste_numero for j in const.liste_couleur[:4]]
-
-  countinghand.test("Cards",8,8,8,8)
-
-  for i in range(32):
-    assert(countinghand.cards[i] not in (countinghand.cards[:i]+countinghand.cards[i+1:])) #check for double
-    assert(countinghand.check_card(cards_of_pioche[i]))
-
-  print("test ok")
 
 
+  generic.test("init and random draw",test_init)
+  generic.test("choose_atout",test_choose_atout)
+  generic.test("cards_update",test_cards_update)
+  generic.test("play_pli",test_play_pli)
 
+
+"""
   print("check classic_drawing ")
 
   myround.pioche = Hand(name="pioche",cards=[Card(i,j) for i in const.liste_numero for j in const.liste_couleur[:4]])
@@ -475,25 +365,7 @@ if __name__=="__main__"   :
 
   print("test OK")
 
-  print("choose_atout test")
-  for i in range(500):
-    test_choose_atout()
-  print("test OK")
-
-  print("cards_update test")
-  for i in range(500):
-    test_cards_update()
-  print("test OK")
-
-  print("play_pli test")
-  for i in range(500):
-    test_play_pli()
-  print("test OK")
-
-
-
-
-
+"""
 
 
 

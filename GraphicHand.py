@@ -9,13 +9,13 @@ import generical_function as generic
 from GraphicCard import GraphicCard
 from Hand import Hand
 import graphic_constant as gconst
-import pygame 
+import pygame
 import coinche_constant as const
 import sys
 
 
 class GraphicHand(Hand):
-  
+
   def display(self,screen,player):
      """
      display the board of cards
@@ -47,18 +47,19 @@ class GraphicHand(Hand):
         for card in self.cards:
           mouse=pygame.mouse.get_pos()
           if mouse[0]>card.position[0] and mouse[0]<(card.position[0]+card.position[2]) and mouse[1]>card.position[1] and mouse[1]<(card.position[1]+card.position[3]):
-            if  event.type == pygame.MOUSEBUTTONDOWN : 
+            if  event.type == pygame.MOUSEBUTTONDOWN :
                if card.rest:
                  pygame.display.flip()
                  return card
 
     else: #BOT
+      while True :
          card_position = generic.decision(liste_choix_possible=const.liste_entier32[:len(self.cards)], random=random, question="Quelle carte ? 1ère, 2ème ? ")
          card_position = int(card_position)-1
          if card_position<len(self.cards) :
              if self.cards[card_position].rest:
                  return self.cards[card_position]
-               
+
   def play(self,screen,player,random,pli): # could not work // dont play a empty hand with bots
     """
     play a graphic card
@@ -78,7 +79,7 @@ def test_graphic_hand():
     i+=1
   myhand=GraphicHand(name="Pli",cards=cards)
   mypli=GraphicHand(name="Pli",cards=[])
-  pygame.init() 
+  pygame.init()
   screen=pygame.display.set_mode(gconst.screen_size)
 
   screen.fill(gconst.GREEN)
@@ -87,42 +88,42 @@ def test_graphic_hand():
 
   while True:
     event = pygame.event.poll()
-    
+
 
     if event.type == pygame.QUIT or event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE: #escape
             break
 
     if event.type == pygame.KEYDOWN and event.key == pygame.K_UP :
         myhand.play(screen,player="j1",random=False,pli=mypli)
-             
+
     if event.type == pygame.KEYDOWN and event.key == pygame.K_1 :
         screen.fill(gconst.BLUE,gconst.area["j1"])
-        
+
     if event.type == pygame.KEYDOWN and event.key == pygame.K_2 :
         screen.fill(gconst.BLUE,gconst.area["j2"])
-        
+
     if event.type == pygame.KEYDOWN and event.key == pygame.K_3 :
         screen.fill(gconst.BLUE,gconst.area["j3"])
-        
+
     if event.type == pygame.KEYDOWN and event.key == pygame.K_4 :
         screen.fill(gconst.BLUE,gconst.area["j4"])
-        
+
     if event.type == pygame.KEYDOWN and event.key == pygame.K_5 :
         screen.fill(gconst.BLUE,gconst.area["middle"])
-        
+
     if event.type == pygame.KEYDOWN and event.key == pygame.K_6 :
         screen.fill(gconst.BLUE,gconst.area["points"])
-        
+
     if event.type == pygame.KEYDOWN and event.key == pygame.K_7 :
         screen.fill(gconst.BLUE,gconst.area["test"])
-        
+
     if event.type == pygame.KEYDOWN and event.key == pygame.K_9 :
         screen.fill(gconst.GREEN)
 
     pygame.display.flip()
-    
+
   pygame.quit()
- 
+
 if __name__=="__main__"   :
 
 

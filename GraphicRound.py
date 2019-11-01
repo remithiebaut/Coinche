@@ -8,6 +8,9 @@ Created on Tue Feb 26 15:30:05 2019
 import coinche_constant as const
 import generical_function as generic
 import graphic_constant as gconst
+from generical_function import get_mouse,graphic_yesorno,draw_text
+import pygame
+
 
 from GraphicPlayer import GraphicPlayer
 from GraphicHand import GraphicHand
@@ -45,6 +48,96 @@ class GraphicRound(Round):
                     j2_name=j4_name, j2_random=j4_random, j2_cards=players[3])]
    self.hidden=hidden
 
+  def graphic_choose_atout(self,screen,annonce_actuelle):
+      screen.fill(gconst.PURPLE,gconst.area["middle"])
+      for announce in gconst.area["announce"]["value"]:
+        draw_text(screen,announce,gconst.area["announce"]["value"][announce])
+      for announce in gconst.area["announce"]["color"]:
+        draw_text(screen,announce,gconst.area["announce"]["color"][announce])
+      color=self.choose_announce(screen,"color")
+      while True :
+        bet = self.choose_announce(screen,"value")
+        annonce_voulue=const.liste_annonce.index(bet)
+        if annonce_voulue>annonce_actuelle :
+            annonce_actuelle=annonce_voulue
+            break
+
+      screen.fill(gconst.GREEN,gconst.area["middle"])
+      draw_text(screen,bet + " " + color,gconst.area["middle"])
+      return (color,bet,annonce_actuelle)
+
+
+
+  def choose_announce(self,screen,value_or_color):
+    assert((value_or_color=="color") or (value_or_color=="value"))
+    confirmation_zone=None
+    while True :
+      event = pygame.event.poll()
+      if event.type == pygame.QUIT or event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE: #escape
+        break
+      for announce in gconst.area["announce"][value_or_color]:
+        if gconst.get_mouse(gconst.area["announce"][value_or_color][announce]):
+          if  event.type == pygame.MOUSEBUTTONDOWN :
+            if confirmation_zone==gconst.area["announce"][value_or_color][announce] : #second click
+              screen.fill(gconst.RED,gconst.area["announce"][value_or_color][announce])
+              draw_text(screen,announce,gconst.area["announce"][value_or_color][announce])
+              pygame.display.flip()
+              return announce
+            else :
+              if confirmation_zone!=None : # already click elsewhere
+                screen.fill(gconst.PURPLE,confirmation_zone)
+                draw_text(screen,confirmed_announce,confirmation_zone)
+              screen.fill(gconst.YELLOW,gconst.area["announce"][value_or_color][announce])
+              draw_text(screen,announce,gconst.area["announce"][value_or_color][announce])
+              pygame.display.flip()
+              confirmation_zone=gconst.area["announce"][value_or_color][announce] #click once to highligth, click twice to confirm
+              confirmed_announce=announce
+
+
+
+
+  def coincher(self,screen,player,bet):
+    """
+    make a turn of coince take as argument the player who just bet
+    """
+    self.teams[player.team].bet=bet #fixe la bet de lteam attention bet est un char
+    self.teams[(player.team+1)%2].bet=None
+    if bet == "generale":
+      player.generale=True
+
+    for coincheur in self.teams[(player.team+1)%2].players:
+        if not self.coinche :
+          #BOT
+          if coincheur.random:
+            self.coinche=generic.decision(random=coincheur.random, question='coincher sur {} {} ?'.format(bet,self.atout), ouverte=False)
+          #PLAYER
+          else :
+            self.coinche= graphic_yesorno(screen,question="coincher ?",question_surface=gconst.area["choice"]["question"],
+                                   yes_surface=gconst.area["choice"]["yes"],no_surface=gconst.area["choice"]["no"])
+          if self.coinche:
+
+
+             if not self.hidden : #GRAPHIC
+               draw_text(screen,' {} coinche sur {} {} !'.format(coincheur.name,bet,self.atout),gconst.area["middle"])
+
+
+
+             for surcoincheur in self.teams[player.team].players:
+
+               if not self.surcoinche :
+                 #BOT
+                 if coincheur.random:
+                   self.surcoinche=generic.decision(random=surcoincheur.random, question='surcoincher sur {} {} ?'.format(bet,self.atout), ouverte=False)
+                 #PLAYER
+                 else :
+                   self.surcoinche= graphic_yesorno(screen,question="surcoincher ?",question_surface=gconst.area["choice"]["question"],
+                                           yes_surface=gconst.area["choice"]["yes"],no_surface=gconst.area["choice"]["no"])
+                 if self.surcoinche :
+                     if not self.hidden : #GRAPHIC
+                       draw_text(screen,' {} surcoinche sur {} {} !'.format(surcoincheur.name,bet,self.atout),gconst.area["middle"])
+
+
+
   def choose_atout(self,screen,background_color="GREEN"): # pensez a display avant surcoinche empecher danooncer 170 180 tout atout sans atout
     """
     select the atout and return true if someone didnt pass his turn
@@ -67,71 +160,41 @@ class GraphicRound(Round):
             else :
               turn=1
 
+              self.atout=generic.decision(const.liste_couleur, random=player.random, question ="Choisir la couleur d'atout : %s " % const.liste_couleur)
+
+              while True :
+                bet = generic.decision(const.liste_annonce, random=player.random, question="Choisir la hauteur d'annonce : %s " % const.liste_annonce )
+                annonce_voulue=const.liste_annonce.index(bet)
+                if annonce_voulue>annonce_actuelle :
+                    annonce_actuelle=annonce_voulue
+
+                    if not self.hidden :  #GRAPHIC
+                      print(' {} prend à {} {} !'.format(player.name,bet,self.atout))
+
+                    break
+              self.coincher(screen,player,bet)
+
           #PLAYER
           else :
-            end=False
-            while not end :
-               event = pygame.event.poll()
-               if event.type == pygame.QUIT or event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE: #escape
-                 break
-               if gconst.get_mouse(gconst.area["middle"]):
-                 if  event.type == pygame.MOUSEBUTTONDOWN :
-                   screen.fill(gconst.GREEN,gconst.area["middle"])
-                   end=True
-               pygame.display.flip()
+            if not graphic_yesorno(screen,question="annoncer ?",question_surface=gconst.area["choice"]["question"],
+                                   yes_surface=gconst.area["choice"]["yes"],no_surface=gconst.area["choice"]["no"]) :
+              turn+=1
+            else:
+              turn=1
+              self.atout,bet,annonce_actuelle=self.graphic_choose_atout(screen,annonce_actuelle)
+              self.coincher(screen,player,bet)
 
 
-                  else:
-                 turn=1
-
-                 self.atout=generic.decision(const.liste_couleur, random=player.random, question ="Choisir la couleur d'atout : %s " % const.liste_couleur)
-
-                 while True :
-
-                    bet = generic.decision(const.liste_annonce, random=player.random, question="Choisir la hauteur d'annonce : %s " % const.liste_annonce )
-                    annonce_voulue=const.liste_annonce.index(bet)
-                    if annonce_voulue>annonce_actuelle :
-                        annonce_actuelle=annonce_voulue
-
-                        if not self.hidden :  #GRAPHIC
-                          print(' {} prend à {} {} !'.format(player.name,bet,self.atout))
-
-                        break
-
-                 self.teams[player.team].bet=bet #fixe la bet de lteam attention bet est un char
-                 self.teams[(player.team+1)%2].bet=None
-                 if bet == "generale":
-                     player.generale=True
-                 for coincheur in self.teams[(player.team+1)%2].players:
-
-                   if not self.hidden :  #GRAPHIC
-                     coincheur.Hand.display(coincheur.random)
-
-                   if not self.coinche :
-                      self.coinche=generic.decision(random=coincheur.random, question='coincher sur {} {} ?'.format(bet,self.atout), ouverte=False)
-                      if self.coinche:
-                         if not self.hidden : #GRAPHIC
-                           print(' {} coinche sur {} {} !'.format(coincheur.name,bet,self.atout))
-                         for surcoincheur in self.teams[player.team].players:
-
-                           if not self.hidden : #GRAPHIC
-                             surcoincheur.Hand.display(surcoincheur.random)
-
-                           if not self.surcoinche :
-                               self.surcoinche=generic.decision(random=surcoincheur.random, question='surcoincher sur {} {} ?'.format(bet,self.atout), ouverte=False)
-                               if self.surcoinche :
-                                 if not self.hidden : #GRAPHIC
-                                   print(' {} surcoinche sur {} {} !'.format(surcoincheur.name,bet,self.atout))
-
-     if (self.atout==None):
+    if (self.atout==None):
           return False
 
-     if not self.hidden :  #GRAPHIC
-       for team in self.teams :
-            if team.bet!=None:
-                print("L'équipe '{}' a pris {} à {} !!!".format(team.name, team.bet, self.atout))
+    if not self.hidden :  #GRAPHIC
+      for team in self.teams :
+        if team.bet!=None:
+          print("L'équipe '{}' a pris {} à {} !!!".format(team.name, team.bet, self.atout))
 
-     return True
+    return True
+
 
 
 

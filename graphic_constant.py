@@ -44,12 +44,39 @@ area={}
 
 area["points"]=surface(0,0,9,3)
 
-area["middle"]=surface(11,4,23,13)
+area["middle"]=surface(3,4,29,13)
 
 area["choice"]={}
 area["choice"]["question"]=surface(11,4,23,9)
 area["choice"]["yes"]=surface(11,10,16,13)
 area["choice"]["no"]=surface(17,10,23,13)
+
+area["announce"]={}
+#row 1
+
+area["announce"]["color"]={}
+area["announce"]["color"]["coeur"]=surface(3,4,8,7)
+area["announce"]["color"]["carreau"]=surface(10,4,15,7)
+area["announce"]["color"]["pique"]=surface(17,4,22,7)
+area["announce"]["color"]["trefle"]=surface(24,4,29,7)
+
+#row 2
+area["announce"]["value"]={}
+area["announce"]["value"]["150"]=surface(4,7,6,10)
+area["announce"]["value"]["160"]=surface(8,7,10,10)
+area["announce"]["value"]["170"]=surface(12,7,14,10)
+area["announce"]["value"]["capot"]=surface(16,7,20,10)
+area["announce"]["value"]["generale"]=surface(22,7,29,10)
+
+#row 3
+area["announce"]["value"]["80"]=surface(4,10,5,13)
+area["announce"]["value"]["90"]=surface(7,10,8,13)
+area["announce"]["value"]["100"]=surface(10,10,12,13)
+area["announce"]["value"]["110"]=surface(14,10,16,13)
+area["announce"]["value"]["120"]=surface(18,10,20,13)
+area["announce"]["value"]["130"]=surface(22,10,24,13)
+area["announce"]["value"]["140"]=surface(26,10,28,13)
+
 
 
 

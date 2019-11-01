@@ -77,6 +77,7 @@ def draw_text(screen, text, position, color=(0,0,0),
     surface = font.render(text, True, color)
     surface = pygame.transform.scale(surface,(position[2],position[3]))
     screen.blit(surface, position)
+    pygame.display.flip()
 
 
 

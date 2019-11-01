@@ -122,6 +122,8 @@ def test():
 
 
 
+
+
     pygame.display.flip()
 
 
@@ -130,16 +132,43 @@ def test():
 
 def choose_atout(screen):
     screen.fill(gconst.PURPLE,gconst.area["middle"])
-    end=False
-    while not end :
-       event = pygame.event.poll()
-       if event.type == pygame.QUIT or event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE: #escape
-         break
-       if gconst.get_mouse(gconst.area["middle"]):
+
+    for announce in gconst.area["announce"]["value"]:
+      draw_text(screen,announce,gconst.area["announce"]["value"][announce])
+    for announce in gconst.area["announce"]["color"]:
+      draw_text(screen,announce,gconst.area["announce"]["color"][announce])
+    color=choose_announce(screen,"color")
+    value=choose_announce(screen,"value")
+
+    screen.fill(gconst.GREEN,gconst.area["middle"])
+    draw_text(screen,value + " " + color,gconst.area["middle"])
+
+
+
+def choose_announce(screen,value_or_color):
+  assert((value_or_color=="color") or (value_or_color=="value"))
+  confirmation_zone=None
+  while True :
+    event = pygame.event.poll()
+    if event.type == pygame.QUIT or event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE: #escape
+      break
+    for announce in gconst.area["announce"][value_or_color]:
+      if gconst.get_mouse(gconst.area["announce"][value_or_color][announce]):
         if  event.type == pygame.MOUSEBUTTONDOWN :
-          screen.fill(gconst.GREEN,gconst.area["middle"])
-          end=True
-       pygame.display.flip()
+          if confirmation_zone==gconst.area["announce"][value_or_color][announce] : #second click
+            screen.fill(gconst.RED,gconst.area["announce"][value_or_color][announce])
+            draw_text(screen,announce,gconst.area["announce"][value_or_color][announce])
+            pygame.display.flip()
+            return announce
+          else :
+            if confirmation_zone!=None : # already click elsewhere
+              screen.fill(gconst.PURPLE,confirmation_zone)
+              draw_text(screen,confirmed_announce,confirmation_zone)
+            screen.fill(gconst.YELLOW,gconst.area["announce"][value_or_color][announce])
+            draw_text(screen,announce,gconst.area["announce"][value_or_color][announce])
+            pygame.display.flip()
+            confirmation_zone=gconst.area["announce"][value_or_color][announce] #click once to highligth, click twice to confirm
+            confirmed_announce=announce
 
 
 

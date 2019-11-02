@@ -27,7 +27,7 @@ class GraphicRound(Round):
   """
   def __init__(self, team1_name, j1_name, j1_random, j3_name, j3_random,
                team2_name, j2_name, j2_random, j4_name, j4_random ,
-               number,pioche, hidden=False): # e1 et e2 inutiles
+               number,pioche, hidden=False,screen=None): # e1 et e2 inutiles
 
    self.number=number
    self.atout=None
@@ -47,6 +47,7 @@ class GraphicRound(Round):
                     j1_name=j2_name, j1_random=j2_random, j1_cards=players[1],
                     j2_name=j4_name, j2_random=j4_random, j2_cards=players[3])]
    self.hidden=hidden
+   self.screen=screen
 
 
 
@@ -209,9 +210,102 @@ class GraphicRound(Round):
     if not self.hidden :  #GRAPHIC
       for team in self.teams :
         if team.bet!=None:
-          draw_text(screen,"L'équipe '{}' a pris {} {} !!!".format(team.name, team.bet, self.atout),gconst.area["middle"])
+          draw_text(screen,"L'équipe '{}' a pris {} {} !!!".format(team.name, team.bet, self.atout),gconst.area["points"])
+          screen.fill(gconst.GREEN,gconst.area["middle"])
 
     return True
+
+  def allowed_cards(self, choosen_color, j):
+      """
+      return cards allowed to play by the player who has to play
+      """
+
+      #cas 1 : la color demandée est atout
+      if choosen_color==self.atout :
+
+          #cas 1.1 : a de latout
+          if j.Hand.rest[choosen_color]!=0 :
+              atouts=[]
+
+          #cas 1.11 : atout plus fort
+              for carte in j.Hand.cards :
+                  if carte.atout and carte.number!= None and carte.value > self.pli.cards[self.pli.winner()].value : #il faut checké que les cards sont présentes
+                      atouts.append(carte)
+
+              if len(atouts)!=0:
+                  return GraphicHand("Cards allowed",cards=atouts)
+
+          # cas 1.12 : pas d'atouts plus forts
+
+              return j.Hand.color(choosen_color)
+
+          #cas 1.2 pas d'atout
+          return GraphicHand("Cards allowed",cards=j.Hand.cards)
+      #cas 2 : la color demandée n'est pas latout
+
+      #case 2.1 : a la color demandée
+      if j.Hand.rest[choosen_color]!=0 :
+          return j.Hand.color(choosen_color)
+
+      #cas 2.2 : n'a  pas la color demandée
+
+      #cas 2.21 : a atout
+      if self.atout in const.liste_couleur[:4]:
+
+          #cas 2.211 : le partenaire mène
+          if self.pli.winner()%2==len(self.pli.cards)%2: #permet de se defausser sur partenaire
+             return GraphicHand("Cards allowed",cards=j.Hand.cards)
+
+
+         #cas 2.212 : on doit couper
+          if j.Hand.rest[self.atout]!=0 :
+              return j.Hand.color(self.atout)
+
+      #cas 2.22 pas datout
+      return GraphicHand("Cards allowed",cards=j.Hand.cards)
+
+  def play_pli(self, players, pli_number): #•fonctionne
+      """
+      prends en entrée le tableau ORDONNEE des players de ce pli et le renvoi réordonné
+      """
+
+      #la meilleure card est le 1er joueur pour l'ini
+      choosen_color=players[0].Hand.play(self.screen,players[0].number,players[0].random, self.pli,hand=players[0].Hand)
+
+      for j in players[1:]:
+          allowed_hand=self.allowed_cards( choosen_color, j)
+          j.Hand.play(self.screen,j.number,j.random,self.pli,hand=allowed_hand)
+      if not self.hidden :
+        pygame.time.wait(5000)
+
+      """
+      choosen_color=players[0].Hand.play_card( self.pli, players[0].Hand.choose_card(random=players[0].random))
+
+      for j in players[1:]:
+          if not self.hidden :#GRAPHIC
+            self.pli.display(self.screen,"board")
+          allowed_hand=self.allowed_cards( choosen_color, j)
+          choosen_card=allowed_hand.choose_card(random=j.random)           # trois lignes a verifier
+          j.Hand.play_card( self.pli, choosen_card)
+      if not self.hidden :# GRAPHIC
+        self.pli.display(self.screen,"board")
+      """
+
+      winner=self.pli.winner()
+
+      if not self.hidden :#GRAPHIC
+        draw_text(self.screen,str("{} a gagné avec le {} de {}".format(players[winner].name, self.pli.cards[winner].number , self.pli.cards[winner].color )),gconst.area["points"])
+
+      new_order=[players[winner],players[(winner+1)%4], players[(winner+2)%4] ,players[(winner+3)%4]]
+      players[winner].plis+=1
+      self.teams[players[winner].team].pli+=self.pli #reinitialise le pli
+      assert(self.pli.rest["cards"]==0)
+
+       #compter 10 de der
+      if pli_number==8 :
+          self.teams[players[winner].team].pli.points+=10
+
+      return new_order
 
 
 def test_init():

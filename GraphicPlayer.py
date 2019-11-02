@@ -69,7 +69,7 @@ def test_graphic_player():
     cards1.append(GraphicCard(numero,"carreau", position=gconst.area["cards"]["j1"][i]))
     cards2.append(GraphicCard(numero,"pique", position=gconst.area["cards"]["j3"][i]))
     cards3.append(GraphicCard(numero,"trefle", position=gconst.area["cards"]["j2"][i]))
-    cards4.append(GraphicCard(numero,"carreau", position=gconst.area["cards"]["j4"][i]))
+    cards4.append(GraphicCard(numero,"coeur", position=gconst.area["cards"]["j4"][i]))
 
     i+=1
   myplayer1=GraphicPlayer(team_number=0, name="Bob", random = False, cards=cards1,number=1)
@@ -92,7 +92,7 @@ def test_graphic_player():
             break
 
     if event.type == pygame.KEYDOWN and event.key == pygame.K_UP :
-        myplayer1.Hand.play(screen,player=myplayer1.number,random=myplayer1.random,pli=mypli)
+        myplayer1.Hand.play(screen,player=myplayer1.number,random=myplayer1.random,pli=mypli,hand=myplayer1.Hand)
 
 
 
@@ -125,15 +125,15 @@ def test_graphic_player():
         screen.fill(gconst.GREEN)
 
     if event.type == pygame.KEYDOWN and event.key == pygame.K_KP2 :
-        myplayer2.Hand.play(screen,player=myplayer2.number,random=myplayer2.random,pli=mypli)
+        myplayer2.Hand.play(screen,player=myplayer2.number,random=myplayer2.random,pli=mypli,hand=myplayer2.Hand)
 
 
 
     if event.type == pygame.KEYDOWN and event.key == pygame.K_KP3 :
-        myplayer3.Hand.play(screen,player=myplayer3.number,random=myplayer3.random,pli=mypli)
+        myplayer3.Hand.play(screen,player=myplayer3.number,random=myplayer3.random,pli=mypli,hand=myplayer3.Hand)
 
     if event.type == pygame.KEYDOWN and event.key == pygame.K_KP4 :
-        myplayer4.Hand.play(screen,player=myplayer4.number,random=myplayer4.random,pli=mypli)
+        myplayer4.Hand.play(screen,player=myplayer4.number,random=myplayer4.random,pli=mypli,hand=myplayer4.Hand)
 
     pygame.display.flip()
 

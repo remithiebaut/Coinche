@@ -62,7 +62,7 @@ def test_graphic_card():
       if mouse[0]>card.position[0] and mouse[0]<(card.position[0]+card.position[2]) and mouse[1]>card.position[1] and mouse[1]<(card.position[1]+card.position[3]):
         if  event.type == pygame.MOUSEBUTTONDOWN :
 
-           card.play(screen,gconst.area["cards"]["board"]["j1"])
+           card.play(screen,gconst.area["cards"]["board"][0])
            delete=cards.index(card)
            cards=cards[:delete]+cards[delete+1:]
 
@@ -85,8 +85,8 @@ def test_graphic_card():
     if event.type == pygame.KEYDOWN and event.key == pygame.K_6 :
         screen.fill(gconst.BLUE,gconst.area["points"])
 
-    if event.type == pygame.KEYDOWN and event.key == pygame.K_7 :
-        screen.fill(gconst.BLUE,gconst.area["test"])
+    #if event.type == pygame.KEYDOWN and event.key == pygame.K_7 :
+    #    screen.fill(gconst.BLUE,gconst.area["test"])
 
     if event.type == pygame.KEYDOWN and event.key == pygame.K_9 :
         screen.fill(gconst.GREEN)

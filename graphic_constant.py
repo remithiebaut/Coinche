@@ -91,11 +91,16 @@ area["announce"]["bet"]=area["j3"]
 
 
 area["cards"]={"board":{}}
+#COULD BE AN ERROR
+area["cards"]["board"][0]=(area["middle"][0]+int(area["middle"][2]/2),area["middle"][1]+int(area["middle"][3]/2),card_size[0],card_size[1])
+area["cards"]["board"][1]=(area["cards"]["board"][0][0]-0.75*card_size[0],area["cards"]["board"][0][1]-0.75*card_size[1],card_size[0],card_size[1])
+area["cards"]["board"][2]=(area["cards"]["board"][0][0],area["cards"]["board"][0][1]-1.5*card_size[1],card_size[0],card_size[1])
+area["cards"]["board"][3]=(area["cards"]["board"][0][0]+0.75*card_size[0],area["cards"]["board"][0][1]-0.75*card_size[1],card_size[0],card_size[1])
 
-area["cards"]["board"]["j1"]=(area["middle"][0]+int(area["middle"][2]/2),area["middle"][1]+int(area["middle"][3]/2),card_size[0],card_size[1])
-area["cards"]["board"]["j2"]=(area["middle"][0]+card_size[0],area["middle"][1],card_size[0],card_size[1])
-area["cards"]["board"]["j3"]=(area["middle"][0]+card_size[0],area["middle"][1],card_size[0],card_size[1])
-area["cards"]["board"]["j4"]=(area["middle"][0]+card_size[0],area["middle"][1],card_size[0],card_size[1])
+area["cards"]["board"]["j1"]=area["cards"]["board"][0]
+area["cards"]["board"]["j2"]=area["cards"]["board"][1]
+area["cards"]["board"]["j3"]=area["cards"]["board"][2]
+area["cards"]["board"]["j4"]=area["cards"]["board"][3]
 
 
 

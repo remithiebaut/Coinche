@@ -115,6 +115,7 @@ def test():
     if event.type == pygame.KEYDOWN and event.key == pygame.K_KP4 :
       result=graphic_yesorno(screen,question="surcoincher ?",question_surface=gconst.area["choice"]["question"],
                       yes_surface=gconst.area["choice"]["yes"],no_surface=gconst.area["choice"]["no"])
+      pygame.time.wait(1000)
       screen.fill(gconst.GREEN,gconst.area["middle"])
       draw_text(screen,str(result),gconst.area["middle"])
 

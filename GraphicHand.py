@@ -60,16 +60,35 @@ class GraphicHand(Hand):
              if self.cards[card_position].rest:
                  return self.cards[card_position]
 
-  def play(self,screen,player,random,pli): # could not work // dont play a empty hand with bots
+
+
+  def play(self,screen,player,random,pli,hand): # could not work // dont play a empty hand with bots
     """
     play a graphic card
     """
-    self.display(screen=screen,player=player)
-    card=self.choose_card(random=random)
-    card.play(screen,new_position=gconst.area["cards"]["board"][player])
+    if screen!=None :
+      screen.fill(gconst.GREEN,gconst.area[player])
+      hand.display(screen=screen,player=player)
+    card=hand.choose_card(random=random)
     choosen_color=self.play_card(pli=pli,choosen_card=card)
-    self.display(screen=screen,player=player)
+    if screen!=None :
+      card.play(screen,new_position=gconst.area["cards"]["board"][player])
+      self.display(screen=screen,player=player)
     return choosen_color
+
+
+
+
+  def color(self, chosen_color):
+    """
+    return all the cards of a given color => it is now returning a Hand !!
+    """
+    cards_of_this_color=[]
+    for card in self.cards:
+        if card.color==chosen_color:
+            cards_of_this_color.append(card)
+    return GraphicHand(cards=cards_of_this_color, name =chosen_color)
+
 
 def test_graphic_hand():
   cards=[]
@@ -94,7 +113,7 @@ def test_graphic_hand():
             break
 
     if event.type == pygame.KEYDOWN and event.key == pygame.K_UP :
-        myhand.play(screen,player="j1",random=False,pli=mypli)
+      myhand.play(screen,player="j1",random=False,pli=mypli,hand=myhand)
 
     if event.type == pygame.KEYDOWN and event.key == pygame.K_1 :
         screen.fill(gconst.BLUE,gconst.area["j1"])
@@ -114,8 +133,8 @@ def test_graphic_hand():
     if event.type == pygame.KEYDOWN and event.key == pygame.K_6 :
         screen.fill(gconst.BLUE,gconst.area["points"])
 
-    if event.type == pygame.KEYDOWN and event.key == pygame.K_7 :
-        screen.fill(gconst.BLUE,gconst.area["test"])
+    #if event.type == pygame.KEYDOWN and event.key == pygame.K_7 :
+     #   screen.fill(gconst.BLUE,gconst.area["test"])
 
     if event.type == pygame.KEYDOWN and event.key == pygame.K_9 :
         screen.fill(gconst.GREEN)

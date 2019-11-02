@@ -67,6 +67,8 @@ class GraphicHand(Hand):
     play a graphic card
     """
     if screen!=None :
+      self.display(screen=screen,player=player)
+      generic.wait_or_pass(1)
       screen.fill(gconst.GREEN,gconst.area[player])
       hand.display(screen=screen,player=player)
     card=hand.choose_card(random=random)
@@ -74,6 +76,7 @@ class GraphicHand(Hand):
     if screen!=None :
       card.play(screen,new_position=gconst.area["cards"]["board"][player])
       self.display(screen=screen,player=player)
+      generic.wait_or_pass(1)
     return choosen_color
 
 

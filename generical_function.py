@@ -84,9 +84,22 @@ def test(test_name,test_function,*args,**kwargs):
 #GRAPHIC
 import pygame
 
+def wait_or_pass(delay):
+  """
+  delay the programm for the given time in second or press a key to pass the delay
+  """
+  tic = time.clock()
+  while ((time.clock()-tic)<delay) :
+    event = pygame.event.poll()
+    if event.type == pygame.QUIT or event.type == pygame.KEYDOWN or event.type == pygame.MOUSEBUTTONDOWN: #escape
+      break
+
+
+
+
 
 def draw_text(screen, text, position, color=(0,0,0),
-                font_type='mono', font_size = 15,
+                font_type='mono', font_size = 150,
                 background_color=(0,125,0)):
     """
     write text in window

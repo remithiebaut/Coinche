@@ -38,6 +38,12 @@ def surface(x1,y1,x2,y2) :
   """
   return((grid[x1][y1][0],grid[x1][y1][1],(1+x2-x1)*cell_size[0],(1+y2-y1)*cell_size[1]))
 
+#Time
+normal_game_time=1
+fast_game_time=0.5
+time={}
+time["play_card"]=1000
+
 #areas definition
 
 area={}
@@ -45,6 +51,8 @@ area={}
 area["points"]=surface(0,0,9,3)
 
 area["middle"]=surface(3,4,29,13)
+
+area["message"]=surface(22,0,30,2)
 
 area["choice"]={}
 area["choice"]["question"]=surface(11,4,23,9)

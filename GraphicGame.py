@@ -16,7 +16,7 @@ Created on Tue Feb 26 15:49:30 2019
 import coinche_constant as const
 import generical_function as generic
 import graphic_constant as gconst
-from generical_function import get_mouse,graphic_yesorno,draw_text
+from generical_function import get_mouse,graphic_yesorno,draw_text,wait_or_pass
 import pygame
 
 
@@ -90,12 +90,11 @@ class GraphicGame(Game):
   def end_round(self) :
     self.result()
     if not self.hidden: #GRAPHIC
-      draw_text(self.screen,str(self.score),gconst.area["announce"]["bet"])
+      draw_text(self.screen,str(self.score),gconst.area["points"])
     for team in self.score:
       if self.score[team]>self.limit: #error
         if not self.hidden: #GRAPHIC
-          draw_text(self.screen,str(self.Round.atout, self.Round.teams[0].bet, self.Round.teams[1].bet),gconst.area["points"])
-          draw_text(self.screen, " l'équipe {} a gagné avec {} ".format(team, self.score),gconst.area["j1"])
+          draw_text(self.screen, " l'équipe {} a gagné avec {} ".format(team, self.score),gconst.area["message"])
         return False
     return True
 

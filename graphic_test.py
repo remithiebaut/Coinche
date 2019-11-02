@@ -10,7 +10,7 @@ import pygame
 import graphic_constant as gconst
 import coinche_constant as const
 from GraphicCard import GraphicCard
-from generical_function import get_mouse,graphic_yesorno,draw_text
+from generical_function import get_mouse,graphic_yesorno,draw_text,wait_or_pass
 
 
 def draw_pos(screen,size,position,color=(255,255,255)):
@@ -98,16 +98,16 @@ def test():
         screen.fill(gconst.BLUE,gconst.area["points"])
 
     if event.type == pygame.KEYDOWN and event.key == pygame.K_7 :
-        screen.fill(gconst.BLUE,gconst.area["test"])
+        wait_or_pass(1)
 
     if event.type == pygame.KEYDOWN and event.key == pygame.K_9 :
         screen.fill(gconst.GREEN)
 
     if event.type == pygame.KEYDOWN and event.key == pygame.K_KP7 :
-        screen.fill(gconst.YELLOW,gconst.area["cards"]["J1"][7])
+        screen.fill(gconst.YELLOW,gconst.area["cards"]["j1"][7])
 
     if event.type == pygame.KEYDOWN and event.key == pygame.K_KP0 :
-        screen.fill(gconst.YELLOW,gconst.area["cards"]["J1"][0])
+        screen.fill(gconst.YELLOW,gconst.area["cards"]["j1"][0])
 
     if event.type == pygame.KEYDOWN and event.key == pygame.K_KP9 :
       choose_atout(screen)

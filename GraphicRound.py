@@ -8,7 +8,7 @@ Created on Tue Feb 26 15:30:05 2019
 import coinche_constant as const
 import generical_function as generic
 import graphic_constant as gconst
-from generical_function import get_mouse,graphic_yesorno,draw_text
+from generical_function import get_mouse,graphic_yesorno,draw_text,wait_or_pass
 import pygame
 
 
@@ -84,11 +84,10 @@ class GraphicRound(Round):
         if annonce_voulue>annonce_actuelle :
             annonce_actuelle=annonce_voulue
             break
-        draw_text(screen,"you must bet higher ! ",gconst.area["announce"]["bet"])
+        draw_text(screen,"you must bet higher ! ",gconst.area["message"])
 
 
       screen.fill(gconst.GREEN,gconst.area["middle"])
-      draw_text(screen,bet + " " + color,gconst.area["announce"]["bet"])
       return (color,bet,annonce_actuelle)
 
 
@@ -138,7 +137,7 @@ class GraphicRound(Round):
 
 
              if not self.hidden : #GRAPHIC
-               draw_text(screen,' {} coinche sur {} {} !'.format(coincheur.name,bet,self.atout),gconst.area["announce"]["bet"])
+               draw_text(screen,' {} coinche sur {} {} !'.format(coincheur.name,bet,self.atout),gconst.area["message"])
 
 
 
@@ -154,7 +153,7 @@ class GraphicRound(Round):
                                            yes_surface=gconst.area["choice"]["yes"],no_surface=gconst.area["choice"]["no"])
                  if self.surcoinche :
                      if not self.hidden : #GRAPHIC
-                       draw_text(screen,' {} surcoinche sur {} {} !'.format(surcoincheur.name,bet,self.atout),gconst.area["announce"]["bet"])
+                       draw_text(screen,' {} surcoinche sur {} {} !'.format(surcoincheur.name,bet,self.atout),gconst.area["message"])
 
 
 
@@ -188,7 +187,8 @@ class GraphicRound(Round):
                     annonce_actuelle=annonce_voulue
 
                     if not self.hidden :  #GRAPHIC
-                      draw_text(screen,' {} prend à {} {} !'.format(player.name,bet,self.atout),gconst.area["announce"]["bet"])
+                      draw_text(screen,' {} prend à {} {} !'.format(player.name,bet,self.atout),gconst.area["message"])
+                      draw_text(screen,'{} : {} {}'.format(self.teams[player.team].name,bet,self.atout),gconst.area["points"])
 
                     break
               self.coincher(screen,player,bet)
@@ -201,6 +201,9 @@ class GraphicRound(Round):
             else:
               turn=1
               self.atout,bet,annonce_actuelle=self.graphic_choose_atout(screen,annonce_actuelle)
+              if not self.hidden :  #GRAPHIC
+                draw_text(screen,'{} : {} {}'.format(self.teams[player.team].name,bet,self.atout),gconst.area["points"])#WE ASSUME
+
               self.coincher(screen,player,bet)
 
 
@@ -210,7 +213,7 @@ class GraphicRound(Round):
     if not self.hidden :  #GRAPHIC
       for team in self.teams :
         if team.bet!=None:
-          draw_text(screen,"L'équipe '{}' a pris {} {} !!!".format(team.name, team.bet, self.atout),gconst.area["points"])
+          draw_text(screen,"L'équipe '{}' a pris {} {} !!!".format(team.name, team.bet, self.atout),gconst.area["message"])
           screen.fill(gconst.GREEN,gconst.area["middle"])
 
     return True
@@ -276,7 +279,7 @@ class GraphicRound(Round):
           allowed_hand=self.allowed_cards( choosen_color, j)
           j.Hand.play(self.screen,j.number,j.random,self.pli,hand=allowed_hand)
       if not self.hidden :
-        pygame.time.wait(5000)
+        wait_or_pass(4)
 
       """
       choosen_color=players[0].Hand.play_card( self.pli, players[0].Hand.choose_card(random=players[0].random))

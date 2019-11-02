@@ -114,8 +114,12 @@ def test_graphic_player():
     if event.type == pygame.KEYDOWN and event.key == pygame.K_6 :
         screen.fill(gconst.BLUE,gconst.area["points"])
 
-    #if event.type == pygame.KEYDOWN and event.key == pygame.K_7 :
-        #screen.fill(gconst.BLUE,gconst.area["test"])
+    if event.type == pygame.KEYDOWN and event.key == pygame.K_7 :
+      myplayer1.display(screen)
+      myplayer2.display(screen)
+      myplayer3.display(screen)
+      myplayer4.display(screen)
+
 
     if event.type == pygame.KEYDOWN and event.key == pygame.K_9 :
         screen.fill(gconst.GREEN)

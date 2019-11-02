@@ -27,7 +27,7 @@ class GraphicRound(Round):
   """
   def __init__(self, team1_name, j1_name, j1_random, j3_name, j3_random,
                team2_name, j2_name, j2_random, j4_name, j4_random ,
-               number,pioche, hidden=False,): # e1 et e2 inutiles
+               number,pioche, hidden=False): # e1 et e2 inutiles
 
    self.number=number
    self.atout=None
@@ -47,6 +47,25 @@ class GraphicRound(Round):
                     j1_name=j2_name, j1_random=j2_random, j1_cards=players[1],
                     j2_name=j4_name, j2_random=j4_random, j2_cards=players[3])]
    self.hidden=hidden
+
+
+
+  def display(self,screen):
+    """
+    display the four hands
+    """
+
+    if not self.hidden :
+       for player in self.shortkey():
+         player.display(screen)
+         player.display(screen) # BIG PROBLEM HERE DONT GET WHY
+    """
+    self.teams[0].players[0].display(screen)
+    graphic_yesorno(screen,question="montrer ?",question_surface=gconst.area["choice"]["question"],
+                    yes_surface=gconst.area["choice"]["yes"],no_surface=gconst.area["choice"]["no"])
+    self.teams[0].players[0].display(screen)
+    """
+
 
 
 
@@ -335,22 +354,17 @@ def test_graphic_round():
   """
   Playing as Bob
   """
-  myround = GraphicRound( team1_name ="Les winners", j1_name="Bob", j1_random=False, j3_name="Fred", j3_random=True,
-               team2_name="Les loseurs", j2_name = "Bill", j2_random=True, j4_name="John", j4_random=True,
-               hidden=False,pioche=GraphicHand(name="pioche",cards=[GraphicCard(i,j) for i in const.liste_numero for j in const.liste_couleur[:4]]),number=0)
-  cards=[]
-  i=0
-  for numero in const.liste_numero :
-    cards.append(GraphicCard(numero,"carreau", position=gconst.area["cards"]["j1"][i]))
-    i+=1
-  myhand=GraphicHand(name="Pli",cards=cards)
-  mypli=GraphicHand(name="Pli",cards=[])
+
   pygame.init()
   screen=pygame.display.set_mode(gconst.screen_size)
 
   screen.fill(gconst.GREEN)
   pygame.display.flip()
 
+  myround = GraphicRound( team1_name ="Les winners", j1_name="Bob", j1_random=False, j3_name="Fred", j3_random=True,
+               team2_name="Les loseurs", j2_name = "Bill", j2_random=True, j4_name="John", j4_random=True,
+               hidden=False,pioche=GraphicHand(name="pioche",cards=[GraphicCard(i,j) for i in const.liste_numero for j in const.liste_couleur[:4]]),number=0)
+  myround.display(screen)
 
   while True:
     event = pygame.event.poll()
@@ -360,7 +374,7 @@ def test_graphic_round():
             break
 
     if event.type == pygame.KEYDOWN and event.key == pygame.K_UP :
-        myhand.play(screen,player="j1",random=False,pli=mypli)
+      myround.pioche.display(screen,"j1")
 
     if event.type == pygame.KEYDOWN and event.key == pygame.K_1 :
         screen.fill(gconst.BLUE,gconst.area["j1"])
@@ -400,7 +414,7 @@ def test_graphic_round():
 if __name__=="__main__"   :
 
 #ALLOWED_CARD COULD NOT WORK
-
+  """
   generic.test("init and random draw",test_init)
   generic.test("choose_atout",test_choose_atout)
   generic.test("cards_update",test_cards_update)
@@ -408,8 +422,6 @@ if __name__=="__main__"   :
   generic.test("classic_drawing",test_classic_drawing)
   generic.test("cut",test_cut)
   generic.test("shortcut",test_shortcut)
-
+  """
   #GRAPHIC
-  """
   generic.test("Graphic",test_graphic_round)
-  """

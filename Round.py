@@ -200,7 +200,6 @@ class Round():
     elif self.atout==const.liste_couleur[5]:
         for j in players :
             for card in j.Hand.cards:
-                card.atout=True
                 card.value=const.ordre_atout.index(card.number)
                 card.points=const.points[const.liste_mode[3]][card.number]
 

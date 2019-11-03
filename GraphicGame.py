@@ -155,7 +155,6 @@ class GraphicGame(Game):
           round_number+=1
           self.new_round(round_number)
           played=self.play()
-          print(self.Round.atout)
           if played :
             break
         if not self.end_round():

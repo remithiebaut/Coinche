@@ -511,7 +511,6 @@ def test_graphic_round():
 if __name__=="__main__"   :
 
 #ALLOWED_CARD COULD NOT WORK
-  """
   generic.test("init and random draw",test_init)
   generic.test("choose_atout",test_choose_atout)
   generic.test("cards_update",test_cards_update)
@@ -522,3 +521,4 @@ if __name__=="__main__"   :
   """
   #GRAPHIC
   generic.test("Graphic",test_graphic_round)
+  """

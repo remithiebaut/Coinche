@@ -100,6 +100,7 @@ class GraphicGame(Game):
 
   def new_round(self,round_number) :
 
+
     pioche=GraphicHand(name="pioche",cards=[],sort=False)
       # the last round was played
     pioche+=self.Round.teams[0].pli
@@ -109,6 +110,8 @@ class GraphicGame(Game):
     for player in players_in_order :
       pioche+=player.Hand
     assert(pioche.rest["cards"]==32)
+    for card in pioche.cards : # it seems to work
+      card.reset()
 
     self.Round=GraphicRound(team1_name=self.data["team1_name"], j1_name=self.data["j1_name"], j1_random=self.data["j1_random"],
                         j3_name=self.data["j3_name"], j3_random=self.data["j3_random"],
@@ -152,6 +155,7 @@ class GraphicGame(Game):
           round_number+=1
           self.new_round(round_number)
           played=self.play()
+          print(self.Round.atout)
           if played :
             break
         if not self.end_round():

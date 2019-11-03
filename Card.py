@@ -20,6 +20,15 @@ class Card():
     self.ID=number+color  #ATENTION SI Numero = None ne devrait pas marcher
 
 
+  def reset(self):
+    """
+    reset cards values
+    """
+    self.rest=True #utilisé seulement dans la distribution de cartes, lutiliser a la place de none ?
+    self.value=None #order of power in teh actual announcing 16 atout Jacket and 1:7 normal
+    self.atout=False
+    self.points=0
+
 if __name__=="__main__"   :
   mycard=Card("7","Coeur")
   mycard2=Card("7","Coeur",False)

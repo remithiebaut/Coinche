@@ -19,16 +19,16 @@ class Game():
    def __init__(self, team1_name="e1", j1_name="joueur1", j1_random=False, j3_name="joueur3", j3_random=True,
              team2_name="e2", j2_name="joueur2", j2_random=True,j4_name="joueur4", j4_random=True,
              score_limit=2000,hidden=False):
-     
+
      self.data={"team1_name":team1_name, "j1_name":j1_name, "j1_random":j1_random, "j3_name":j3_name, "j3_random":j3_random,
              "team2_name":team2_name, "j2_name":j2_name, "j2_random":j2_random,"j4_name":j4_name, "j4_random":j4_random}
-     
+
      self.Round=Round(team1_name=self.data["team1_name"], j1_name=self.data["j1_name"], j1_random=self.data["j1_random"],
                 j3_name=self.data["j3_name"], j3_random=self.data["j3_random"],
                 team2_name=self.data["team2_name"], j2_name=self.data["j2_name"], j2_random=self.data["j2_random"],
                 j4_name=self.data["j4_name"], j4_random=self.data["j4_random"],
                 number=0,pioche=Hand(name="pioche",cards=[Card(i,j) for i in const.liste_numero for j in const.liste_couleur]),hidden=hidden)
-     
+
      #self.Round=Round(team1_name=team1_name, j1_name=j1_name, j1_random=j1_random, j3_name=j3_name, j3_random=j3_random,
      #team2_name=team2_name, j2_name=j2_name, j2_random=j2_random,j4_name=j4_name, j4_random=j4_random, hidden=hidden ) #faire un tableau de manche
      self.limit=score_limit
@@ -72,7 +72,7 @@ class Game():
                   self.score[self.Round.teams[(team.number+1)%2].name] += 160*multiplicator
 
    def end_round(self) :
-     
+
        self.result()
        if not self.hidden: #GRAPHIC
          print(self.score)
@@ -95,6 +95,8 @@ class Game():
     for player in players_in_order :
       pioche+=player.Hand
     assert(pioche.rest["cards"]==32)
+    for card in pioche.cards : # it seems to work
+      card.reset()
 
     self.Round=Round(team1_name=self.data["team1_name"], j1_name=self.data["j1_name"], j1_random=self.data["j1_random"],
                         j3_name=self.data["j3_name"], j3_random=self.data["j3_random"],
@@ -117,13 +119,13 @@ class Game():
          return True #a trump was picked
        else :
          return False #nobody picked a trump : it's a white round
-              
+
    def reinitialize(self):
      self.new_round(round_number=0)
      self.score={self.data["team1_name"]:0,self.data["team2_name"]:0}
 
- 
-             
+
+
    def run(self):
      while True : #game root
        round_number = -1 # to start the first at 0
@@ -145,9 +147,9 @@ class Game():
 def random_test():
     mygame=Game(j1_random=True,hidden=True)
     mygame.run()
-         
+
 if __name__=="__main__"   :
-  
+
   print("random test")
   for i in range(500):
     random_test()

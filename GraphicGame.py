@@ -206,7 +206,7 @@ def test_graphic_game():
     if event.type == pygame.KEYDOWN and event.key == pygame.K_6 :
         screen.fill(gconst.BLUE,gconst.area["points"])
 
-    if event.type == pygame.KEYDOWN and event.key == pygame.K_KP1 :
+    if event.type == pygame.KEYDOWN and event.key == pygame.K_7 :
       mygame.run()
 
     if event.type == pygame.KEYDOWN and event.key == pygame.K_9 :

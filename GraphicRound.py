@@ -67,8 +67,7 @@ class GraphicRound(Round):
                    allyName=player_names[(playerNumber+2)%4],
                    ennemyNames=[player_names[(playerNumber+1)%4],player_names[(playerNumber+3)%4]])
 
-    for bot in self.bots : #TODO : remove
-      print(self.bots[bot].name)
+
 
     self.teams=[GraphicTeam(team_name=team_names[0], team_number=0,
                       j1_name=player_names[0], j1_random=player_bots[0], j1_cards=players_cards[0],
@@ -217,7 +216,6 @@ class GraphicRound(Round):
           #BOT
           if player.random:
 
-            print(player.name,self.bots[player.name].betStrength) #TODO : remove
             wanted_bet,betColor=self.bots[player.name].bet()
 
             if wanted_bet!=None :
@@ -227,6 +225,11 @@ class GraphicRound(Round):
                 bet=wanted_bet
                 annonce_actuelle=annonce_voulue
                 self.atout=betColor
+
+                if self.bots[player.name].level=="advanced" :
+                  #Keep in mind that he has announced in this color
+                  self.bots[player.name].announcetracker[betColor]=True
+
 
                 if not self.hidden :  #GRAPHIC
                   draw_text(screen,' {} prend à {} {} !'.format(player.name,bet,self.atout),gconst.area["message"])
@@ -240,12 +243,10 @@ class GraphicRound(Round):
 
                 #Our ally is a bot
                 if allyName in self.bots :
-                  print(allyName,"before update" ,self.bots[allyName].betStrength) #TODO : remove
 
                   if self.bots[allyName].level=="advanced":
                       self.bots[allyName].adaptBetStrength(PartnerBet=bet,BetColor=betColor)
 
-                      print(allyName,self.bots[allyName].betStrength) #TODO : remove
 
 
                 turn=1
@@ -280,12 +281,10 @@ class GraphicRound(Round):
               #Our ally is a bot
               if allyName in self.bots :
 
-                print(allyName,"before update" ,self.bots[allyName].betStrength) #TODO : remove
 
                 if self.bots[allyName].level=="advanced":
                     self.bots[allyName].adaptBetStrength(PartnerBet=bet,BetColor=self.atout)
 
-                    print(allyName,self.bots[allyName].betStrength) #TODO : remove
 
 
     if (self.atout==None):

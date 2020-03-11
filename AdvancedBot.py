@@ -17,6 +17,10 @@ class AdvancedBot(Bot):
 
     Bot.__init__(self,cards=cards,level=level,name=name,allyName=allyName,ennemyNames=ennemyNames)
     self.previouscounter={} #keep track of the last round
+    self.announcetracker={}
+    for color in const.liste_couleur :
+      self.announcetracker[color]=False
+
 
   def reinitialize(self):
     """
@@ -46,15 +50,19 @@ class AdvancedBot(Bot):
                   result[1] = highestStreakCard
       return result
 
-  def adaptBetStrength(self,PartnerBet,BetColor): #TODO : they keeps going up
+  def adaptBetStrength(self,PartnerBet,BetColor):
     """
     adapt its bet strength according to his partner announce
     """
 
     #Assert that our partner announce something
     if PartnerBet != None :
-      if PartnerBet!="generale" and PartnerBet!="capot" : # TODO : adapt this method to the capot and generale cases
-        self.betStrength[BetColor]+=int(PartnerBet)
+
+      #update strength only if the bot hasnt already said something in this color
+      if not self.announcetracker[BetColor] :
+
+        if PartnerBet!="generale" and PartnerBet!="capot" : # TODO : adapt this method to the capot and generale cases
+          self.betStrength[BetColor]+=int(PartnerBet)
 
   def coinche(self,AdversaryBet,BetColor):
     """

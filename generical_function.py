@@ -76,7 +76,7 @@ def time_check(f,nb_iter=100,*args,**kwargs):
 def test(test_name,test_function,*args,**kwargs):
   print("Testing ", test_name)
   test_function(*args,**kwargs)
-  print("Test OK")
+  print("Test OK",end ="\n"*2)
   return 0
 
 

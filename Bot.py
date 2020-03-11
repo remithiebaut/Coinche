@@ -113,71 +113,28 @@ class Bot:
 
 
 def test_update_bet_strength(): #random test
-    testCards = [Card("D","carreau"), Card("As","trefle"), Card("V","coeur"), Card("9","coeur"),
-                 Card("As","pique"), Card("10","pique"), Card("7","trefle"), Card("D","trefle")]
+  testCards1 = [Card("D","carreau"), Card("As","trefle"), Card("V","coeur"), Card("9","coeur"),
+               Card("As","pique"), Card("10","pique"), Card("7","trefle"), Card("D","trefle")]
 
-    testCards2 = [Card("8","coeur"), Card("7","coeur"), Card("R","coeur"), Card("9","coeur"),
-                 Card("D","carreau"), Card("10","pique"), Card("7","trefle"), Card("D","trefle")]
+  testCards2 = [Card("8","coeur"), Card("7","coeur"), Card("R","coeur"), Card("9","coeur"),
+               Card("D","carreau"), Card("10","pique"), Card("7","trefle"), Card("D","trefle")]
 
-    testCards3 = [Card("8","coeur"), Card("D","coeur"), Card("R","coeur"), Card("As","coeur"),
-                 Card("D","carreau"), Card("As","pique"), Card("7","trefle"), Card("D","trefle")]
+  testCards3 = [Card("8","coeur"), Card("D","coeur"), Card("R","coeur"), Card("As","coeur"),
+               Card("D","carreau"), Card("As","pique"), Card("7","trefle"), Card("D","trefle")]
 
-    testCards4 = [Card("As","coeur"), Card("D","coeur"), Card("10","coeur"), Card("As","trefle"),
-                 Card("10","trefle"), Card("As","pique"), Card("7","trefle"), Card("D","trefle")]
+  testCards4 = [Card("As","coeur"), Card("D","coeur"), Card("10","coeur"), Card("As","trefle"),
+               Card("10","trefle"), Card("As","pique"), Card("7","trefle"), Card("D","trefle")]
 
-    bot = Bot(testCards)
+  bots =[Bot(testCards1),Bot(testCards2),Bot(testCards3),Bot(testCards4)]
+
+  i=1
+  for bot in bots :
+    print("Bet of bot {} :".format(i))
     print(bot.bet())
     print(bot.betStrength)
+    print()
+    i+=1
 
-
-    bot = Bot(testCards2)
-    print(bot.bet())
-    print(bot.betStrength)
-
-    bot = Bot(testCards3)
-    print(bot.bet())
-    print(bot.betStrength)
-
-    bot = Bot(testCards4)
-    print(bot.bet())
-    print(bot.betStrength)
-
-
-class AdvancedBot(Bot):
-  """
-  AI Prototype who keep track of previous games
-  """
-  def __init__(self, level="beginner"):
-    Bot.__init__(self,level)
-    self.previouscounter={} #keep track of the last round
-
-  def reinitialize(self):
-    """
-    reinitialize for a new round
-    """
-    for color in self.counter:
-      self.previouscounter[color]=self.counter[color]
-    Bot.reinitialize(self)
-
-  def findBestStreak(self, color) :
-      #result=[longestStreak,highestStreakCard]
-      result = [0,0]
-      longestStreak = 0
-      highestStreakCard = 0
-      for card in self.hand[color] :
-          if self.hand[color][card] :
-              longestStreak += 1
-              highestStreakCard = const.liste_numero.index(card)
-          else :
-              if highestStreakCard > result[1] :
-                  result[0] = longestStreak
-                  result[1] = highestStreakCard
-              longestStreak = 0
-              highestStreakCard = 0
-      if highestStreakCard > result[1] :
-                  result[0] = longestStreak
-                  result[1] = highestStreakCard
-      return result
 
 
 if __name__=="__main__" :

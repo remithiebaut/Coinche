@@ -192,19 +192,6 @@ class GraphicRound(Round):
 
           #BOT
           if player.random:
-            """
-            if not generic.decision(random=player.random, question='annoncer', ouverte=False): #local variable referenced before assignment
-              turn+=1
-            else :
-              turn=1
-
-              self.atout=generic.decision(const.liste_couleur, random=player.random, question ="Choisir la couleur d'atout : %s " % const.liste_couleur)
-
-              while True :
-                bet = generic.decision(const.liste_annonce, random=player.random, question="Choisir la hauteur d'annonce : %s " % const.liste_annonce )
-                annonce_voulue=const.liste_annonce.index(bet)
-                """
-
             wanted_bet,betColor=self.bots[player.name].bet()
 
             if wanted_bet!=None :

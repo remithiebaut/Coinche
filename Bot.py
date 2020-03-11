@@ -26,25 +26,26 @@ class Bot:
         self.counter[card.color] += 1
     for color in const.liste_couleur :
         self.betStrength[color] = 0
-        
+    self.updateBetStrength()
+
+
   def count(self, card):
     """
     call after each card is played
     """
     self.counter[card.color]+=1
-      
+
   def reinitialize(self):
     """
     reinitialize for a new round
     """
     for color in self.counter:
       self.counter[color]=0
-      
+
   def bet(self):
     """
     determine which trump to bet on
     """
-    self.updateBetStrength()
     maxBet = 0
     betColor = ''
     # find highest bet above 80
@@ -52,17 +53,32 @@ class Bot:
       if self.betStrength[color] > maxBet and self.betStrength[color] > 80 :
         maxBet = self.betStrength[color]
         betColor = color
-    if betColor != '' :
-      return([maxBet,betColor])
-      
-      
+
+    if betColor == '' : #announce nothing
+      return ([None,None])
+
+    else: #announce something
+
+      if maxBet%10==5: #if its between two announces
+        maxBet-=5 #round to the inferior
+
+      if maxBet>160:
+
+        maxBet="capot" # TODO: add generale and take trump into account
+
+      maxBet=str(maxBet) #convert to string
+
+      return([maxBet,betColor]) #retourne none ???
+
+
+
   def updateBetStrength(self):
     """
     evaluate the strength of each bet
     """
     for trump in const.liste_couleur[:4] :
       #belote and number of trumps
-      self.betStrength[trump] = 10 * self.counter[trump] + 20 * (self.hand[trump]['R'] and self.hand[trump]['D']) 
+      self.betStrength[trump] = 10 * self.counter[trump] + 20 * (self.hand[trump]['R'] and self.hand[trump]['D'])
       #search valet and 9
       if self.hand[trump]['V'] :
         if self.hand[trump]['9'] :
@@ -71,7 +87,7 @@ class Bot:
           self.betStrength[trump] += 40
       elif self.hand[trump]['9'] :
         self.betStrength[trump] += 30
-      #search for as and 10        
+      #search for as and 10
       for color in const.liste_couleur[:4] :
         #as and 10
         if color != trump :
@@ -79,7 +95,7 @@ class Bot:
             self.betStrength[trump] += 10 + 5 * self.hand[color]['10']
           elif self.hand[color]['10'] :
             #dry 10
-            if self.counter[color] == 1 : 
+            if self.counter[color] == 1 :
               self.betStrength[trump] -= 15
             else :
               self.betStrength[trump] += 5
@@ -90,25 +106,25 @@ class Bot:
         self.betStrength['sans atout'] += 25 + 15 * self.hand[color]['10'] + 5 * self.hand[color]['R']
       elif self.hand[color]['10'] :
         #dry 10
-        if self.counter[color] == 1 : 
+        if self.counter[color] == 1 :
           self.betStrength[trump] -= 10
         else :
           self.betStrength[trump] += 10
-        
-                              
+
+
 def test_update_bet_strength(): #random test
-    testCards = [Card("D","carreau"), Card("As","trefle"), Card("V","coeur"), Card("9","coeur"), 
+    testCards = [Card("D","carreau"), Card("As","trefle"), Card("V","coeur"), Card("9","coeur"),
                  Card("As","pique"), Card("10","pique"), Card("7","trefle"), Card("D","trefle")]
-    
-    testCards2 = [Card("8","coeur"), Card("7","coeur"), Card("R","coeur"), Card("9","coeur"), 
+
+    testCards2 = [Card("8","coeur"), Card("7","coeur"), Card("R","coeur"), Card("9","coeur"),
                  Card("D","carreau"), Card("10","pique"), Card("7","trefle"), Card("D","trefle")]
-    
-    testCards3 = [Card("8","coeur"), Card("D","coeur"), Card("R","coeur"), Card("As","coeur"), 
+
+    testCards3 = [Card("8","coeur"), Card("D","coeur"), Card("R","coeur"), Card("As","coeur"),
                  Card("D","carreau"), Card("As","pique"), Card("7","trefle"), Card("D","trefle")]
-    
-    testCards4 = [Card("As","coeur"), Card("D","coeur"), Card("10","coeur"), Card("As","trefle"), 
+
+    testCards4 = [Card("As","coeur"), Card("D","coeur"), Card("10","coeur"), Card("As","trefle"),
                  Card("10","trefle"), Card("As","pique"), Card("7","trefle"), Card("D","trefle")]
-    
+
     bot = Bot(testCards)
     print(bot.bet())
     print(bot.betStrength)
@@ -124,7 +140,7 @@ def test_update_bet_strength(): #random test
 
     bot = Bot(testCards4)
     print(bot.bet())
-    print(bot.betStrength)    
+    print(bot.betStrength)
 
 
 class AdvancedBot(Bot):
@@ -134,7 +150,7 @@ class AdvancedBot(Bot):
   def __init__(self, level="beginner"):
     Bot.__init__(self,level)
     self.previouscounter={} #keep track of the last round
-      
+
   def reinitialize(self):
     """
     reinitialize for a new round
@@ -142,7 +158,7 @@ class AdvancedBot(Bot):
     for color in self.counter:
       self.previouscounter[color]=self.counter[color]
     Bot.reinitialize(self)
-    
+
   def findBestStreak(self, color) :
       #result=[longestStreak,highestStreakCard]
       result = [0,0]
@@ -161,9 +177,9 @@ class AdvancedBot(Bot):
       if highestStreakCard > result[1] :
                   result[0] = longestStreak
                   result[1] = highestStreakCard
-      return result  
+      return result
 
-    
+
 if __name__=="__main__" :
   """
   card={}
@@ -172,7 +188,7 @@ if __name__=="__main__" :
   bob = Bot([Card("As",'trefle')])
   bob.count(card[const.liste_couleur[3]])
   assert(bob.counter[const.liste_couleur[3]]==1)
-  
+
   bill = AdvancedBot()
   bill.counter
   bill.count(card[const.liste_couleur[2]])
@@ -188,4 +204,4 @@ if __name__=="__main__" :
   """
   print("Test OK")
   test_update_bet_strength()
-  
+

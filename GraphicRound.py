@@ -19,6 +19,7 @@ from GraphicTeam import GraphicTeam
 from Round import Round
 
 import random as rand
+from Bot import Bot
 
 
 class GraphicRound(Round):
@@ -28,26 +29,39 @@ class GraphicRound(Round):
   def __init__(self, team1_name, j1_name, j1_random, j3_name, j3_random,
                team2_name, j2_name, j2_random, j4_name, j4_random ,
                number,pioche, hidden=False,screen=None): # e1 et e2 inutiles
+    self.number=number
+    self.atout=None
+    self.coinche=False #indicator of coinche
+    self.surcoinche=False
+    self.pli=GraphicHand(name="Pli in progress",cards=[], sort=False)
+    assert(self.pli.rest["cards"]==0)
+    self.pioche=pioche
 
-   self.number=number
-   self.atout=None
-   self.coinche=False #indicator of coinche
-   self.surcoinche=False
-   self.pli=GraphicHand(name="Pli in progress",cards=[], sort=False)
-   assert(self.pli.rest["cards"]==0)
-   self.pioche=pioche
-   if self.number==0 :
-     players=self.random_draw()
-   else :
-     players=self.classic_draw()
-   self.teams=[GraphicTeam(team_name=team1_name, team_number=0,
-                    j1_name=j1_name, j1_random=j1_random, j1_cards=players[0],
-                    j2_name=j3_name, j2_random=j3_random, j2_cards=players[2]),
-               GraphicTeam(team_name=team2_name, team_number=1,
-                    j1_name=j2_name, j1_random=j2_random, j1_cards=players[1],
-                    j2_name=j4_name, j2_random=j4_random, j2_cards=players[3])]
-   self.hidden=hidden
-   self.screen=screen
+    if self.number==0 :
+      players_cards=self.random_draw()
+    else :
+      players_cards=self.classic_draw()
+
+    #bots creation
+    # number_of_bots = j1_random+j2_random+j3_random+j4_random) #count number of bots
+    self.bots={}
+    if j1_random :
+      self.bots[j1_name]=Bot(players_cards[0])
+    if j2_random :
+      self.bots[j2_name]=Bot(players_cards[1])
+    if j3_random :
+      self.bots[j3_name]=Bot(players_cards[2])
+    if j4_random :
+      self.bots[j4_name]=Bot(players_cards[3])
+
+    self.teams=[GraphicTeam(team_name=team1_name, team_number=0,
+                      j1_name=j1_name, j1_random=j1_random, j1_cards=players_cards[0],
+                      j2_name=j3_name, j2_random=j3_random, j2_cards=players_cards[2]),
+                 GraphicTeam(team_name=team2_name, team_number=1,
+                      j1_name=j2_name, j1_random=j2_random, j1_cards=players_cards[1],
+                      j2_name=j4_name, j2_random=j4_random, j2_cards=players_cards[3])]
+    self.hidden=hidden
+    self.screen=screen
 
 
 
@@ -128,7 +142,8 @@ class GraphicRound(Round):
         if not self.coinche :
           #BOT
           if coincheur.random:
-            self.coinche=generic.decision(random=coincheur.random, question='coincher sur {} {} ?'.format(bet,self.atout), ouverte=False)
+            self.coinche=False # TODO : COINCHE
+            #self.coinche=generic.decision(random=coincheur.random, question='coincher sur {} {} ?'.format(bet,self.atout), ouverte=False)
           #PLAYER
           else :
             self.coinche= graphic_yesorno(screen,question="coincher ?",question_surface=gconst.area["choice"]["question"],
@@ -138,6 +153,7 @@ class GraphicRound(Round):
 
              if not self.hidden : #GRAPHIC
                draw_text(screen,' {} coinche sur {} {} !'.format(coincheur.name,bet,self.atout),gconst.area["message"])
+               wait_or_pass(2)
 
 
 
@@ -146,7 +162,8 @@ class GraphicRound(Round):
                if not self.surcoinche :
                  #BOT
                  if surcoincheur.random:
-                   self.surcoinche=generic.decision(random=surcoincheur.random, question='surcoincher sur {} {} ?'.format(bet,self.atout), ouverte=False)
+                   self.surcoinche=False # TODO : COINCHE
+                   #self.surcoinche=generic.decision(random=surcoincheur.random, question='surcoincher sur {} {} ?'.format(bet,self.atout), ouverte=False)
                  #PLAYER
                  else :
                    self.surcoinche= graphic_yesorno(screen,question="surcoincher ?",question_surface=gconst.area["choice"]["question"],
@@ -154,6 +171,8 @@ class GraphicRound(Round):
                  if self.surcoinche :
                      if not self.hidden : #GRAPHIC
                        draw_text(screen,' {} surcoinche sur {} {} !'.format(surcoincheur.name,bet,self.atout),gconst.area["message"])
+                       wait_or_pass(2)
+
 
 
 
@@ -173,6 +192,7 @@ class GraphicRound(Round):
 
           #BOT
           if player.random:
+            """
             if not generic.decision(random=player.random, question='annoncer', ouverte=False): #local variable referenced before assignment
               turn+=1
             else :
@@ -183,15 +203,36 @@ class GraphicRound(Round):
               while True :
                 bet = generic.decision(const.liste_annonce, random=player.random, question="Choisir la hauteur d'annonce : %s " % const.liste_annonce )
                 annonce_voulue=const.liste_annonce.index(bet)
-                if annonce_voulue>annonce_actuelle :
-                    annonce_actuelle=annonce_voulue
+                """
 
-                    if not self.hidden :  #GRAPHIC
-                      draw_text(screen,' {} prend à {} {} !'.format(player.name,bet,self.atout),gconst.area["message"])
-                      draw_text(screen,'{} : {} {}'.format(self.teams[player.team].name,bet,self.atout),gconst.area["points"])
+            wanted_bet,betColor=self.bots[player.name].bet()
 
-                    break
-              self.coincher(screen,player,bet)
+            if wanted_bet!=None :
+              annonce_voulue=const.liste_annonce.index(wanted_bet)
+
+              if annonce_voulue>annonce_actuelle :
+                bet=wanted_bet
+                annonce_actuelle=annonce_voulue
+                self.atout=betColor
+
+                if not self.hidden :  #GRAPHIC
+                  draw_text(screen,' {} prend à {} {} !'.format(player.name,bet,self.atout),gconst.area["message"])
+                  draw_text(screen,'{} : {} {}'.format(self.teams[player.team].name,bet,self.atout),gconst.area["points"])
+                  wait_or_pass(2)
+
+                self.coincher(screen,player,bet)
+
+                turn=1
+
+              else : #bet too low
+
+                turn+=1
+
+            else : #doesnt bet
+
+              turn+=1
+            #print(player.name,turn,wanted_bet,betColor) # TODO : for test only remove this
+
 
           #PLAYER
           else :
@@ -217,6 +258,9 @@ class GraphicRound(Round):
           screen.fill(gconst.GREEN,gconst.area["middle"])
 
     return True
+
+
+
 
   def allowed_cards(self, choosen_color, j):
       """
@@ -339,11 +383,13 @@ def test_init():
 
 
 def test_choose_atout(): #random test
-  for i in range( 500):
+  for i in range(500):
+    print(i)
     myround = GraphicRound( team1_name ="Les winners", j1_name="Bob", j1_random=True, j3_name="Fred", j3_random=True,
                      team2_name="Les loseurs", j2_name = "Bill", j2_random=True, j4_name="John", j4_random=True,
                      hidden=True,pioche=GraphicHand(name="pioche",cards=[GraphicCard(i,j) for i in const.liste_numero for j in const.liste_couleur[:4]]),number=0)
     myround.choose_atout(None)
+
 
 
 def test_cards_update(): #random test

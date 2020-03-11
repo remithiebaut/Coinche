@@ -20,15 +20,17 @@ from Round import Round
 
 import random as rand
 from Bot import Bot
+from AdvancedBot import AdvancedBot
+
 
 
 class GraphicRound(Round):
   """
   One Round of coinche
   """
-  def __init__(self, team1_name, j1_name, j1_random, j3_name, j3_random,
-               team2_name, j2_name, j2_random, j4_name, j4_random ,
-               number,pioche, hidden=False,screen=None): # e1 et e2 inutiles
+  def __init__(self, team_names, player_names, player_bots,
+               number,pioche, hidden=False,screen=None,
+               difficulty="beginner"):
     self.number=number
     self.atout=None
     self.coinche=False #indicator of coinche
@@ -44,22 +46,37 @@ class GraphicRound(Round):
 
     #bots creation
     # number_of_bots = j1_random+j2_random+j3_random+j4_random) #count number of bots
-    self.bots={}
-    if j1_random :
-      self.bots[j1_name]=Bot(players_cards[0])
-    if j2_random :
-      self.bots[j2_name]=Bot(players_cards[1])
-    if j3_random :
-      self.bots[j3_name]=Bot(players_cards[2])
-    if j4_random :
-      self.bots[j4_name]=Bot(players_cards[3])
 
-    self.teams=[GraphicTeam(team_name=team1_name, team_number=0,
-                      j1_name=j1_name, j1_random=j1_random, j1_cards=players_cards[0],
-                      j2_name=j3_name, j2_random=j3_random, j2_cards=players_cards[2]),
-                 GraphicTeam(team_name=team2_name, team_number=1,
-                      j1_name=j2_name, j1_random=j2_random, j1_cards=players_cards[1],
-                      j2_name=j4_name, j2_random=j4_random, j2_cards=players_cards[3])]
+    self.bots={}
+
+    if difficulty =="beginner" :
+      for playerNumber in range(4):
+        if player_bots[playerNumber] :
+          self.bots[player_names[playerNumber]]=Bot(players_cards[playerNumber],
+                   name=player_names[playerNumber],
+                   allyName=player_names[(playerNumber+2)%4],
+                   ennemyNames=[player_names[(playerNumber+1)%4],player_names[(playerNumber+3)%4]])
+
+
+    if difficulty == "advanced" :
+
+      for playerNumber in range(4):
+        if player_bots[playerNumber] :
+          self.bots[player_names[playerNumber]]=AdvancedBot(players_cards[playerNumber],
+                   name=player_names[playerNumber],
+                   allyName=player_names[(playerNumber+2)%4],
+                   ennemyNames=[player_names[(playerNumber+1)%4],player_names[(playerNumber+3)%4]])
+
+    for bot in self.bots : #TODO : remove
+      print(self.bots[bot].name)
+
+    self.teams=[GraphicTeam(team_name=team_names[0], team_number=0,
+                      j1_name=player_names[0], j1_random=player_bots[0], j1_cards=players_cards[0],
+                      j2_name=player_names[2], j2_random=player_bots[2], j2_cards=players_cards[2]),
+                 GraphicTeam(team_name=team_names[1], team_number=1,
+                      j1_name=player_names[1], j1_random=player_bots[1], j1_cards=players_cards[1],
+                      j2_name=player_names[3], j2_random=player_bots[2], j2_cards=players_cards[3])]
+
     self.hidden=hidden
     self.screen=screen
 
@@ -132,6 +149,7 @@ class GraphicRound(Round):
   def coincher(self,screen,player,bet):
     """
     make a turn of coince take as argument the player who just bet
+    This method fixes the bet
     """
     self.teams[player.team].bet=bet #fixe la bet de lteam attention bet est un char
     self.teams[(player.team+1)%2].bet=None
@@ -142,8 +160,14 @@ class GraphicRound(Round):
         if not self.coinche :
           #BOT
           if coincheur.random:
-            self.coinche=False # TODO : COINCHE
-            #self.coinche=generic.decision(random=coincheur.random, question='coincher sur {} {} ?'.format(bet,self.atout), ouverte=False)
+
+            #too stupid to coinche
+            if self.bots[coincheur.name].level=="beginner" :
+              self.coinche=False
+
+            elif self.bots[coincheur.name].level=="advanced" :
+              self.coinche=self.bots[coincheur.name].coinche(bet,self.atout)
+
           #PLAYER
           else :
             self.coinche= graphic_yesorno(screen,question="coincher ?",question_surface=gconst.area["choice"]["question"],
@@ -162,7 +186,7 @@ class GraphicRound(Round):
                if not self.surcoinche :
                  #BOT
                  if surcoincheur.random:
-                   self.surcoinche=False # TODO : COINCHE
+                   self.surcoinche=False # TODO : surCOINCHE
                    #self.surcoinche=generic.decision(random=surcoincheur.random, question='surcoincher sur {} {} ?'.format(bet,self.atout), ouverte=False)
                  #PLAYER
                  else :
@@ -180,18 +204,20 @@ class GraphicRound(Round):
     """
     select the atout and return true if someone didnt pass his turn
     """
-    j=self.shortkey()
+    players=self.shortkey()
     bet=0
     annonce_actuelle=-1
     turn=0
     while turn!=4 and bet!='generale' and not self.coinche:
-      for player in j:
+      for player in players:
         if turn==4 or bet=='generale' or self.coinche:
           break
         else:
 
           #BOT
           if player.random:
+
+            print(player.name,self.bots[player.name].betStrength) #TODO : remove
             wanted_bet,betColor=self.bots[player.name].bet()
 
             if wanted_bet!=None :
@@ -209,7 +235,21 @@ class GraphicRound(Round):
 
                 self.coincher(screen,player,bet)
 
+                #If our partner is not stupid he adapted his bet according to ours
+                allyName=self.bots[player.name].ally
+
+                #Our ally is a bot
+                if allyName in self.bots :
+                  print(allyName,"before update" ,self.bots[allyName].betStrength) #TODO : remove
+
+                  if self.bots[allyName].level=="advanced":
+                      self.bots[allyName].adaptBetStrength(PartnerBet=bet,BetColor=betColor)
+
+                      print(allyName,self.bots[allyName].betStrength) #TODO : remove
+
+
                 turn=1
+
 
               else : #bet too low
 
@@ -233,6 +273,19 @@ class GraphicRound(Round):
                 draw_text(screen,'{} : {} {}'.format(self.teams[player.team].name,bet,self.atout),gconst.area["points"])#WE ASSUME
 
               self.coincher(screen,player,bet)
+
+              #If our partner is not stupid he adapted his bet according to ours
+              allyName=self.teams[0].players[1].name # TODO: I assume here that we are the player 1
+
+              #Our ally is a bot
+              if allyName in self.bots :
+
+                print(allyName,"before update" ,self.bots[allyName].betStrength) #TODO : remove
+
+                if self.bots[allyName].level=="advanced":
+                    self.bots[allyName].adaptBetStrength(PartnerBet=bet,BetColor=self.atout)
+
+                    print(allyName,self.bots[allyName].betStrength) #TODO : remove
 
 
     if (self.atout==None):
@@ -343,8 +396,7 @@ class GraphicRound(Round):
 
 
 def test_init():
-  myround = GraphicRound( team1_name ="Les winners", j1_name="Bob", j1_random=True, j3_name="Fred", j3_random=True,
-                   team2_name="Les loseurs", j2_name = "Bill", j2_random=True, j4_name="John", j4_random=True,
+  myround = GraphicRound(team_names=["Les winners","Les loseurs"],player_names=["Bob","Bill","Fred","John"],player_bots=[True,True,True,True],
                    hidden=False,pioche=GraphicHand(name="pioche",cards=[GraphicCard(i,j) for i in const.liste_numero for j in const.liste_couleur[:4]]),number=0)
 
   "check if pioche is empty"
@@ -366,15 +418,15 @@ def test_init():
     assert(countinghand.cards[i] not in (countinghand.cards[:i]+countinghand.cards[i+1:])) #check for double
     assert(countinghand.check_card(cards_of_pioche[i]))
 
-
+def test_bot():
+  myround = GraphicRound(team_names=["Les winners","Les loseurs"],player_names=["Bob","Bill","Fred","John"],player_bots=[True,True,True,True],
+                   hidden=False,pioche=GraphicHand(name="pioche",cards=[GraphicCard(i,j) for i in const.liste_numero for j in const.liste_couleur[:4]]),number=0,difficulty="advanced")
 
 
 def test_choose_atout(): #random test
   for i in range(500):
-    print(i)
-    myround = GraphicRound( team1_name ="Les winners", j1_name="Bob", j1_random=True, j3_name="Fred", j3_random=True,
-                     team2_name="Les loseurs", j2_name = "Bill", j2_random=True, j4_name="John", j4_random=True,
-                     hidden=True,pioche=GraphicHand(name="pioche",cards=[GraphicCard(i,j) for i in const.liste_numero for j in const.liste_couleur[:4]]),number=0)
+    myround = GraphicRound(team_names=["Les winners","Les loseurs"],player_names=["Bob","Bill","Fred","John"],player_bots=[True,True,True,True],
+                   hidden=True,pioche=GraphicHand(name="pioche",cards=[GraphicCard(i,j) for i in const.liste_numero for j in const.liste_couleur[:4]]),number=0)
     myround.choose_atout(None)
 
 
@@ -382,8 +434,7 @@ def test_choose_atout(): #random test
 def test_cards_update(): #random test
 
   for i in range( 500):
-    myround = GraphicRound( team1_name ="Les winners", j1_name="Bob", j1_random=True, j3_name="Fred", j3_random=True,
-                   team2_name="Les loseurs", j2_name = "Bill", j2_random=True, j4_name="John", j4_random=True,
+    myround = GraphicRound(team_names=["Les winners","Les loseurs"],player_names=["Bob","Bill","Fred","John"],player_bots=[True,True,True,True],
                    hidden=True,pioche=GraphicHand(name="pioche",cards=[GraphicCard(i,j) for i in const.liste_numero for j in const.liste_couleur[:4]]),number=0)
     if myround.choose_atout(None) :
       myround.cards_update()
@@ -391,8 +442,7 @@ def test_cards_update(): #random test
 
 def test_play_pli(hidden=True): #•fonctionne
   for i in range( 500):
-    myround = GraphicRound( team1_name ="Les winners", j1_name="Bob", j1_random=True, j3_name="Fred", j3_random=True,
-                   team2_name="Les loseurs", j2_name = "Bill", j2_random=True, j4_name="John", j4_random=True,
+    myround = GraphicRound(team_names=["Les winners","Les loseurs"],player_names=["Bob","Bill","Fred","John"],player_bots=[True,True,True,True],
                    hidden=True,pioche=GraphicHand(name="pioche",cards=[GraphicCard(i,j) for i in const.liste_numero for j in const.liste_couleur[:4]]),number=0)
     if myround.choose_atout(None) :
       myround.cards_update()
@@ -406,8 +456,7 @@ def test_play_pli(hidden=True): #•fonctionne
 
 
 def test_classic_drawing():
-  myround = GraphicRound( team1_name ="Les winners", j1_name="Bob", j1_random=True, j3_name="Fred", j3_random=True,
-                 team2_name="Les loseurs", j2_name = "Bill", j2_random=True, j4_name="John", j4_random=True,
+  myround = GraphicRound(team_names=["Les winners","Les loseurs"],player_names=["Bob","Bill","Fred","John"],player_bots=[True,True,True,True],
                  hidden=True,pioche=GraphicHand(name="pioche",cards=[GraphicCard(i,j) for i in const.liste_numero for j in const.liste_couleur[:4]]),number=0)
   myround.pioche = GraphicHand(name="pioche",cards=[GraphicCard(i,j) for i in const.liste_numero for j in const.liste_couleur[:4]])
   players=myround.classic_draw()
@@ -448,9 +497,8 @@ def test_classic_drawing():
 
 
 def test_cut():
-  myround = GraphicRound( team1_name ="Les winners", j1_name="Bob", j1_random=True, j3_name="Fred", j3_random=True,
-                 team2_name="Les loseurs", j2_name = "Bill", j2_random=True, j4_name="John", j4_random=True,
-                 hidden=True,pioche=GraphicHand(name="pioche",cards=[GraphicCard(i,j) for i in const.liste_numero for j in const.liste_couleur[:4]]),number=0)
+  myround = GraphicRound(team_names=["Les winners","Les loseurs"],player_names=["Bob","Bill","Fred","John"],player_bots=[True,True,True,True],
+               hidden=True,pioche=GraphicHand(name="pioche",cards=[GraphicCard(i,j) for i in const.liste_numero for j in const.liste_couleur[:4]]),number=0)
 
   for nb_of_try in range(100):
 
@@ -469,9 +517,8 @@ def test_cut():
 
 
 def test_shortcut():
-  myround = GraphicRound( team1_name ="Les winners", j1_name="Bob", j1_random=True, j3_name="Fred", j3_random=True,
-                 team2_name="Les loseurs", j2_name = "Bill", j2_random=True, j4_name="John", j4_random=True,
-                 hidden=True,pioche=GraphicHand(name="pioche",cards=[GraphicCard(i,j) for i in const.liste_numero for j in const.liste_couleur[:4]]),number=0)
+  myround = GraphicRound(team_names=["Les winners","Les loseurs"],player_names=["Bob","Bill","Fred","John"],player_bots=[True,True,True,True],
+               hidden=True,pioche=GraphicHand(name="pioche",cards=[GraphicCard(i,j) for i in const.liste_numero for j in const.liste_couleur[:4]]),number=0)
 
 
   p=myround.shortkey()
@@ -491,8 +538,7 @@ def test_graphic_round():
   screen.fill(gconst.GREEN)
   pygame.display.flip()
 
-  myround = GraphicRound( team1_name ="Les winners", j1_name="Bob", j1_random=False, j3_name="Fred", j3_random=True,
-               team2_name="Les loseurs", j2_name = "Bill", j2_random=True, j4_name="John", j4_random=True,
+  myround = GraphicRound(team_names=["Les winners","Les loseurs"],player_names=["Bob","Bill","Fred","John"],player_bots=[True,True,True,True],
                hidden=False,pioche=GraphicHand(name="pioche",cards=[GraphicCard(i,j) for i in const.liste_numero for j in const.liste_couleur[:4]]),number=0)
   myround.display(screen)
 
@@ -551,6 +597,7 @@ if __name__=="__main__"   :
   generic.test("classic_drawing",test_classic_drawing)
   generic.test("cut",test_cut)
   generic.test("shortcut",test_shortcut)
+  generic.test("bot",test_bot)
   """
   #GRAPHIC
   generic.test("Graphic",test_graphic_round)

@@ -13,8 +13,9 @@ class AdvancedBot(Bot):
   """
   AI Prototype who keep track of previous games
   """
-  def __init__(self, level="beginner"):
-    Bot.__init__(self,level)
+  def __init__(self,cards, level="advanced",name="j1",allyName="j3",ennemyNames=["j2","j4"]):
+
+    Bot.__init__(self,cards=cards,level=level,name=name,allyName=allyName,ennemyNames=ennemyNames)
     self.previouscounter={} #keep track of the last round
 
   def reinitialize(self):
@@ -45,14 +46,15 @@ class AdvancedBot(Bot):
                   result[1] = highestStreakCard
       return result
 
-  def adaptBetStrength(self,PartnerBet,BetColor):
+  def adaptBetStrength(self,PartnerBet,BetColor): #TODO : they keeps going up
     """
     adapt its bet strength according to his partner announce
     """
 
     #Assert that our partner announce something
     if PartnerBet != None :
-      self.betStrength[BetColor]+=int(PartnerBet)
+      if PartnerBet!="generale" and PartnerBet!="capot" : # TODO : adapt this method to the capot and generale cases
+        self.betStrength[BetColor]+=int(PartnerBet)
 
   def coinche(self,AdversaryBet,BetColor):
     """

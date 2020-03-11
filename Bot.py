@@ -11,7 +11,12 @@ class Bot:
   """
   AI Prototype which count cards each round
   """
-  def __init__(self, cards, level="beginner"):
+  def __init__(self, cards, level="beginner",name="j1",allyName="j3",ennemyNames=["j2","j4"]):
+
+    self.name=name
+    self.ally=allyName
+    self.ennemies=ennemyNames
+
     self.hand={}
     self.betStrength={}
     self.level=level
@@ -27,6 +32,8 @@ class Bot:
     for color in const.liste_couleur :
         self.betStrength[color] = 0
     self.updateBetStrength()
+
+
 
 
   def count(self, card):

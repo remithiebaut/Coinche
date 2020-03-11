@@ -33,23 +33,21 @@ import random as rand
 
 
 class GraphicGame(Game):
-  def __init__(self, team1_name="e1", j1_name="joueur1", j1_random=False, j3_name="joueur3", j3_random=True,
-               team2_name="e2", j2_name="joueur2", j2_random=True,j4_name="joueur4", j4_random=True,
-               score_limit=2000,hidden=False,screen=None):
+  def __init__(self, team_names=["e1","e2"], player_names=["j1","j2","j3","j4"], player_bots=[False,True,True,True],
+               score_limit=2000,hidden=False,screen=None,
+               difficulty="beginner"):
 
-    self.data={"team1_name":team1_name, "j1_name":j1_name, "j1_random":j1_random, "j3_name":j3_name, "j3_random":j3_random,
-           "team2_name":team2_name, "j2_name":j2_name, "j2_random":j2_random,"j4_name":j4_name, "j4_random":j4_random}
+    self.data= {"team_names":team_names, "player_names":player_names, "player_bots":player_bots}
 
-    self.Round=GraphicRound(team1_name=self.data["team1_name"], j1_name=self.data["j1_name"], j1_random=self.data["j1_random"],
-              j3_name=self.data["j3_name"], j3_random=self.data["j3_random"],
-              team2_name=self.data["team2_name"], j2_name=self.data["j2_name"], j2_random=self.data["j2_random"],
-              j4_name=self.data["j4_name"], j4_random=self.data["j4_random"],
-              number=0,pioche=GraphicHand(name="pioche",cards=[GraphicCard(i,j) for i in const.liste_numero for j in const.liste_couleur[:4]]),hidden=hidden,screen=screen)
+    self.Round=GraphicRound(team_names=self.data["team_names"], player_names=self.data["player_names"], player_bots=self.data["player_bots"],
+              number=0,pioche=GraphicHand(name="pioche",cards=[GraphicCard(i,j) for i in const.liste_numero for j in const.liste_couleur[:4]]),hidden=hidden,screen=screen,
+              difficulty=difficulty)
 
     self.screen=screen
     self.limit=score_limit
-    self.score={team1_name:0,team2_name:0}
+    self.score={team_names[0]:0,team_names[1]:0}
     self.hidden=hidden
+    self.difficulty=difficulty
 
 
   def result(self): # normalement mise nest pas char
@@ -113,11 +111,9 @@ class GraphicGame(Game):
     for card in pioche.cards : # it seems to work
       card.reset()
 
-    self.Round=GraphicRound(team1_name=self.data["team1_name"], j1_name=self.data["j1_name"], j1_random=self.data["j1_random"],
-                        j3_name=self.data["j3_name"], j3_random=self.data["j3_random"],
-                        team2_name=self.data["team2_name"], j2_name=self.data["j2_name"], j2_random=self.data["j2_random"],
-                        j4_name=self.data["j4_name"], j4_random=self.data["j4_random"],
-                        number=round_number,pioche=pioche,hidden=self.hidden,screen=self.screen)
+    self.Round=GraphicRound(team_names=self.data["team_names"], player_names=self.data["player_names"], player_bots=self.data["player_bots"],
+                        number=round_number,pioche=pioche,hidden=self.hidden,screen=self.screen,
+                        difficulty=self.difficulty)
 
 
   def play(self):
@@ -142,7 +138,7 @@ class GraphicGame(Game):
 
   def reinitialize(self):
     self.new_round(round_number=0)
-    self.score={self.data["team1_name"]:0,self.data["team2_name"]:0}
+    self.score={self.data["team_names"][0]:0,self.data["team_names"][1]:0}
 
 
 
@@ -165,7 +161,7 @@ class GraphicGame(Game):
         self.reinitialize()
 
 def random_test():
-    mygame=GraphicGame(j1_random=True,hidden=True)
+    mygame=GraphicGame(player_bots=[True]*4,hidden=True,difficulty="advanced")
     mygame.run()
 
 def test_graphic_game():
@@ -178,7 +174,7 @@ def test_graphic_game():
 
   screen.fill(gconst.GREEN)
   pygame.display.flip()
-  mygame=GraphicGame(j1_random=False,hidden=False,screen=screen)
+  mygame=GraphicGame(player_bots=[False,True,True,True],hidden=False,screen=screen,difficulty="advanced")
 
 
   while True:
@@ -219,10 +215,11 @@ def test_graphic_game():
 
 if __name__=="__main__"   :
 
+  """
   print("random test")
   for i in range(500):
     random_test()
   print("test OK")
-
+  """
   test_graphic_game()
 
